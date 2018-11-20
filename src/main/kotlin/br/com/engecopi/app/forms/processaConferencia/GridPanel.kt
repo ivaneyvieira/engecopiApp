@@ -1,0 +1,131 @@
+package br.com.engecopi.app.forms.processaConferencia
+
+import br.com.engecopi.saci.QuerySaci
+import br.com.engecopi.saci.beans.AjusteInventario
+import com.github.vok.karibudsl.column
+import com.github.vok.karibudsl.grid
+import com.github.vok.karibudsl.panel
+import com.github.vok.karibudsl.showColumns
+import com.vaadin.data.provider.ListDataProvider
+import com.vaadin.icons.VaadinIcons
+import com.vaadin.ui.Button
+import com.vaadin.ui.CssLayout
+import com.vaadin.ui.renderers.NumberRenderer
+import com.vaadin.ui.themes.ValoTheme
+import org.vaadin.viritin.fields.IntegerField
+import java.text.DecimalFormat
+
+class GridPanel(val form: ProcessaConferenciaForm) : CssLayout() {
+  val saci = QuerySaci.querySaci
+  val edtInv = IntegerField()
+  val grid = grid(AjusteInventario::class, null,
+                  ListDataProvider<AjusteInventario>(emptyList())) {
+    setSizeFull()
+    val binder = this.editor.binder
+    val invBinding = binder.bind(edtInv, AjusteInventario::inventario.name)
+    column(AjusteInventario::storeno) {
+      expandRatio = 1
+      caption = "Loja"
+    }
+    column(AjusteInventario::barcode) {
+      expandRatio = 1
+      caption = "Código de barras"
+    }
+    column(AjusteInventario::prdno) {
+      expandRatio = 1
+      caption = "Código"
+    }
+    column(AjusteInventario::descricao) {
+      expandRatio = 3
+      caption = "Descricao"
+    }
+    column(AjusteInventario::grade) {
+      expandRatio = 1
+      caption = "Grade"
+    }
+    column(AjusteInventario::inventario) {
+      expandRatio = 1
+      setRenderer(NumberRenderer(DecimalFormat("0")))
+      setStyleGenerator { "v-align-right" }
+      caption = "Inventario"
+      editorBinding = invBinding
+      this.isEditable = true
+    }
+    column(AjusteInventario::saldo) {
+      expandRatio = 1
+      setRenderer(NumberRenderer(DecimalFormat("0")))
+      setStyleGenerator { "v-align-right" }
+      caption = "Saldo"
+    }
+    column(AjusteInventario::qtty) {
+      expandRatio = 1
+      setRenderer(NumberRenderer(DecimalFormat("0")))
+      setStyleGenerator { "v-align-right" }
+      caption = "Quantidade"
+    }
+    
+    column(AjusteInventario::cost) {
+      expandRatio = 1
+      setRenderer(NumberRenderer(DecimalFormat("0.0000")))
+      setStyleGenerator { "v-align-right" }
+      caption = "Custo Real"
+    }
+    column(AjusteInventario::operador) {
+      expandRatio = 1
+      caption = "Operador"
+    }
+    
+    
+    showColumns(AjusteInventario::barcode, AjusteInventario::prdno,
+                AjusteInventario::descricao, AjusteInventario::grade,
+                AjusteInventario::inventario, AjusteInventario::saldo,
+                AjusteInventario::qtty, AjusteInventario::cost, AjusteInventario::operador)
+    
+    val colBtn = addComponentColumn { ajuste ->
+      val button = Button(VaadinIcons.TRASH)
+      button.addStyleName(ValoTheme.BUTTON_SMALL)
+      button.description = "Apaga a linha"
+      button.addClickListener {
+        saci.apagaAjuste(ajuste)
+        
+        form.headerPanel.updateView(form.headerPanel.comboInventario.value)
+        /*
+                val ajustes = saci
+                        .ajustesInventario(ajuste.numero
+                                           ?: "")
+                form.headerPanel.updateView(ajustes)
+        */
+      }
+      button
+    }
+    
+    colBtn.setStyleGenerator { "center" }
+    colBtn.expandRatio = 1
+    
+    editor.isEnabled = true
+    editor.saveCaption = "Salvar"
+    editor.cancelCaption = "Cancelar"
+    editor.addSaveListener { edit ->
+      val ajuste = edit.bean
+      saci.salvaAjuste(ajuste)
+      
+      form.headerPanel.updateView(form.headerPanel.comboInventario.value)
+      /*
+      val ajustes = saci
+              .ajustesInventario(ajuste.numero
+                                 ?: "")
+      form.headerPanel.updateView(ajustes)
+      */
+    }
+  }
+  
+  init {
+    caption = "Produtos"
+    setSizeFull()
+    styleName = ValoTheme.LAYOUT_WELL
+    panel {
+      setSizeFull()
+      content = grid
+    }
+  }
+}
