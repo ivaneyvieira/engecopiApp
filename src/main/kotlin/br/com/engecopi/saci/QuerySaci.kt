@@ -1,6 +1,7 @@
 package br.com.engecopi.saci
 
 import br.com.engecopi.saci.beans.AjusteInventario
+import br.com.engecopi.saci.beans.DatasProcessamento
 import br.com.engecopi.saci.beans.Inventario
 import br.com.engecopi.saci.beans.NotaFiscal
 import br.com.engecopi.saci.beans.Pedido
@@ -13,7 +14,6 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 class QuerySaci : QueryDB(driver, url, username, password) {
-
   fun userSenha(login: String): UserSenha? {
     val sql = "/sql/userSenha.sql"
     return query(sql) { q ->
@@ -21,20 +21,14 @@ class QuerySaci : QueryDB(driver, url, username, password) {
     }
   }
 
-  fun pedido(
-          storeno: Int,
-          ordno: Int
-            ): Pedido? {
+  fun pedido(storeno: Int, ordno: Int): Pedido? {
     val sql = "/sql/pedido.sql"
     return query(sql) { q ->
       q.addParameter("storeno", storeno).addParameter("ordno", ordno).executeAndFetchFirst(Pedido::class.java)
     }
   }
 
-  fun pedidoProduto(
-          storeno: Int,
-          ordno: Int
-                   ): List<PedidoProduto> {
+  fun pedidoProduto(storeno: Int, ordno: Int): List<PedidoProduto> {
     val sql = "/sql/pedidoProduto.sql"
     return query(sql) { q ->
       q.addParameter("storeno", storeno).addParameter("ordno", ordno).executeAndFetch(PedidoProduto::class.java)
@@ -42,9 +36,9 @@ class QuerySaci : QueryDB(driver, url, username, password) {
   }
 
   fun processaPedido(
-          storeno: Int,
-          ordno: Int,
-          tipo: String
+    storeno: Int,
+    ordno: Int,
+    tipo: String
                     ) {
     val sql = "/sql/processaPedido.sql"
     execute(sql, Pair("storeno", "$storeno"),
@@ -53,9 +47,9 @@ class QuerySaci : QueryDB(driver, url, username, password) {
   }
 
   fun desfazPedido(
-          storeno: Int,
-          ordno: Int,
-          tipo: String
+    storeno: Int,
+    ordno: Int,
+    tipo: String
                   ) {
     val sql = "/sql/desfazPedido.sql"
     execute(sql, Pair("storeno", "$storeno"),
@@ -64,9 +58,9 @@ class QuerySaci : QueryDB(driver, url, username, password) {
   }
 
   fun saldoKardec(
-          dataInicial: LocalDate,
-          dataFinal: LocalDate,
-          monitor: (String, Int, Int) -> Unit
+    dataInicial: LocalDate,
+    dataFinal: LocalDate,
+    monitor: (String, Int, Int) -> Unit
                  ) {
     val sql = "/sql/saldoKardec.sql"
     val sdf = DateTimeFormatter.ofPattern("yyyyMMdd")
@@ -78,16 +72,16 @@ class QuerySaci : QueryDB(driver, url, username, password) {
   }
 
   fun pesquisaNota(
-          storeno: Int,
-          ordno: Int,
-          tipo: String
+    storeno: Int,
+    ordno: Int,
+    tipo: String
                   ): NotaFiscal? {
     val sql = "/sql/pesquisaNota.sql"
     return query(sql) { q ->
       q.addParameter("storeno", storeno)
-              .addParameter("ordno", ordno)
-              .addParameter("tipo", tipo)
-              .executeAndFetchFirst(NotaFiscal::class.java)
+        .addParameter("ordno", ordno)
+        .addParameter("tipo", tipo)
+        .executeAndFetchFirst(NotaFiscal::class.java)
     }
   }
 
@@ -109,7 +103,7 @@ class QuerySaci : QueryDB(driver, url, username, password) {
     val sql = "/sql/ajustesInventario.sql"
     return query(sql) { q ->
       q.addParameter("numero", numero)
-              .executeAndFetch(AjusteInventario::class.java)
+        .executeAndFetch(AjusteInventario::class.java)
     }
   }
 
@@ -125,18 +119,6 @@ class QuerySaci : QueryDB(driver, url, username, password) {
     execute(sql, Pair("numero", numero))
   }
 
-  companion object {
-    val db = DB("saci")
-    internal val driver = db.driver
-    internal val url = db.url
-    internal val username = db.username
-    internal val password = db.password
-    //internal val sqldir = db.sqldir
-    val querySaci = QuerySaci()
-
-    val ipServer = QuerySaci.db.url.split("/").getOrNull(2)
-  }
-
   fun novoAjuste(data: Int) {
     val sql = "/sql/novoAjuste.sql"
     execute(sql)
@@ -149,6 +131,7 @@ class QuerySaci : QueryDB(driver, url, username, password) {
             ("prdno" to "'${ajuste.prdno.lpad(16, " ")}'"),
             ("grade" to "'${ajuste.grade}'"))
   }
+
   fun findGrades(codigo: String?): List<String> {
     val sql = "/sql/findGrades.sql"
     return query(sql) { q ->
@@ -176,5 +159,23 @@ class QuerySaci : QueryDB(driver, url, username, password) {
             ("prdno" to "'${ajuste.prdno.lpad(16, " ")}'"),
             ("grade" to "'${ajuste.grade}'"),
             ("quant" to "${ajuste.inventario}"))
+  }
+
+  fun datasProcessamento(): DatasProcessamento? {
+    val sql = "/sql/datasProcessamento.sql"
+    return query(sql) { q ->
+      q.executeAndFetch(DatasProcessamento::class.java).firstOrNull()
+    }
+  }
+
+  companion object {
+    val db = DB("saci")
+    internal val driver = db.driver
+    internal val url = db.url
+    internal val username = db.username
+    internal val password = db.password
+    //internal val sqldir = db.sqldir
+    val querySaci = QuerySaci()
+    val ipServer = QuerySaci.db.url.split("/").getOrNull(2)
   }
 }

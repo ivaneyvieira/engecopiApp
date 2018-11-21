@@ -23,6 +23,10 @@ class AppView : VerticalLayout(), View {
       addTab(SaldoKardecForm(), "Compara Saldo vs Kardec")
       addTab(ProcessaConferenciaForm(), "Conferência")
       expandRatio = 1f
+      addSelectedTabChangeListener {tab->
+        val tabKardec = tab.tabSheet.selectedTab as? SaldoKardecForm
+        tabKardec?.updateDataFiltro()
+      }
     }
 
     panel {

@@ -6,16 +6,16 @@ import org.sql2o.Query
 import org.sql2o.Sql2o
 
 open class QueryDB(
-        val driver: String, val url: String, val username: String,
-        val password: String
+  val driver: String, val url: String, val username: String,
+  val password: String
                   ) {
   private val sql2o: Sql2o
-  
+
   init {
     registerDriver(driver)
     this.sql2o = Sql2o(url, username, password)
   }
-  
+
   private fun registerDriver(driver: String) {
     try {
       Class.forName(driver)
@@ -23,7 +23,7 @@ open class QueryDB(
       throw RuntimeException(e)
     }
   }
-  
+
   protected fun <T> query(file: String, lambda: (Query) -> T): T {
     return buildQuery(file) { con, query ->
       val ret = lambda(query)
@@ -31,16 +31,16 @@ open class QueryDB(
       ret
     }
   }
-  
+
   private inline fun <C : AutoCloseable, R> C.trywr(block: (C) -> R): R {
     this.use {
       return block(this)
     }
   }
-  
+
   protected fun execute(
-          file: String, vararg params: Pair<String, String>,
-          monitor: (String, Int, Int) -> Unit = { _, _, _ -> }
+    file: String, vararg params: Pair<String, String>,
+    monitor: (String, Int, Int) -> Unit = { _, _, _ -> }
                        ) {
     var sqlScript = SystemUtils.readFile(file)
     sql2o.beginTransaction().trywr { con ->
@@ -59,7 +59,7 @@ open class QueryDB(
       con.commit()
     }
   }
-  
+
   private fun <T> buildQuery(file: String, proc: (Connection, Query) -> T): T {
     val sql = SystemUtils.readFile(file)
     this.sql2o.open().trywr { con ->

@@ -59,3 +59,8 @@ fun Date?.format() : String? {
   val sdf = SimpleDateFormat("dd/MM/yyyy")
   return sdf.format(this)
 }
+
+fun Int.toDate() : LocalDate {
+  val formatter = DateTimeFormatter.ofPattern("yyyyMMdd")
+  return LocalDate.parse(this.toString(), formatter)
+}

@@ -11,7 +11,7 @@ class Pedido(val storeno: Int?, val ordno: Int?, val date: Date?,
   }
 
   fun notaFiscal(tipo: String): NotaFiscal? {
-    val query = QuerySaci()
+    val query = QuerySaci.querySaci
     return query.pesquisaNota(storeno ?: 0, ordno ?: 0, tipo)
   }
 }

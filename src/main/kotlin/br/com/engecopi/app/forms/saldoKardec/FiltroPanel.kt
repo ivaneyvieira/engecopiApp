@@ -27,7 +27,8 @@ class FiltroPanel : CssLayout() {
   
   val filtro: FiltroSaldoKardec? = FiltroSaldoKardec()
   
-  val btnExcel = button("Gera Planilha", {
+  val btnExcel = button("Gera Planilha") {
+    isEnabled = false
     addClickListener {
       if (binder.writeBeanIfValid(filtro)) {
         filtro?.let {
@@ -35,18 +36,17 @@ class FiltroPanel : CssLayout() {
         }
       }
     }
-  })
-  
-  val btnProcessa = button("Processamento", {
-    addClickListener {
+  }
+  val btnProcessa = button("Processamento") {
+    addClickListener { eve ->
       if (binder.writeBeanIfValid(filtro)) {
         filtro?.let {
           execFiltro(it)
         }
       }
     }
-  })
-  
+  }
+
   init {
     caption = "Filtro"
     setWidth("100%")

@@ -2,9 +2,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 
 plugins {
-  kotlin("jvm") version "1.2.41"
+  kotlin("jvm") version "1.3.10"
   // need to use Gretty here because of https://github.com/johndevs/gradle-vaadin-plugin/issues/317
-  id("org.gretty") version "2.1.0"
   id("com.devsoap.plugin.vaadin") version "1.3.1"
 }
 
@@ -21,11 +20,7 @@ tasks.withType<KotlinCompile> {
 }
 
 vaadin {
-  version = "8.4.2"
-}
-
-gretty {
-  contextPath = "/"
+  version = "8.6.1"
 }
 
 tasks.withType<Test> {
@@ -38,7 +33,7 @@ tasks.withType<Test> {
 
 dependencies {
   // Karibu-DSL dependency
-  compile("com.github.vok.karibudsl:karibu-dsl-v8:0.4.5")
+  compile("com.github.vok.karibudsl:karibu-dsl-v8:0.4.9")
   
   // include proper kotlin version
   compile(kotlin("stdlib-jdk8"))
@@ -70,15 +65,3 @@ dependencies {
   testRuntime("com.github.jsimone:webapp-runner:8.5.30.0")
 }
 
-// Heroku
-tasks {
-  "copyToLib"(Copy::class) {
-    into("$buildDir/server")
-    from(configurations.testRuntime) {
-      include("webapp-runner*")
-    }
-  }
-  "stage" {
-    dependsOn("build", "copyToLib")
-  }
-}
