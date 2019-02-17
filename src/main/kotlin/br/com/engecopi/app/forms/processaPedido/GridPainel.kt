@@ -18,29 +18,36 @@ class GridPainel : CssLayout() {
 
     column(PedidoProduto::prdno) {
       caption = "Código"
+      expandRatio = 1
     }
     column(PedidoProduto::descricao) {
       caption = "Descricao"
+      expandRatio = 3
     }
     column(PedidoProduto::grade) {
       caption = "Grade"
+      expandRatio = 1
+    }
+    column(PedidoProduto::localizacao) {
+      caption = "Localização"
+      expandRatio = 5
     }
     column(PedidoProduto::quant) {
       setRenderer(NumberRenderer(DecimalFormat("0")))
       setStyleGenerator { "v-align-right" }
       caption = "Quantidade"
+      expandRatio = 1
     }
-
     column(PedidoProduto::preco) {
       setRenderer(NumberRenderer(DecimalFormat("0.00")))
       setStyleGenerator { "v-align-right" }
       caption = "Custo Contabil"
+      expandRatio = 1
     }
 
-    showColumns(PedidoProduto::prdno,PedidoProduto::descricao, PedidoProduto::grade,
-                PedidoProduto::quant, PedidoProduto::preco)
+    showColumns(PedidoProduto::prdno, PedidoProduto::descricao, PedidoProduto::grade,
+                PedidoProduto::localizacao, PedidoProduto::quant, PedidoProduto::preco)
   }
-
 
   init {
     caption = "Produtos"

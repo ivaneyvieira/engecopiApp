@@ -23,14 +23,6 @@ vaadin {
   version = "8.6.1"
 }
 
-tasks.withType<Test> {
-  useJUnitPlatform()
-  testLogging {
-    // to see the exceptions of failed tests in Travis-CI console.
-    exceptionFormat = TestExceptionFormat.FULL
-  }
-}
-
 dependencies {
   // Karibu-DSL dependency
   compile("com.github.vok.karibudsl:karibu-dsl-v8:0.4.9")
@@ -49,8 +41,8 @@ dependencies {
   testCompile("com.github.mvysny.dynatest:dynatest:0.8")
   
   // workaround until https://youtrack.jetbrains.com/issue/IDEA-178071 is fixed
-  compile("com.vaadin:vaadin-themes:${vaadin.version}")
-  compile("com.vaadin:vaadin-client-compiled:${vaadin.version}")
+  compile("com.vaadin:vaadin-themes:8.6.1")
+  compile("com.vaadin:vaadin-client-compiled:8.6.1")
   
   //Dependencias do projeto
   compile("org.sql2o:sql2o:1.5.4")
