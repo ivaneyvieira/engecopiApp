@@ -2,6 +2,7 @@ package br.com.engecopi.app.forms.processaPedido
 
 import br.com.engecopi.saci.QuerySaci
 import br.com.engecopi.saci.beans.Pedido
+import br.com.engecopi.saci.saci
 import com.github.vok.karibudsl.label
 import com.github.vok.karibudsl.panel
 import com.vaadin.data.provider.ListDataProvider
@@ -16,42 +17,40 @@ class PedidosMovForm : VerticalLayout() {
 
   init {
     filtroPedidoPainel.execFiltro = { filtro ->
-      val query = QuerySaci.querySaci
       val loja = filtro.loja?.numero ?: 0
-      val numPedido = filtro.numPedido ?: 0
-      val pedido = query.pedido(loja, numPedido)
+      val numPedido = filtro.numPedido ?: ""
+      val pedido = saci.pedidoNota(loja, numPedido)
       val tipo = filtro.tipoMov?.cod
       if (pedido == null)
         Notification.show("Pedido não encontrado", Notification.Type.WARNING_MESSAGE)
 
       pedidoPainel.setPedido(pedido, tipo)
-      val produtos = query.pedidoProduto(loja, numPedido)
+      val produtos = saci.pedidoProduto(loja, numPedido)
       gridPainel.grid.dataProvider = ListDataProvider(produtos)
     }
 
     filtroPedidoPainel.execProcessa = { filtro ->
-      val query = QuerySaci.querySaci
       val loja = filtro.loja?.numero ?: 0
-      val numPedido = filtro.numPedido ?: 0
+      val numPedido = filtro.numPedido ?: ""
       val tipo = filtro.tipoMov?.cod ?: ""
-      val pedido = query.pedido(loja, numPedido)
-      val nota = query.pesquisaNota(loja, numPedido, tipo)
+      val pedido = saci.pedidoNota(loja, numPedido)
+      val nota = saci.pesquisaNota(loja, numPedido, tipo)
       when {
         pedido == null     -> {
           Notification.show("Esse pedido não foi encontrado", Notification.Type.WARNING_MESSAGE)
         }
         pedido.status == 1 -> {
-          query.processaPedido(loja, numPedido, tipo)
+          saci.processaPedido(loja, numPedido, tipo)
           filtroPedidoPainel.execFiltro(filtro)
         }
         else               -> {
           when {
             nota == null           -> {
-              query.processaPedido(loja, numPedido, tipo)
+              saci.processaPedido(loja, numPedido, tipo)
               filtroPedidoPainel.execFiltro(filtro)
             }
             nota.cancelado == true -> {
-              query.processaPedido(loja, numPedido, tipo)
+              saci.processaPedido(loja, numPedido, tipo)
               filtroPedidoPainel.execFiltro(filtro)
             }
             else                   -> {
@@ -63,17 +62,16 @@ class PedidosMovForm : VerticalLayout() {
     }
 
     filtroPedidoPainel.desfazProcessa = { filtro ->
-      val query = QuerySaci.querySaci
       val loja = filtro.loja?.numero ?: 0
-      val numPedido = filtro.numPedido ?: 0
+      val numPedido = filtro.numPedido ?: ""
       val tipo = filtro.tipoMov?.cod ?: ""
-      val pedido = query.pedido(loja, numPedido)
-      val nota = query.pesquisaNota(loja, numPedido, tipo)
-      when {
-        pedido == null -> {
+      val pedido = saci.pedidoNota(loja, numPedido)
+      val nota = saci.pesquisaNota(loja, numPedido, tipo)
+      when (pedido) {
+        null -> {
           Notification.show("Esse pedido não foi encontrado", Notification.Type.WARNING_MESSAGE)
         }
-        else           -> {
+        else -> {
           when {
             nota == null           -> {
               Notification.show("Esse pedido não foi processado", Notification.Type.WARNING_MESSAGE)
@@ -82,7 +80,7 @@ class PedidosMovForm : VerticalLayout() {
               Notification.show("Esse pedido não foi processado", Notification.Type.WARNING_MESSAGE)
             }
             else                   -> {
-              query.desfazPedido(loja, numPedido, tipo)
+              saci.desfazPedido(loja, numPedido, tipo)
             }
           }
           filtroPedidoPainel.execFiltro(filtro)

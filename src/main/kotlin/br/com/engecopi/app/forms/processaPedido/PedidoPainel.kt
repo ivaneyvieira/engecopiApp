@@ -27,8 +27,8 @@ class PedidoPainel : CssLayout() {
   val statusPedido = textReadOnly("Status")
 
   fun setPedido(pedido: Pedido?, tipo: String?) {
-    lojaPedido.value = pedido?.loja()?.toString() ?: ""
-    numeroPedido.value = pedido?.ordno?.toString() ?: ""
+    lojaPedido.value = pedido?.loja?.toString() ?: ""
+    numeroPedido.value = pedido?.numero ?: ""
     dataPedido.value = pedido?.date?.format() ?: ""
     usuarioPedido.value = pedido?.username ?: ""
     clientePedido.value = pedido?.cliente ?: ""

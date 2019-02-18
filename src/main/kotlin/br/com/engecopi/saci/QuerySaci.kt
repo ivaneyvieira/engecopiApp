@@ -17,44 +17,61 @@ class QuerySaci : QueryDB(driver, url, username, password) {
   fun userSenha(login: String): UserSenha? {
     val sql = "/sql/userSenha.sql"
     return query(sql) { q ->
-      q.addParameter("login", login).executeAndFetchFirst(UserSenha::class.java)
+      q.addParameter("login", login)
+        .executeAndFetchFirst(UserSenha::class.java)
     }
   }
 
-  fun pedido(storeno: Int, ordno: Int): Pedido? {
+  fun pedidoNota(storeno: Int, numero: String): Pedido? {
     val sql = "/sql/pedido.sql"
     return query(sql) { q ->
-      q.addParameter("storeno", storeno).addParameter("ordno", ordno).executeAndFetchFirst(Pedido::class.java)
+      val num = numero.split("/").getOrNull(0) ?: ""
+      val serie = numero.split("/").getOrNull(1) ?: ""
+      q.addParameter("storeno", storeno)
+        .addParameter("numero", num)
+        .addParameter("serie", serie)
+        .executeAndFetchFirst(Pedido::class.java)
     }
   }
 
-  fun pedidoProduto(storeno: Int, ordno: Int): List<PedidoProduto> {
+  fun pedidoProduto(storeno: Int, numero: String): List<PedidoProduto> {
     val sql = "/sql/pedidoProduto.sql"
     return query(sql) { q ->
-      q.addParameter("storeno", storeno).addParameter("ordno", ordno).executeAndFetch(PedidoProduto::class.java)
+      if (numero.contains("/"))
+        TODO()
+      else
+        q.addParameter("storeno", storeno)
+          .addParameter("ordno", numero)
+          .executeAndFetch(PedidoProduto::class.java)
     }
   }
 
   fun processaPedido(
     storeno: Int,
-    ordno: Int,
+    numero: String,
     tipo: String
                     ) {
     val sql = "/sql/processaPedido.sql"
-    execute(sql, Pair("storeno", "$storeno"),
-            Pair("ordno", "$ordno"),
-            Pair("tipo", "'$tipo'"))
+    if (numero.contains("/"))
+      TODO()
+    else
+      execute(sql, Pair("storeno", "$storeno"),
+              Pair("ordno", numero),
+              Pair("tipo", "'$tipo'"))
   }
 
   fun desfazPedido(
     storeno: Int,
-    ordno: Int,
+    numero: String,
     tipo: String
                   ) {
     val sql = "/sql/desfazPedido.sql"
-    execute(sql, Pair("storeno", "$storeno"),
-            Pair("ordno", "$ordno"),
-            Pair("tipo", "'$tipo'"))
+    if (numero.contains("/"))
+      TODO()
+    else
+      execute(sql, Pair("storeno", "$storeno"),
+              Pair("ordno", numero),
+              Pair("tipo", "'$tipo'"))
   }
 
   fun saldoKardec(
@@ -73,15 +90,18 @@ class QuerySaci : QueryDB(driver, url, username, password) {
 
   fun pesquisaNota(
     storeno: Int,
-    ordno: Int,
+    numero: String,
     tipo: String
                   ): NotaFiscal? {
     val sql = "/sql/pesquisaNota.sql"
     return query(sql) { q ->
-      q.addParameter("storeno", storeno)
-        .addParameter("ordno", ordno)
-        .addParameter("tipo", tipo)
-        .executeAndFetchFirst(NotaFiscal::class.java)
+      if (numero.contains("/"))
+        TODO()
+      else
+        q.addParameter("storeno", storeno)
+          .addParameter("ordno", numero)
+          .addParameter("tipo", tipo)
+          .executeAndFetchFirst(NotaFiscal::class.java)
     }
   }
 
@@ -164,7 +184,8 @@ class QuerySaci : QueryDB(driver, url, username, password) {
   fun datasProcessamento(): DatasProcessamento? {
     val sql = "/sql/datasProcessamento.sql"
     return query(sql) { q ->
-      q.executeAndFetch(DatasProcessamento::class.java).firstOrNull()
+      q.executeAndFetch(DatasProcessamento::class.java)
+        .firstOrNull()
     }
   }
 
@@ -175,7 +196,9 @@ class QuerySaci : QueryDB(driver, url, username, password) {
     internal val username = db.username
     internal val password = db.password
     //internal val sqldir = db.sqldir
-    val querySaci = QuerySaci()
-    val ipServer = QuerySaci.db.url.split("/").getOrNull(2)
+    val ipServer = QuerySaci.db.url
+      .split("/").getOrNull(2)
   }
 }
+
+val saci = QuerySaci()

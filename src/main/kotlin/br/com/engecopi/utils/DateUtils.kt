@@ -60,7 +60,8 @@ fun Date?.format() : String? {
   return sdf.format(this)
 }
 
-fun Int.toDate() : LocalDate {
+fun Int.toDate() : LocalDate? {
+  if(this == 0) return null
   val formatter = DateTimeFormatter.ofPattern("yyyyMMdd")
   return LocalDate.parse(this.toString(), formatter)
 }

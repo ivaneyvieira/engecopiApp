@@ -6,7 +6,7 @@ import com.vaadin.server.Resource
 data class FiltroPedido(
         var tipoMov: TipoMov? = TipoMov.SAIDA,
         var loja: Loja? = Loja.JS,
-        var numPedido: Int? = null
+        var numPedido: String? = null
                        )
 
 enum class TipoMov(val cod: String, val descricao: String, val icon: Resource) {

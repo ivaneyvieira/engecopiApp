@@ -1,7 +1,7 @@
 package br.com.engecopi.app.forms.processaConferencia
 
-import br.com.engecopi.saci.QuerySaci
 import br.com.engecopi.saci.beans.AjusteInventario
+import br.com.engecopi.saci.saci
 import com.github.vok.karibudsl.column
 import com.github.vok.karibudsl.grid
 import com.github.vok.karibudsl.panel
@@ -16,7 +16,6 @@ import org.vaadin.viritin.fields.IntegerField
 import java.text.DecimalFormat
 
 class GridPanel(val form: ProcessaConferenciaForm) : CssLayout() {
-  val saci = QuerySaci.querySaci
   val edtInv = IntegerField()
   val grid = grid(AjusteInventario::class, null,
                   ListDataProvider<AjusteInventario>(emptyList())) {

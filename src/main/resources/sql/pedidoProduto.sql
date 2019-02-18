@@ -6,7 +6,7 @@ SELECT
   qtty / 1000                                               AS quant,
   IF(I.last_cost = 0, I.cm_varejo_otn, I.last_cost) / 10000 AS preco,
   TRIM(MID(P.name, 1, 37))                                  AS descricao,
-  GROUP_CONCAT(DISTINCT localizacao ORDER BY localizacao separator "/")   AS localizacao
+  GROUP_CONCAT(DISTINCT localizacao ORDER BY localizacao separator '/')   AS localizacao
 FROM sqldados.eoprd AS E
   INNER JOIN sqldados.eord O
   USING (storeno, ordno)
