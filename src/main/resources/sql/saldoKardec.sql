@@ -18,7 +18,7 @@ create temporary table uym
 select MAX(ym) as ym
 FROM sqldados.stkchk
 where date < @DATA
-      and ym < MID(@DATA, 1, 6)*1;
+    and ym < MID(@DATA, 1, 6)*1;
 
 DO @MES:=(SELECT ym FROM uym);
 
