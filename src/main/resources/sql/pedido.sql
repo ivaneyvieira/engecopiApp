@@ -1,80 +1,54 @@
-SELECT
-  E.storeno                                                 AS storeno,
-  E.ordno                                                   AS numero,
-  E.prdno                                                   AS prdno,
-  E.grade                                                   AS grade,
-  qtty / 1000                                               AS quant,
-  IF(I.last_cost = 0, I.cm_varejo_otn, I.last_cost) / 10000 AS preco,
-  TRIM(MID(P.name, 1, 37))                                  AS descricao,
-  GROUP_CONCAT(DISTINCT localizacao ORDER BY localizacao separator '/')   AS localizacao
-FROM sqldados.eoprd AS E
-  INNER JOIN sqldados.eord O
-  USING (storeno, ordno)
-  INNER JOIN sqldados.prd AS P
-    ON E.prdno = P.no
-  INNER JOIN sqldados.stk AS I
-    ON I.storeno = E.storeno
-       AND I.prdno = E.prdno
-       AND I.grade = E.grade
-  LEFT JOIN sqldados.prdloc AS L
-    ON E.storeno = L.storeno
-    AND E.prdno  = L.prdno
-WHERE O.status IN (1, 4)
-      AND O.storeno = 4
-      AND O.ordno   = ':numero'
-      AND ""        = ':serie'
-GROUP BY storeno, ordno, prdno, grade
+SELECT E.storeno             AS storeno,
+       E.ordno               AS numero,
+       cast(date AS DATE)    AS date,
+       userno                AS userno,
+       IFNULL(U.name, 'N/D') AS username,
+       IFNULL(C.name, 'N/D') AS cliente,
+       E.status              AS status
+FROM sqldados.eord                AS E
+         LEFT JOIN sqldados.users AS U
+                   ON U.no = E.userno
+         LEFT JOIN sqldados.custp AS C
+                   ON C.no = E.custno
+WHERE E.status IN (1, 4) AND
+      E.storeno = :storeno AND
+      E.ordno = :numero AND
+      '' = :serie
+GROUP BY storeno,
+         ordno
 UNION
-SELECT
-  E.storeno                                                 AS storeno,
-  CONCAT(O.nfname, '/', O.invse)                            AS numero,
-  E.prdno                                                   AS prdno,
-  E.grade                                                   AS grade,
-  qtty / 1000                                               AS quant,
-  IF(I.last_cost = 0, I.cm_varejo_otn, I.last_cost) / 10000 AS preco,
-  TRIM(MID(P.name, 1, 37))                                  AS descricao,
-  GROUP_CONCAT(DISTINCT localizacao ORDER BY localizacao separator '/')   AS localizacao
-FROM sqldados.iprd AS E
-  INNER JOIN sqldados.inv O
-  USING (invno)
-  INNER JOIN sqldados.prd AS P
-    ON E.prdno = P.no
-  INNER JOIN sqldados.stk AS I
-    ON I.storeno = E.storeno
-       AND I.prdno = E.prdno
-       AND I.grade = E.grade
-  LEFT JOIN sqldados.prdloc AS L
-    ON E.storeno = L.storeno
-    AND E.prdno  = L.prdno
-WHERE O.storeno = 4
-  AND O.nfname  = 'numero'
-  AND O.invse   = 'serie'
-  AND 'serie'   = '66'
-GROUP BY storeno, ordno, prdno, grade
+SELECT O.storeno                      AS storeno,
+       CONCAT(O.nfname, '/', O.invse) AS numero,
+       cast(issue_date AS DATE)       AS date,
+       usernoFirst                    AS userno,
+       IFNULL(U.name, 'N/D')          AS username,
+       IFNULL(V.name, 'N/D')          AS cliente,
+       1                              AS status
+FROM sqldados.inv                    O
+         LEFT JOIN sqldados.users AS U
+                   ON U.no = O.usernoFirst
+         LEFT JOIN sqldados.vend  AS V
+                   ON V.no = O.vendno
+WHERE O.storeno = :storeno AND
+      O.nfname = :numero AND
+      O.invse = :serie AND
+      :serie = '66'
+GROUP BY storeno,
+         numero
 UNION
-SELECT
-  E.storeno                                                 AS storeno,
-  CONCAT(O.nfno, '/', O.nfse)                               AS numero,
-  E.prdno                                                   AS prdno,
-  E.grade                                                   AS grade,
-  qtty / 1000                                               AS quant,
-  IF(I.last_cost = 0, I.cm_varejo_otn, I.last_cost) / 10000 AS preco,
-  TRIM(MID(P.name, 1, 37))                                  AS descricao,
-  GROUP_CONCAT(DISTINCT localizacao ORDER BY localizacao separator '/')   AS localizacao
-FROM sqldados.xaprd2 AS E
-  INNER JOIN sqldados.nf O
-  USING (storeno, pdvno, xano)
-  INNER JOIN sqldados.prd AS P
-    ON E.prdno = P.no
-  INNER JOIN sqldados.stk AS I
-    ON I.storeno = E.storeno
-       AND I.prdno = E.prdno
-       AND I.grade = E.grade
-  LEFT JOIN sqldados.prdloc AS L
-    ON E.storeno = L.storeno
-    AND E.prdno  = L.prdno
-WHERE O.storeno = 4
-  AND O.nfno    = 'numero'
-  AND O.nfse    = 'serie'
-  AND 'serie'   = '66'
-GROUP BY storeno, ordno, prdno, grade
+SELECT O.storeno                   AS storeno,
+       CONCAT(O.nfno, '/', O.nfse) AS numero,
+       cast(issuedate AS DATE)     AS date,
+       0                           AS userno,
+       ''                          AS username,
+       IFNULL(C.name, 'N/D')       AS cliente,
+       1                           AS status
+FROM sqldados.nf                     O
+         LEFT JOIN sqldados.custp AS C
+                   ON C.no = O.custno
+WHERE O.storeno = :storeno AND
+      O.nfno = :numero AND
+      O.nfse = :serie AND
+      :serie = 66
+GROUP BY storeno,
+         numero

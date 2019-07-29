@@ -37,11 +37,11 @@ class QuerySaci : QueryDB(driver, url, username, password) {
   fun pedidoProduto(storeno: Int, numero: String): List<PedidoProduto> {
     val sql = "/sql/pedidoProduto.sql"
     return query(sql) { q ->
-      if (numero.contains("/"))
-        TODO()
-      else
+      val num = numero.split("/").getOrNull(0) ?: ""
+      val serie = numero.split("/").getOrNull(1) ?: ""
         q.addParameter("storeno", storeno)
-          .addParameter("ordno", numero)
+          .addParameter("ordno", num)
+          .addParameter("serie", serie)
           .executeAndFetch(PedidoProduto::class.java)
     }
   }
