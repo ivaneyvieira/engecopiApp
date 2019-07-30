@@ -10,7 +10,6 @@ class Pedido(val storeno: Int?,
              val date: Date?,
              val userno: Int?,
              val username: String?,
-             val cpf_cgc: String?,
              val cliente: String?,
              val status: Int?) {
   val loja = Loja.values().firstOrNull { it.numero == storeno }

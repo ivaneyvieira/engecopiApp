@@ -13,10 +13,10 @@ import br.com.engecopi.utils.lpad
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-class QuerySaci : QueryDB(driver, url, username, password) {
+class QuerySaci: QueryDB(driver, url, username, password) {
   fun userSenha(login: String): UserSenha? {
     val sql = "/sql/userSenha.sql"
-    return query(sql) { q ->
+    return query(sql) {q ->
       q.addParameter("login", login)
         .executeAndFetchFirst(UserSenha::class.java)
     }
@@ -24,25 +24,26 @@ class QuerySaci : QueryDB(driver, url, username, password) {
 
   fun pedidoNota(storeno: Int, numero: String): Pedido? {
     val sql = "/sql/pedido.sql"
-    return query(sql) { q ->
+    val list = query(sql) {q ->
       val num = numero.split("/").getOrNull(0) ?: ""
       val serie = numero.split("/").getOrNull(1) ?: ""
       q.addParameter("storeno", storeno)
         .addParameter("numero", num)
         .addParameter("serie", serie)
-        .executeAndFetchFirst(Pedido::class.java)
+        .executeAndFetch(Pedido::class.java)
     }
+    return list.firstOrNull()
   }
 
   fun pedidoProduto(storeno: Int, numero: String): List<PedidoProduto> {
     val sql = "/sql/pedidoProduto.sql"
-    return query(sql) { q ->
+    return query(sql) {q ->
       val num = numero.split("/").getOrNull(0) ?: ""
       val serie = numero.split("/").getOrNull(1) ?: ""
-        q.addParameter("storeno", storeno)
-          .addParameter("ordno", num)
-          .addParameter("serie", serie)
-          .executeAndFetch(PedidoProduto::class.java)
+      q.addParameter("storeno", storeno)
+        .addParameter("numero", num)
+        .addParameter("serie", serie)
+        .executeAndFetch(PedidoProduto::class.java)
     }
   }
 
@@ -52,7 +53,7 @@ class QuerySaci : QueryDB(driver, url, username, password) {
     tipo: String
                     ) {
     val sql = "/sql/processaPedido.sql"
-    if (numero.contains("/"))
+    if(numero.contains("/"))
       TODO()
     else
       execute(sql, Pair("storeno", "$storeno"),
@@ -66,7 +67,7 @@ class QuerySaci : QueryDB(driver, url, username, password) {
     tipo: String
                   ) {
     val sql = "/sql/desfazPedido.sql"
-    if (numero.contains("/"))
+    if(numero.contains("/"))
       TODO()
     else
       execute(sql, Pair("storeno", "$storeno"),
@@ -94,9 +95,9 @@ class QuerySaci : QueryDB(driver, url, username, password) {
     tipo: String
                   ): NotaFiscal? {
     val sql = "/sql/pesquisaNota.sql"
-    return query(sql) { q ->
-      if (numero.contains("/"))
-        TODO()
+    return query(sql) {q ->
+      if(numero.contains("/"))
+        null
       else
         q.addParameter("storeno", storeno)
           .addParameter("ordno", numero)
@@ -107,21 +108,21 @@ class QuerySaci : QueryDB(driver, url, username, password) {
 
   fun pesquisaSaldoKardec(): List<SaldoKardec> {
     val sql = "/sql/querySaldoKardec.sql"
-    return query(sql) { q ->
+    return query(sql) {q ->
       q.executeAndFetch(SaldoKardec::class.java)
     }
   }
 
   fun inventarios(): List<Inventario> {
     val sql = "/sql/inventarios.sql"
-    return query(sql) { q ->
+    return query(sql) {q ->
       q.executeAndFetch(Inventario::class.java)
     }
   }
 
   fun ajustesInventario(numero: String): List<AjusteInventario> {
     val sql = "/sql/ajustesInventario.sql"
-    return query(sql) { q ->
+    return query(sql) {q ->
       q.addParameter("numero", numero)
         .executeAndFetch(AjusteInventario::class.java)
     }
@@ -154,7 +155,7 @@ class QuerySaci : QueryDB(driver, url, username, password) {
 
   fun findGrades(codigo: String?): List<String> {
     val sql = "/sql/findGrades.sql"
-    return query(sql) { q ->
+    return query(sql) {q ->
       q.addParameter("codigo", codigo.lpad(16, " "))
       q.executeAndFetch(String::class.java)
     }
@@ -183,7 +184,7 @@ class QuerySaci : QueryDB(driver, url, username, password) {
 
   fun datasProcessamento(): DatasProcessamento? {
     val sql = "/sql/datasProcessamento.sql"
-    return query(sql) { q ->
+    return query(sql) {q ->
       q.executeAndFetch(DatasProcessamento::class.java)
         .firstOrNull()
     }
@@ -197,7 +198,8 @@ class QuerySaci : QueryDB(driver, url, username, password) {
     internal val password = db.password
     //internal val sqldir = db.sqldir
     val ipServer = QuerySaci.db.url
-      .split("/").getOrNull(2)
+      .split("/")
+      .getOrNull(2)
   }
 }
 

@@ -67,10 +67,10 @@ FROM sqldados.xaprd2                AS E
                     ON I.storeno = E.storeno AND I.prdno = E.prdno AND I.grade = E.grade
          LEFT JOIN  sqldados.prdloc AS L
                     ON E.storeno = L.storeno AND E.prdno = L.prdno
-WHERE O.storeno = 4 AND
+WHERE O.storeno = :storeno AND
       O.nfno = :numero AND
       O.nfse = :serie AND
-      :serie = 66
+      :serie = '66'
 GROUP BY storeno,
          numero,
          prdno,
