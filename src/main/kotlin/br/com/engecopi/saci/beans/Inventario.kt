@@ -1,7 +1,6 @@
 package br.com.engecopi.saci.beans
 
 import br.com.engecopi.saci.QuerySaci
-import br.com.engecopi.saci.saci
 
 class Inventario(
         var numero: String?,
@@ -16,7 +15,9 @@ class Inventario(
   }
 
   fun processado(): Boolean {
-    val ajuste = saci.ajustesInventario(numero ?: "").firstOrNull()
+    val ajuste =
+      QuerySaci.querySaci.ajustesInventario(numero ?: "")
+        .firstOrNull()
     return ajuste?.let {
       (it.nfEntrada != "") || (it.nfSaida != "")
     } ?: false

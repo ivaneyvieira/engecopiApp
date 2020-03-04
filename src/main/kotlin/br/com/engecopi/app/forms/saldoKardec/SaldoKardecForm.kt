@@ -3,7 +3,6 @@ package br.com.engecopi.app.forms.saldoKardec
 import br.com.engecopi.app.model.FiltroSaldoKardec
 import br.com.engecopi.saci.QuerySaci
 import br.com.engecopi.saci.beans.SaldoKardec
-import br.com.engecopi.saci.saci
 import br.com.engecopi.utils.toDate
 import com.vaadin.ui.VerticalLayout
 import org.vaadin.addons.excelexporter.ExportToExcel
@@ -16,6 +15,7 @@ import java.time.LocalDate
 import java.util.*
 
 class SaldoKardecForm : VerticalLayout() {
+  val saci = QuerySaci.querySaci
   val filtroPanel = FiltroPanel()
   val gridPanel = GridPanel()
   val progressPanel = ProgressPanel()
@@ -31,10 +31,11 @@ class SaldoKardecForm : VerticalLayout() {
   }
 
   fun updateDataFiltro() {
-    saci.datasProcessamento()?.let { datasProcessamento ->
-      filtroPanel.dataInicial.value = datasProcessamento.dataInicial.toDate()
-      filtroPanel.dataFinal.value = datasProcessamento.dataFinal.toDate() ?: LocalDate.now()
-    }
+    QuerySaci.querySaci.datasProcessamento()
+      ?.let {datasProcessamento ->
+        filtroPanel.dataInicial.value = datasProcessamento.dataInicial.toDate()
+        filtroPanel.dataFinal.value = datasProcessamento.dataFinal.toDate()
+      }
   }
 
   private fun execExcel(filtro: FiltroSaldoKardec) {

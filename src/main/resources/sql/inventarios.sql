@@ -9,7 +9,7 @@ from (
          date,
          usuario                                       as coletor,
          RIGHT(usuario, 2) * 1                         as storeno,
-         IF(usuario = "NOTA", @NOTA := barcode, @NOTA) as nota
+         IF(usuario = 'NOTA', @NOTA := barcode, @NOTA) AS nota
        from sqldados.coletor
        where date > 20180101
        ORDER BY id

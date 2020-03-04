@@ -1,14 +1,13 @@
 DO @DATA := :DATA;
-DO @NOTA := "";
+DO @NOTA := '';
 
 /*Filtrar a tabela coletor*/
 DROP TABLE IF EXISTS T;
-CREATE TEMPORARY TABLE T
-(
+CREATE TEMPORARY TABLE T (
   INDEX (userno),
   INDEX (barcode),
-  storeno int,
-  nota    varchar(10)
+  storeno INT,
+  nota    VARCHAR(10)
 )
     select
       barcode * 1                                   as userno,
@@ -19,7 +18,7 @@ CREATE TEMPORARY TABLE T
       usuario                                       as coletor,
       id,
       RIGHT(usuario, 2) * 1                         as storeno,
-      IF(usuario = "NOTA", @NOTA := barcode, @NOTA) as nota
+      IF(usuario = 'NOTA', @NOTA := barcode, @NOTA) AS nota
     from sqldados.coletor
     where date >= @DATA
     ORDER BY id;

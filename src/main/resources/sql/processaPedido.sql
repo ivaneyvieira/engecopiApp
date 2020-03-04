@@ -3,17 +3,12 @@ DO @PEDIDO := :ordno;
 DO @SERIE := 66;
 DO @TIPO := :tipo;
 DO @FATOR := IF(@TIPO = 'E', 1, -1);
-DO @DOC := IF(@TIPO = 'E', "AJUS ENT", "AJUS SAI");
+DO @DOC := IF(@TIPO = 'E', 'AJUS ENT', 'AJUS SAI');
 
 DROP TABLE IF EXISTS T;
 CREATE TEMPORARY TABLE T
-    SELECT
-      E.storeno,
-      E.ordno,
-      E.prdno,
-      E.grade,
-      qtty,
-      ROUND(IF(I.last_cost = 0, I.cm_varejo_otn, I.last_cost)) / 100 AS cost,
+SELECT E.storeno, E.ordno, E.prdno, E.grade, qtty,
+       ROUND(IF(I.last_cost = 0, I.cm_varejo_otn, I.last_cost)) / 100 AS cost,
       V.no                                                           AS vendno,
       C.no                                                           AS custno,
       E.empno
@@ -63,9 +58,9 @@ WHERE invno = @INVDEL
 */
 DO @INVNO := (SELECT MAX(invno) + 1
               FROM sqldados.inv);
-DO @NFNO := IFNULL((select MAX(no)+1 from lastno
-                   where se=@SERIE
-                         and storeno = @LOJA), 1);
+DO @NFNO := IFNULL((SELECT MAX(no) + 1
+                    FROM sqldados.lastno
+                    WHERE se = @SERIE AND storeno = @LOJA), 1);
 
 INSERT INTO sqldados.inv (invno, vendno, ordno, xfrno, issue_date, date, comp_date, ipi, icm,
                           freight, netamt, grossamt, subst_trib, discount, prdamt, despesas, base_ipi, aliq, cfo, nfNfno,

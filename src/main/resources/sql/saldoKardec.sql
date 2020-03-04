@@ -8,27 +8,32 @@ DO @REF := MID(@DTREF, 1, 6);
 
 drop table if exists Lojas;
 create temporary table Lojas
-(PRIMARY KEY (storeno))
-SELECT no as storeno from sqldados.store
+(
+  PRIMARY KEY (storeno)
+)
+SELECT no AS storeno
+FROM sqldados.store
 WHERE no = @LJ OR @LJ = 0;
 
-drop table if exists uym;
-create temporary table uym
-(PRIMARY KEY (ym))
-select MAX(ym) as ym
+DROP TABLE IF EXISTS uym;
+CREATE TEMPORARY TABLE uym (
+  PRIMARY KEY (ym)
+)
+SELECT MAX(ym) AS ym
 FROM sqldados.stkchk
-where date < @DATA
-    and ym < MID(@DATA, 1, 6)*1;
+WHERE date < @DATA AND ym < MID(@DATA, 1, 6) * 1;
 
-DO @MES:=(SELECT ym FROM uym);
+DO @MES := (SELECT ym
+            FROM uym);
 
-drop table if exists Saldo;
-create temporary table Saldo
-(  cost  bigint(15) )
-select storeno as loja, prdno, grade, @DATA as date, 'SaldoAnterior' tipo, cost, qtty as quant
+DROP TABLE IF EXISTS Saldo;
+CREATE TEMPORARY TABLE Saldo (
+  cost BIGINT(15)
+)
+SELECT storeno AS loja, prdno, grade, @DATA AS date, 'SaldoAnterior' AS tipo, cost, qtty AS quant
 FROM sqldados.stkchk
-     INNER JOIN Lojas
-     USING(storeno)
+  INNER JOIN Lojas
+               USING (storeno)
 where (prdno = @PRD OR @PRD='')
        AND ym = @MES;
 
@@ -80,12 +85,13 @@ select X.storeno as loja,
        X.prdno, X.grade, X.date, 'NF Cupom' as tipo,
        SUM(-X.price*100*X.qtty)/1000 as cost,
        SUM(-X.qtty) as quant, X.storeno, X.pdvno, X.xano
-from xalog2 AS X
-       LEFT JOIN TXA USING(storeno, pdvno, xano)
-       inner join sqlpdv.pxa AS P
-                  USING(storeno, pdvno, xano)
-       inner join Lojas AS L
-                  ON L.storeno = X.storeno
+FROM sqldados.xalog2    AS X
+  LEFT JOIN  TXA
+               USING (storeno, pdvno, xano)
+  INNER JOIN sqlpdv.pxa AS P
+               USING (storeno, pdvno, xano)
+  INNER JOIN Lojas      AS L
+               ON L.storeno = X.storeno
 where icm_aliq & 4 = 0
       AND X.xatype <> 11
       AND X.qtty > 0

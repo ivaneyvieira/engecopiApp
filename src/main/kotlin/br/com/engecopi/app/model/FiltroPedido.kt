@@ -4,9 +4,9 @@ import com.vaadin.icons.VaadinIcons
 import com.vaadin.server.Resource
 
 data class FiltroPedido(
-        var tipoMov: TipoMov? = TipoMov.SAIDA,
-        var loja: Loja? = Loja.JS,
-        var numPedido: String? = null
+  var tipoMov: TipoMov? = TipoMov.SAIDA,
+  var loja: Loja? = Loja.JS,
+  var numPedido: Int? = null
                        )
 
 enum class TipoMov(val cod: String, val descricao: String, val icon: Resource) {

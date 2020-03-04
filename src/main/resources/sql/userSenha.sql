@@ -13,5 +13,5 @@ SELECT
                   ascii(')')), CHAR(ascii(SUBSTRING(pswd, 7, 1)) + ascii(' ') - ascii(')')),
              CHAR(ascii(SUBSTRING(pswd, 8, 1)) + ascii(' ') - ascii('-')))
       AS CHAR) AS senha
-FROM users
+FROM sqldados.users
 WHERE login = :login

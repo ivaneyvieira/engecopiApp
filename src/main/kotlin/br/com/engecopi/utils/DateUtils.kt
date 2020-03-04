@@ -2,7 +2,11 @@ package br.com.engecopi.utils
 
 import java.sql.Timestamp
 import java.text.SimpleDateFormat
-import java.time.*
+import java.time.Instant
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.*
 
@@ -60,8 +64,7 @@ fun Date?.format() : String? {
   return sdf.format(this)
 }
 
-fun Int.toDate() : LocalDate? {
-  if(this == 0) return null
+fun Int.toDate(): LocalDate {
   val formatter = DateTimeFormatter.ofPattern("yyyyMMdd")
   return LocalDate.parse(this.toString(), formatter)
 }

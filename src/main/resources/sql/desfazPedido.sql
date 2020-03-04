@@ -3,17 +3,12 @@ DO @PEDIDO := :ordno;
 DO @SERIE := 66;
 DO @TIPO := :tipo;
 DO @FATOR := IF(@TIPO = 'E', -1, +1);
-DO @DOC := IF(@TIPO = 'E', "AJUS ENT", "AJUS SAI");
+DO @DOC := IF(@TIPO = 'E', 'AJUS ENT', 'AJUS SAI');
 
 DROP TABLE IF EXISTS T;
 CREATE TEMPORARY TABLE T
-    SELECT
-      E.storeno,
-      E.ordno,
-      E.prdno,
-      E.grade,
-      qtty,
-      ROUND(IF(I.last_cost = 0, I.cm_varejo_otn, I.last_cost)) / 100 AS cost,
+SELECT E.storeno, E.ordno, E.prdno, E.grade, qtty,
+       ROUND(IF(I.last_cost = 0, I.cm_varejo_otn, I.last_cost)) / 100 AS cost,
       V.no                                                           AS vendno,
       C.no                                                           AS custno,
       E.empno
