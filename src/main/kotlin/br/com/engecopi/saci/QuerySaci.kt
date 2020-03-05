@@ -25,7 +25,7 @@ class QuerySaci: QueryDB(driver, url, username, password) {
   fun pedidoNota(storeno: Int, numero: String): Pedido? {
     val sql = "/sql/pedido.sql"
     return query(sql) {q ->
-      q.addParameter("storeno", storeno) A
+      q.addParameter("storeno", storeno)
         .addParameter("ordno", numero)
         .executeAndFetchFirst(Pedido::class.java)
     }
