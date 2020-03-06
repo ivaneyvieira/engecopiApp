@@ -25,7 +25,7 @@ DO @INVNO := (SELECT MAX(invno) + 1
               FROM sqldados.inv);
 
 DO @NFNO := IFNULL((SELECT MAX(no) + 1
-                    FROM lastno
+                    FROM sqldados.lastno
                     WHERE se = @SERIE AND storeno = @LOJA), 1);
 
 INSERT INTO sqldados.lastno (no, storeno, dupse, se, padbyte)
@@ -33,7 +33,7 @@ SELECT DISTINCT @NFNO, @LOJA, 0, @SERIE, ''
 FROM T
 WHERE qtty > 0;
 
-UPDATE ajusteInventario
+UPDATE sqldados.ajusteInventario
 SET nfEntrada = IF(EXISTS(SELECT *
                           FROM T
                           WHERE qtty > 0), @NFNO, '')
@@ -113,12 +113,12 @@ FROM T
 WHERE qtty > 0;
 
 UPDATE sqldados.stk INNER JOIN T USING (storeno, prdno, grade)
-SET last_doc = CONCAT(@NFNO, "66")
+SET last_doc = CONCAT(@NFNO, '66')
 WHERE qtty > 0;
 
 
 DO @NFNO := IFNULL((SELECT MAX(no) + 1
-                    FROM lastno
+                    FROM sqldados.lastno
                     WHERE se = @SERIE AND storeno = @LOJA), 1);
 
 INSERT INTO sqldados.lastno (no, storeno, dupse, se, padbyte)
@@ -126,7 +126,7 @@ SELECT DISTINCT @NFNO, @LOJA, 0, @SERIE, ''
 FROM T
 WHERE qtty < 0;
 
-UPDATE ajusteInventario
+UPDATE sqldados.ajusteInventario
 SET nfSaida = IF(EXISTS(SELECT *
                         FROM T
                         WHERE qtty < 0), @NFNO, '')

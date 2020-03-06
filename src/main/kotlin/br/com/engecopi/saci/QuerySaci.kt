@@ -24,18 +24,32 @@ class QuerySaci: QueryDB(driver, url, username, password) {
   
   fun pedidoNota(storeno: Int, numero: String): Pedido? {
     val sql = "/sql/pedido.sql"
+    val num =
+      numero.split("/")
+        .getOrNull(0) ?: ""
+    val serie =
+      numero.split("/")
+        .getOrNull(1) ?: ""
     return query(sql) {q ->
       q.addParameter("storeno", storeno)
-        .addParameter("ordno", numero)
+        .addParameter("numero", num)
+        .addParameter("serie", serie)
         .executeAndFetchFirst(Pedido::class.java)
     }
   }
   
   fun pedidoProduto(storeno: Int, numero: String): List<PedidoProduto> {
     val sql = "/sql/pedidoProduto.sql"
+    val num =
+      numero.split("/")
+        .getOrNull(0) ?: ""
+    val serie =
+      numero.split("/")
+        .getOrNull(1) ?: ""
     return query(sql) {q ->
       q.addParameter("storeno", storeno)
-        .addParameter("ordno", numero)
+        .addParameter("numero", num)
+        .addParameter("serie", serie)
         .executeAndFetch(PedidoProduto::class.java)
     }
   }
@@ -45,14 +59,17 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     execute(sql, Pair("storeno", "$storeno"),
             Pair("ordno", numero),
             Pair("tipo", "'$tipo'"),
-            Pair("tipo_nota", "$tipo_nota"))
+            Pair("t_nota", "$tipo_nota"))
   }
   
-  fun desfazPedido(
-    storeno: Int,
-    numero: String,
-    tipo: String
-                  ) {
+  fun processaDevolucao(storeno: Int, nfno: String, nfse: String) {
+    val sql = "/sql/processaDevolucao.sql"
+    execute(sql, Pair("storeno", "$storeno"),
+            Pair("nfno", nfno),
+            Pair("nfse", "'$nfse'"))
+  }
+  
+  fun desfazPedido(storeno: Int, numero: String, tipo: String) {
     val sql = "/sql/desfazPedido.sql"
     
     execute(sql, Pair("storeno", "$storeno"),
@@ -60,11 +77,15 @@ class QuerySaci: QueryDB(driver, url, username, password) {
             Pair("tipo", "'$tipo'"))
   }
   
-  fun saldoKardec(
-    dataInicial: LocalDate,
-    dataFinal: LocalDate,
-    monitor: (String, Int, Int) -> Unit
-                 ) {
+  fun desfazDevolucao(storeno: Int, nfno: String, nfse: String) {
+    val sql = "/sql/desfazDevolucao.sql"
+    
+    execute(sql, Pair("storeno", "$storeno"),
+            Pair("nfno", nfno),
+            Pair("nfse", "'$nfse'"))
+  }
+  
+  fun saldoKardec(dataInicial: LocalDate, dataFinal: LocalDate, monitor: (String, Int, Int) -> Unit) {
     val sql = "/sql/saldoKardec.sql"
     val sdf = DateTimeFormatter.ofPattern("yyyyMMdd")
     val di = dataInicial.format(sdf)
@@ -74,11 +95,7 @@ class QuerySaci: QueryDB(driver, url, username, password) {
             monitor = monitor)
   }
   
-  fun pesquisaNota(
-    storeno: Int,
-    numero: String,
-    tipo: String
-                  ): NotaFiscal? {
+  fun pesquisaNota(storeno: Int, numero: String, tipo: String): NotaFiscal? {
     val sql = "/sql/pesquisaNota.sql"
     return query(sql) {q ->
       q.addParameter("storeno", storeno)
@@ -178,6 +195,7 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     internal val url = db.url
     internal val username = db.username
     internal val password = db.password
+  
     //internal val sqldir = db.sqldir
     val ipServer = QuerySaci.db.url
       .split("/")

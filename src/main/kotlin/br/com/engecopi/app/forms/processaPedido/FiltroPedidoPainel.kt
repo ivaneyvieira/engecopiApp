@@ -43,12 +43,11 @@ class FiltroPedidoPainel: CssLayout() {
     bind(binderFiltroPedido).bind(FiltroPedido::tipoNota)
   }
   val loja = comboBox<Loja>("Loja") {
-    setWidth("300px")
     isEmptySelectionAllowed = false
     isTextInputAllowed = false
     setItems(Loja.values().toList())
     setItemCaptionGenerator {it.numero.toString() + " - " + it.descricao}
-    setWidth("100px")
+    setWidth("150px")
     bind(binderFiltroPedido).bind(FiltroPedido::loja)
   }
   val numPedido = textField("Pedido/Nota") {
@@ -62,6 +61,7 @@ class FiltroPedidoPainel: CssLayout() {
       if(binderFiltroPedido.writeBeanIfValid(filtroPedido)) {
         filtroPedido?.let {
           execFiltro(it)
+          binderFiltroPedido.readBean(it)
         }
       }
     }
@@ -71,6 +71,7 @@ class FiltroPedidoPainel: CssLayout() {
       if(binderFiltroPedido.writeBeanIfValid(filtroPedido)) {
         filtroPedido?.let {
           execProcessa(it)
+          binderFiltroPedido.readBean(it)
         }
       }
     }
@@ -80,6 +81,7 @@ class FiltroPedidoPainel: CssLayout() {
       if(binderFiltroPedido.writeBeanIfValid(filtroPedido)) {
         filtroPedido?.let {
           desfazProcessa(it)
+          binderFiltroPedido.readBean(it)
         }
       }
     }
