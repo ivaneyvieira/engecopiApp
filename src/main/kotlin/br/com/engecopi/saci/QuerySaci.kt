@@ -95,7 +95,9 @@ class QuerySaci: QueryDB(driver, url, username, password) {
             monitor = monitor)
   }
   
-  fun pesquisaNota(storeno: Int, numero: String, tipo: String): NotaFiscal? {
+  fun pesquisaNota(storeno: Int?, numero: String?, tipo: String): NotaFiscal? {
+    storeno ?: return null
+    numero ?: return null
     val sql = "/sql/pesquisaNota.sql"
     return query(sql) {q ->
       q.addParameter("storeno", storeno)

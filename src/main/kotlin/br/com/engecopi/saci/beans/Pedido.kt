@@ -26,7 +26,7 @@ class Pedido(val storeno: Int?,
       ?.getOrNull(1)
   
   fun notaFiscal(tipo: String): NotaFiscal? {
-    return saci.pesquisaNota(storeno ?: 0, numeroPedido ?: "0", tipo)
+    return saci.pesquisaNota(storeno, numeroPedido, tipo)
   }
   
   fun isDataValida(): Boolean {

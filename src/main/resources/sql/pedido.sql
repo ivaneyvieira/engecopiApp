@@ -1,6 +1,6 @@
-SELECT E.storeno AS storeno, E.ordno AS numero, cast(date AS DATE) AS date, userno AS userno,
-       IFNULL(U.name, 'N/D') AS username, IFNULL(C.name, 'N/D') AS cliente, E.status AS status,
-       'PEDIDO' AS tipo
+SELECT E.storeno AS storeno, CAST(E.ordno AS CHAR) AS numero, cast(date AS DATE) AS date,
+       userno AS userno, IFNULL(U.name, 'N/D') AS username, IFNULL(C.name, 'N/D') AS cliente,
+       E.status AS status, 'PEDIDO' AS tipo
 FROM sqldados.eord         AS E
   LEFT JOIN sqldados.users AS U
               ON U.no = E.userno
