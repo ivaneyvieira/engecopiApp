@@ -16,7 +16,7 @@ DO @OBS := CASE @TIPO_NOTA
 
 DROP TABLE IF EXISTS T;
 CREATE TEMPORARY TABLE T
-SELECT X.storeno, X.nfno AS ordno, X.prdno, X.grade, qtty,
+SELECT X.storeno, X.nfno AS ordno, X.prdno, X.grade, ROUND(qtty*1000) as qtty,
        ROUND(IF(I.last_cost = 0, I.cm_varejo_otn, I.last_cost)) / 100 AS cost, V.no AS vendno,
        C.no AS custno, N.empno
 FROM sqldados.xaprd         AS X
