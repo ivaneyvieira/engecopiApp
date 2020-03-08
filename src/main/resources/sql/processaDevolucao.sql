@@ -1,10 +1,11 @@
 DO @LOJA := :storeno;
-DO @PEDIDO := :ordno;
+DO @NFNO := :nfno;
+DO @NFSE := :nfse;
 DO @SERIE := 66;
-DO @TIPO := :tipo;
+DO @TIPO := 'E';
 DO @FATOR := IF(@TIPO = 'E', 1, -1);
 DO @DOC := IF(@TIPO = 'E', 'AJUS ENT', 'AJUS SAI');
-DO @TIPO_NOTA := :t_nota;
+DO @TIPO_NOTA := 7;
 DO @OBS := CASE @TIPO_NOTA
              WHEN 9
                THEN '66'
@@ -15,21 +16,21 @@ DO @OBS := CASE @TIPO_NOTA
 
 DROP TABLE IF EXISTS T;
 CREATE TEMPORARY TABLE T
-SELECT E.storeno, E.ordno, E.prdno, E.grade, qtty,
+SELECT X.storeno, X.nfno AS ordno, X.prdno, X.grade, ROUND(qtty*1000) as qtty,
        ROUND(IF(I.last_cost = 0, I.cm_varejo_otn, I.last_cost)) / 100 AS cost, V.no AS vendno,
-       C.no AS custno, E.empno
-FROM sqldados.eoprd         AS E
-  INNER JOIN sqldados.eord  AS O
-               ON O.ordno = E.ordno AND O.storeno = E.storeno
+       C.no AS custno, N.empno
+FROM sqldados.xaprd         AS X
+  INNER JOIN sqldados.nf    AS N
+               USING (storeno, pdvno, xano)
   INNER JOIN sqldados.stk   AS I
-               ON I.storeno = E.storeno AND I.prdno = E.prdno AND I.grade = E.grade
+               ON I.storeno = X.storeno AND I.prdno = X.prdno AND I.grade = X.grade
   INNER JOIN sqldados.store AS S
-               ON S.no = E.storeno
+               ON S.no = X.storeno
   INNER JOIN sqldados.vend  AS V
                ON V.cgc = S.cgc
   INNER JOIN sqldados.custp AS C
                ON C.cpf_cgc = S.cgc
-WHERE E.storeno = @LOJA AND E.ordno = @PEDIDO;
+WHERE X.storeno = @LOJA AND X.nfno = @NFNO AND X.nfse = @NFSE;
 
 UPDATE sqldados.stk INNER JOIN T USING (storeno, prdno, grade)
 SET longReserva1 = qtty_atacado
@@ -45,18 +46,13 @@ SET longReserva2 = T.ordno;
 
 DO @INVDEL := (SELECT MAX(invno)
                FROM sqldados.inv
-               WHERE ordno = @PEDIDO AND storeno = @LOJA AND invse = @SERIE AND c1 = @DOC);
-/*
-DELETE FROM sqldados.inv
-WHERE invno = @INVDEL
-DELETE FROM sqldados.iprd
-WHERE invno = @INVDEL
-*/
+               WHERE ordno = @NFNO AND storeno = @LOJA AND invse = @SERIE AND c1 = @DOC);
+
 DO @INVNO := (SELECT MAX(invno) + 1
               FROM sqldados.inv);
-DO @NFNO := IFNULL((SELECT MAX(no) + 1
-                    FROM sqldados.lastno
-                    WHERE se = @SERIE AND storeno = @LOJA), 1);
+DO @NUMERO := IFNULL((SELECT MAX(no) + 1
+                      FROM sqldados.lastno
+                      WHERE se = @SERIE AND storeno = @LOJA), 1);
 
 INSERT INTO sqldados.inv (invno, vendno, ordno, xfrno, issue_date, date, comp_date, ipi, icm,
                           freight, netamt, grossamt, subst_trib, discount, prdamt, despesas,
@@ -91,7 +87,7 @@ SELECT @INVNO AS invno, vendno, ordno, 0 AS xfrno, current_date * 1 AS issue_dat
        0 AS /*valor desconhecido*/ auxShort7, 0 AS /*valor desconhecido*/ auxShort8, 0 AS auxShort9,
        0 AS auxShort10, 0 AS auxShort11, 0 AS auxShort12, 0 AS auxShort13, 0 AS auxShort14,
        0 AS bits2, 0 AS bits3, 0 AS bits4, 0 AS bits5, 0 AS s1, 0 AS s2, 0 AS s3, 0 AS s4, 0 AS s5,
-       0 AS s6, 0 AS s7, 0 AS s8, @NFNO AS nfname, @SERIE AS invse, 2 AS account, @OBS AS remarks,
+       0 AS s6, 0 AS s7, 0 AS s8, @NUMERO AS nfname, @SERIE AS invse, 2 AS account, @OBS AS remarks,
        '' AS contaCredito, '' AS contaDebito, '' AS nfNfse, '' AS auxStr1, '' AS auxStr2,
        '' AS auxStr3, '' AS auxStr4, '' AS auxStr5, '' AS auxStr6, @DOC AS c1, '' AS c2
 FROM T
@@ -124,73 +120,15 @@ FROM T
 WHERE @TIPO = 'E';
 
 UPDATE sqldados.stk INNER JOIN T USING (storeno, prdno, grade)
-SET last_doc = CONCAT(@NFNO, '66')
+SET last_doc = CONCAT(@NUMERO, '/', '66')
 WHERE @TIPO = 'E';
 
-
-DO @XANO := IFNULL((SELECT MAX(xano) + 1
-                    FROM sqldados.nf
-                    WHERE pdvno = 0 AND storeno = @LOJA), 1);
-
-INSERT INTO sqldados.nf (xano, nfno, custno, issuedate, delivdate, sec_amt, fre_amt, netamt,
-                         grossamt,
-                         discount, icms_amt, tax_paid, ipi_amt, base_calculo_ipi, iss_amt,
-                         base_iss_amt, isento_amt,
-                         subst_amt, baseIcmsSubst, icmsSubst, vol_no, vol_qtty, cfo, invno, cfo2,
-                         auxLong1, auxLong2,
-                         auxLong3, auxLong4, auxMy1, auxMy2, auxMy3, auxMy4, eordno, l1, l2, l3, l4,
-                         l5, l6, l7, l8, m1,
-                         m2, m3, m4, m5, m6, m7, m8, vol_gross, vol_net, mult, storeno, pdvno,
-                         carrno, empno, status,
-                         natopno, xatype, storeno_from, tipo, padbits, bits, usernoCancel,
-                         custno_addno, empnoDiscount,
-                         auxShort1, auxShort2, auxShort3, auxShort4, auxShort5, paymno, s1, s2, s3,
-                         s4, s5, s6, s7, s8,
-                         nfse, ship_by, vol_make, vol_kind, remarks, padbyte, print_remarks,
-                         remarksCancel, c1, c2, wshash)
-SELECT @XANO AS xano, @NFNO AS nfno, custno, current_date * 1 AS issuedate,
-       current_date * 1 AS delivdate, 0 AS sec_amt, 0 AS fre_amt, 0 AS netamt,
-       SUM(qtty * cost / 1000) AS grossamt, 0 AS discount, 0 AS icms_amt, 0 AS tax_paid,
-       0 AS ipi_amt, 0 AS base_calculo_ipi, 0 AS iss_amt, 0 AS base_iss_amt, 0 AS isento_amt,
-       0 AS subst_amt, 0 AS baseIcmsSubst, 0 AS icmsSubst, 0 AS vol_no, 0 AS vol_qtty, 5949 AS cfo,
-       0 AS invno, 0 AS cfo2, 0 AS auxLong1, 0 AS auxLong2, 0 AS auxLong3, 0 AS auxLong4,
-       0 AS auxMy1, 0 AS auxMy2, 0 AS auxMy3, 0 AS auxMy4, ordno AS eordno, 0 AS l1, 0 AS l2,
-       0 AS l3, 0 AS l4, 0 AS l5, 0 AS l6, 0 AS l7, 0 AS l8, 0 AS m1, 0 AS m2, 0 AS m3, 0 AS m4,
-       0 AS m5, 0 AS m6, 0 AS m7, 0 AS m8, 0 AS vol_gross, 0 AS vol_net, 1 AS mult, storeno,
-       0 AS pdvno, 0 AS carrno, 900 + storeno AS empno, 0 AS status, 14 AS natopno, 0 AS xatype,
-       0 AS storeno_from, @TIPO_NOTA AS tipo, 0 AS padbits, 0 AS bits, 0 AS usernoCancel,
-       0 AS custno_addno, 0 AS empnoDiscount, 0 AS auxShort1, 0 AS auxShort2, 0 AS auxShort3,
-       0 AS auxShort4, 0 AS auxShort5, 0 AS paymno, 0 AS s1, 0 AS s2, 0 AS s3, 0 AS s4, 0 AS s5,
-       0 AS s6, 0 AS s7, 0 AS s8, @SERIE AS nfse, '' AS ship_by, '' AS vol_make, '' AS vol_kind,
-       @OBS AS remarks, '' AS padbyte, '' AS print_remarks, '' AS remarksCancel, @DOC AS c1,
-       '' AS c2, '' AS wshash
-FROM T
-WHERE @TIPO = 'S'
-GROUP BY storeno, ordno;
-/*
-DELETE FROM xaprd
-WHERE xano = @PEDIDO
-      AND pdvno = 0
-      AND storeno = @LOJA
-      AND nfse = @SERIE
-*/
-INSERT INTO sqldados.xaprd (xano, nfno, price, date, qtty, storeno, pdvno, prdno, grade, nfse,
-                            padbyte, wshash)
-SELECT @XANO AS xano, @NFNO AS nfno, cost AS price, current_date * 1 AS date, qtty / 1000 AS qtty,
-       storeno, 0 AS pdvno, prdno, grade, @SERIE AS nfse, '' AS padbyte, @DOC AS wshash
-FROM T
-WHERE @TIPO = 'S';
-
-UPDATE sqldados.stk INNER JOIN T USING (storeno, prdno, grade)
-SET last_doc = CONCAT(@NFNO, '66')
-WHERE @TIPO = 'S';
-
-UPDATE sqldados.eord AS E
-SET status = 4 /*Expirado*/
-WHERE E.storeno = @LOJA AND E.ordno = @PEDIDO;
+UPDATE sqldados.nf AS N
+SET s16 = 4 /*Expirado*/
+WHERE N.storeno = @LOJA AND N.nfno = @NFNO AND N.nfse = @NFSE AND N.tipo = 2;
 
 UPDATE sqldados.stk INNER JOIN T USING (storeno, prdno, grade)
 SET last_doc = '';
 
 INSERT INTO sqldados.lastno(no, storeno, dupse, se, padbyte)
-VALUES (@NFNO, @LOJA, 0, @SERIE, '')
+VALUES (@NUMERO, @LOJA, 0, @SERIE, '')
