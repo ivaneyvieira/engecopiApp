@@ -17,7 +17,7 @@ DROP TABLE IF EXISTS T;
 CREATE TEMPORARY TABLE T
 SELECT E.storeno, E.ordno, E.prdno, E.grade, qtty,
        ROUND(IF(I.last_cost = 0, I.cm_varejo_otn, I.last_cost)) / 100 AS cost, V.no AS vendno,
-       C.no AS custno, E.empno
+       CAST(CONCAT(F.no, ' ', MID(F.sname, 1, 4)) AS CHAR) AS frabricante, C.no AS custno, E.empno
 FROM sqldados.eoprd         AS E
   INNER JOIN sqldados.eord  AS O
                ON O.ordno = E.ordno AND O.storeno = E.storeno
@@ -25,6 +25,10 @@ FROM sqldados.eoprd         AS E
                ON I.storeno = E.storeno AND I.prdno = E.prdno AND I.grade = E.grade
   INNER JOIN sqldados.store AS S
                ON S.no = E.storeno
+  INNER JOIN sqldados.prd   AS P
+               ON P.no = E.prdno
+  INNER JOIN sqldados.vend  AS F
+               ON F.no = P.mfno
   INNER JOIN sqldados.vend  AS V
                ON V.cgc = S.cgc
   INNER JOIN sqldados.custp AS C
@@ -91,9 +95,11 @@ SELECT @INVNO AS invno, vendno, ordno, 0 AS xfrno, current_date * 1 AS issue_dat
        0 AS /*valor desconhecido*/ auxShort7, 0 AS /*valor desconhecido*/ auxShort8, 0 AS auxShort9,
        0 AS auxShort10, 0 AS auxShort11, 0 AS auxShort12, 0 AS auxShort13, 0 AS auxShort14,
        0 AS bits2, 0 AS bits3, 0 AS bits4, 0 AS bits5, 0 AS s1, 0 AS s2, 0 AS s3, 0 AS s4, 0 AS s5,
-       0 AS s6, 0 AS s7, 0 AS s8, @NFNO AS nfname, @SERIE AS invse, 2 AS account, @OBS AS remarks,
-       '' AS contaCredito, '' AS contaDebito, '' AS nfNfse, '' AS auxStr1, '' AS auxStr2,
-       '' AS auxStr3, '' AS auxStr4, '' AS auxStr5, '' AS auxStr6, @DOC AS c1, '' AS c2
+       0 AS s6, 0 AS s7, 0 AS s8, @NFNO AS nfname, @SERIE AS invse, 2 AS account,
+       CAST(CONCAT(@OBS, ' ', GROUP_CONCAT(DISTINCT frabricante ORDER BY frabricante SEPARATOR
+                                           ' ')) AS CHAR) AS remarks, '' AS contaCredito,
+       '' AS contaDebito, '' AS nfNfse, '' AS auxStr1, '' AS auxStr2, '' AS auxStr3, '' AS auxStr4,
+       '' AS auxStr5, '' AS auxStr6, @DOC AS c1, '' AS c2
 FROM T
 WHERE @TIPO = 'E'
 GROUP BY storeno, ordno;
