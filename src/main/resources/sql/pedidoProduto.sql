@@ -12,7 +12,10 @@ FROM sqldados.eoprd          AS E
                ON I.storeno = E.storeno AND I.prdno = E.prdno AND I.grade = E.grade
   LEFT JOIN  sqldados.prdloc AS L
                ON E.storeno = L.storeno AND E.prdno = L.prdno AND L.localizacao <> 'CD00'
-WHERE O.status IN (1, 4) AND O.storeno = :storeno AND O.ordno = :numero AND :serie = ''
+WHERE O.status IN (1, 4)
+  AND O.storeno = :storeno
+  AND O.ordno = :numero
+  AND :serie = ''
 GROUP BY storeno, ordno, prdno, grade
 UNION
 DISTINCT
@@ -30,5 +33,8 @@ FROM sqldados.xaprd          AS X
                ON S.storeno = X.storeno AND S.prdno = X.prdno AND S.grade = X.grade
   LEFT JOIN  sqldados.prdloc AS L
                ON X.storeno = L.storeno AND X.prdno = L.prdno AND L.localizacao <> 'CD00'
-WHERE N.tipo = 2 AND N.storeno = :storeno AND N.nfno = :numero AND N.nfse = :serie
+WHERE N.tipo = 2
+  AND N.storeno = :storeno
+  AND N.nfno = :numero
+  AND N.nfse = :serie
 GROUP BY N.storeno, N.nfno, N.nfse, X.prdno, X.grade

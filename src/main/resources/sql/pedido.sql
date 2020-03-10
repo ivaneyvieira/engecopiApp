@@ -6,7 +6,10 @@ FROM sqldados.eord         AS E
               ON U.no = E.userno
   LEFT JOIN sqldados.custp AS C
               ON C.no = E.custno
-WHERE E.status IN (1, 4) AND E.storeno = :storeno AND E.ordno = :numero AND :serie = ''
+WHERE E.status IN (1, 4)
+  AND E.storeno = :storeno
+  AND E.ordno = :numero
+  AND :serie = ''
 GROUP BY storeno, ordno
 UNION
 DISTINCT
@@ -18,5 +21,8 @@ FROM sqldados.nf           AS N
               ON E.no = N.empno
   LEFT JOIN sqldados.custp AS C
               ON C.no = N.custno
-WHERE N.tipo = 2 AND N.storeno = :storeno AND N.nfno = :numero AND N.nfse = :serie
+WHERE N.tipo = 2
+  AND N.storeno = :storeno
+  AND N.nfno = :numero
+  AND N.nfse = :serie
 GROUP BY N.storeno, N.nfno, N.nfse
