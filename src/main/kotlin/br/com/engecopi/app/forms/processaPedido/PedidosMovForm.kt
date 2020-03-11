@@ -5,6 +5,7 @@ import br.com.engecopi.saci.beans.Pedido
 import br.com.engecopi.saci.saci
 import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.ui.Notification
+import com.vaadin.ui.Notification.Type.WARNING_MESSAGE
 import com.vaadin.ui.VerticalLayout
 
 class PedidosMovForm: VerticalLayout() {
@@ -26,23 +27,9 @@ class PedidosMovForm: VerticalLayout() {
         }
       }
       val tipo = filtro.tipoMov?.cod ?: ""
-  
-      if(pedido == null)
-        Notification.show("Pedido não encontrado", Notification.Type.WARNING_MESSAGE)
-      val pedidoValido = when {
-        pedido?.isDataValida() == false -> {
-          Notification.show("Pedido tem mais de 30 dias", Notification.Type.WARNING_MESSAGE)
-          null
-        }
-        pedido?.isLojaValida() == false -> {
-          Notification.show("O cliente da nota/pedidos não é $lojaNome", Notification.Type.WARNING_MESSAGE)
-          null
-        }
-        else                            -> pedido
-      }
+      val pedidoValido = validaPedido(pedido)
       pedidoPainel.setPedido(pedidoValido, tipo)
-      val produtos = saci.pedidoProduto(loja, numPedido)
-      gridPainel.grid.dataProvider = ListDataProvider(produtos)
+      setProdutosGrid(pedidoValido)
     }
     
     filtroPedidoPainel.execProcessa = {filtro ->
@@ -59,11 +46,7 @@ class PedidosMovForm: VerticalLayout() {
       val tipo = filtro.tipoMov?.cod ?: ""
       val tipoNota = filtro.tipoNota
       val nota = saci.pesquisaNota(loja, numPedido, tipo)
-      val pedidoValido = if(pedido?.isDataValida() == true) pedido
-      else {
-        Notification.show("Pedido tem mais de 30 dias", Notification.Type.WARNING_MESSAGE)
-        null
-      }
+      val pedidoValido = validaPedido(pedido)
       
       when {
         pedidoValido == null     -> {
@@ -117,10 +100,36 @@ class PedidosMovForm: VerticalLayout() {
         }
       }
     }
-    
+  
     setSizeFull()
     addComponents(filtroPedidoPainel, pedidoPainel)
     addComponentsAndExpand(gridPainel)
+  }
+  
+  private fun validaPedido(pedido: Pedido?): Pedido? {
+    val lojaNome = pedido?.loja?.descricao
+    return when {
+      pedido == null         -> {
+        Notification.show("Pedido não encontrado", WARNING_MESSAGE)
+        null
+      }
+      !pedido.isDataValida() -> {
+        Notification.show("Pedido tem mais de 30 dias", WARNING_MESSAGE)
+        null
+      }
+      !pedido.isLojaValida() -> {
+        Notification.show("O cliente da nota/pedidos não é $lojaNome", WARNING_MESSAGE)
+        null
+      }
+      else                   -> pedido
+    }
+  }
+  
+  private fun setProdutosGrid(pedido: Pedido?) {
+    val loja = pedido?.loja?.numero
+    val numPedido = pedido?.numeroPedido
+    val produtos = saci.pedidoProduto(loja, numPedido)
+    gridPainel.grid.dataProvider = ListDataProvider(produtos)
   }
   
   private fun processa(pedido: Pedido?,

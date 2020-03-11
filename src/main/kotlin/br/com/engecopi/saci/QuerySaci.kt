@@ -38,7 +38,9 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     }
   }
   
-  fun pedidoProduto(storeno: Int, numero: String): List<PedidoProduto> {
+  fun pedidoProduto(storeno: Int?, numero: String?): List<PedidoProduto> {
+    storeno ?: return emptyList()
+    numero ?: return emptyList()
     val sql = "/sql/pedidoProduto.sql"
     val num =
       numero.split("/")
