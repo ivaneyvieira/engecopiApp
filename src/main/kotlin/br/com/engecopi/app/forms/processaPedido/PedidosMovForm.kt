@@ -15,9 +15,10 @@ class PedidosMovForm: VerticalLayout() {
   init {
     filtroPedidoPainel.execFiltro = {filtro ->
       val loja = filtro.loja?.numero ?: 0
+      val lojaNome = filtro.loja?.descricao ?: "N/D"
       val numPedido = filtro.numPedido ?: ""
       val pedido = saci.pedidoNota(loja, numPedido)
-      
+  
       pedido?.let {ped ->
         if(ped.tipo == DEVOLUCAO) {
           filtro.tipoMov = ENTRADA
@@ -25,13 +26,19 @@ class PedidosMovForm: VerticalLayout() {
         }
       }
       val tipo = filtro.tipoMov?.cod ?: ""
-      
+  
       if(pedido == null)
         Notification.show("Pedido não encontrado", Notification.Type.WARNING_MESSAGE)
-      val pedidoValido = if(pedido?.isDataValida() == true) pedido
-      else {
-        Notification.show("Pedido tem mais de 30 dias", Notification.Type.WARNING_MESSAGE)
-        null
+      val pedidoValido = when {
+        pedido?.isDataValida() == false -> {
+          Notification.show("Pedido tem mais de 30 dias", Notification.Type.WARNING_MESSAGE)
+          null
+        }
+        pedido?.isLojaValida() == false -> {
+          Notification.show("O cliente da nota/pedidos não é $lojaNome", Notification.Type.WARNING_MESSAGE)
+          null
+        }
+        else                            -> pedido
       }
       pedidoPainel.setPedido(pedidoValido, tipo)
       val produtos = saci.pedidoProduto(loja, numPedido)

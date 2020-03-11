@@ -13,7 +13,8 @@ class Pedido(val storeno: Int?,
              val cpf_cgc: String?,
              val cliente: String?,
              val status: Int?,
-             val tipo: String?) {
+             val tipo: String?,
+             val storeno_custno: Int) {
   val loja
     get() =
       Loja.values()
@@ -35,5 +36,9 @@ class Pedido(val storeno: Int?,
     val diff = dateNow.time - datePedido.time
     val days = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS)
     return days < 30
+  }
+  
+  fun isLojaValida(): Boolean {
+    return storeno == storeno_custno
   }
 }
