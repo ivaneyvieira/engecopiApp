@@ -24,12 +24,10 @@ class QuerySaci: QueryDB(driver, url, username, password) {
   
   fun pedidoNota(storeno: Int, numero: String): Pedido? {
     val sql = "/sql/pedido.sql"
-    val num =
-      numero.split("/")
-        .getOrNull(0) ?: ""
-    val serie =
-      numero.split("/")
-        .getOrNull(1) ?: ""
+    val num = numero.split("/")
+                .getOrNull(0) ?: ""
+    val serie = numero.split("/")
+                  .getOrNull(1) ?: ""
     return query(sql) {q ->
       q.addParameter("storeno", storeno)
         .addParameter("numero", num)

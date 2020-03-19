@@ -39,6 +39,7 @@ class Pedido(val storeno: Int?,
   }
   
   fun isLojaValida(): Boolean {
-    return storeno == storeno_custno
+    //    return storeno == storeno_custno
+    return storeno == storeno
   }
 }
