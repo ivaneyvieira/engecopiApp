@@ -1,6 +1,11 @@
 package br.com.engecopi.app
 
-import com.github.vok.karibudsl.*
+import com.github.mvysny.karibudsl.v8.button
+import com.github.mvysny.karibudsl.v8.horizontalLayout
+import com.github.mvysny.karibudsl.v8.label
+import com.github.mvysny.karibudsl.v8.onLeftClick
+import com.github.mvysny.karibudsl.v8.setPrimary
+import com.github.mvysny.karibudsl.v8.verticalLayout
 import com.vaadin.event.ShortcutAction
 import com.vaadin.ui.Alignment
 import com.vaadin.ui.UI
@@ -28,7 +33,7 @@ fun confirmDialog(text: String = "Are you sure?", title: String? = null, yesList
                     onLeftClick { yesListener(); window.close() }
                     setPrimary()
                 }
-                button("No", { window.close() })
+                button("No") {window.close()}
             }
         }
     }

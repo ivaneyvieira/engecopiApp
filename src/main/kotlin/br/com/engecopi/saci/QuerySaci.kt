@@ -141,7 +141,7 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     execute(sql, Pair("numero", numero))
   }
   
-  fun novoAjuste(data: Int) {
+  fun novoAjuste() {
     val sql = "/sql/novoAjuste.sql"
     execute(sql)
     //  processaColetor(data)

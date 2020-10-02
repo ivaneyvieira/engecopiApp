@@ -1,20 +1,20 @@
 package br.com.engecopi.app.forms.saldoKardec
 
 import br.com.engecopi.app.model.FiltroSaldoKardec
-import com.github.vok.karibudsl.beanValidationBinder
-import com.github.vok.karibudsl.bind
-import com.github.vok.karibudsl.button
-import com.github.vok.karibudsl.dateField
-import com.github.vok.karibudsl.horizontalLayout
-import com.github.vok.karibudsl.isMargin
-import com.github.vok.karibudsl.panel
+import com.github.mvysny.karibudsl.v8.beanValidationBinder
+import com.github.mvysny.karibudsl.v8.bind
+import com.github.mvysny.karibudsl.v8.button
+import com.github.mvysny.karibudsl.v8.dateField
+import com.github.mvysny.karibudsl.v8.horizontalLayout
+import com.github.mvysny.karibudsl.v8.isMargin
+import com.github.mvysny.karibudsl.v8.panel
 import com.vaadin.ui.Alignment
 import com.vaadin.ui.CssLayout
 import com.vaadin.ui.themes.ValoTheme
 
-class FiltroPanel : CssLayout() {
+class FiltroPanel: CssLayout() {
   private val binder = beanValidationBinder<FiltroSaldoKardec>()
-  lateinit var execExcel: (FiltroSaldoKardec) -> Unit
+  lateinit var execExcel: () -> Unit
   lateinit var execFiltro: (FiltroSaldoKardec) -> Unit
   val dataInicial = dateField("Data Inicial") {
     bind(binder).bind(FiltroSaldoKardec::dataInicial)
@@ -24,29 +24,25 @@ class FiltroPanel : CssLayout() {
     bind(binder).bind(FiltroSaldoKardec::dataFinal)
     dateFormat = "dd/MM/yyyy"
   }
-  
   val filtro: FiltroSaldoKardec? = FiltroSaldoKardec()
-  
   val btnExcel = button("Gera Planilha") {
     isEnabled = false
     addClickListener {
-      if (binder.writeBeanIfValid(filtro)) {
-        filtro?.let {
-          execExcel(it)
-        }
+      if(binder.writeBeanIfValid(filtro)) {
+        execExcel()
       }
     }
   }
   val btnProcessa = button("Processamento") {
-    addClickListener { eve ->
-      if (binder.writeBeanIfValid(filtro)) {
+    addClickListener {_ ->
+      if(binder.writeBeanIfValid(filtro)) {
         filtro?.let {
           execFiltro(it)
         }
       }
     }
   }
-
+  
   init {
     caption = "Filtro"
     setWidth("100%")

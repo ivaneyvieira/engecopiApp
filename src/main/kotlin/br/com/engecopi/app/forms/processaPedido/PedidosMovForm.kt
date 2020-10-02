@@ -16,7 +16,7 @@ class PedidosMovForm: VerticalLayout() {
   init {
     filtroPedidoPainel.execFiltro = {filtro ->
       val loja = filtro.loja?.numero ?: 0
-      val lojaNome = filtro.loja?.descricao ?: "N/D"
+      //val lojaNome = filtro.loja?.descricao ?: "N/D"
       val numPedido = filtro.numPedido ?: ""
       val pedido = saci.pedidoNota(loja, numPedido)
   
@@ -127,7 +127,7 @@ class PedidosMovForm: VerticalLayout() {
   
   private fun setProdutosGrid(pedido: Pedido?) {
     val loja = pedido?.loja?.numero
-    val numPedido = pedido?.numeroPedido
+    val numPedido = pedido?.numero
     val produtos = saci.pedidoProduto(loja, numPedido)
     gridPainel.grid.dataProvider = ListDataProvider(produtos)
   }

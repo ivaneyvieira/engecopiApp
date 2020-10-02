@@ -2,10 +2,10 @@ package br.com.engecopi.app.forms.processaPedido
 
 import br.com.engecopi.saci.beans.Pedido
 import br.com.engecopi.utils.format
-import com.github.vok.karibudsl.horizontalLayout
-import com.github.vok.karibudsl.isMargin
-import com.github.vok.karibudsl.panel
-import com.github.vok.karibudsl.textField
+import com.github.mvysny.karibudsl.v8.horizontalLayout
+import com.github.mvysny.karibudsl.v8.isMargin
+import com.github.mvysny.karibudsl.v8.panel
+import com.github.mvysny.karibudsl.v8.textField
 import com.vaadin.ui.CssLayout
 import com.vaadin.ui.TextField
 import com.vaadin.ui.themes.ValoTheme

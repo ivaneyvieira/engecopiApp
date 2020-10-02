@@ -1,6 +1,12 @@
 package br.com.engecopi.app
 
-import com.github.vok.karibudsl.*
+import com.github.mvysny.karibudsl.v8.AutoView
+import com.github.mvysny.karibudsl.v8.alignment
+import com.github.mvysny.karibudsl.v8.html
+import com.github.mvysny.karibudsl.v8.image
+import com.github.mvysny.karibudsl.v8.isMargin
+import com.github.mvysny.karibudsl.v8.label
+import com.github.mvysny.karibudsl.v8.verticalLayout
 import com.vaadin.navigator.View
 import com.vaadin.navigator.ViewChangeListener
 import com.vaadin.server.ThemeResource
@@ -10,7 +16,7 @@ import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.themes.ValoTheme
 
 @AutoView("teste")
-class WelcomeView : VerticalLayout(), View {
+class WelcomeView: VerticalLayout(), View {
   init {
     setSizeFull()
     isMargin = false
@@ -21,12 +27,12 @@ class WelcomeView : VerticalLayout(), View {
         styleName = ValoTheme.LABEL_H1
       }
       image(resource = ThemeResource("images/chucknorris.jpg"))
-      label { html("<strong>Vaadin version: </strong> ${Version.getFullVersion()}") }
-      label { html("<strong>Kotlin version: </strong> ${KotlinVersion.CURRENT}") }
-      label { html("<strong>JVM version: </strong> $jvmVersion") }
+      label {html("<strong>Vaadin version: </strong> ${Version.getFullVersion()}")}
+      label {html("<strong>Kotlin version: </strong> ${KotlinVersion.CURRENT}")}
+      label {html("<strong>JVM version: </strong> $jvmVersion")}
     }
   }
-
+  
   override fun enter(event: ViewChangeListener.ViewChangeEvent?) {
   }
 }

@@ -1,10 +1,13 @@
 package br.com.engecopi.app.forms.saldoKardec
 
-import com.github.vok.karibudsl.*
+import com.github.mvysny.karibudsl.v8.isMargin
+import com.github.mvysny.karibudsl.v8.label
+import com.github.mvysny.karibudsl.v8.panel
+import com.github.mvysny.karibudsl.v8.progressBar
+import com.github.mvysny.karibudsl.v8.verticalLayout
 import com.vaadin.ui.CssLayout
 import com.vaadin.ui.Label
 import com.vaadin.ui.ProgressBar
-import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.themes.ValoTheme
 
 class ProgressPanel : CssLayout() {

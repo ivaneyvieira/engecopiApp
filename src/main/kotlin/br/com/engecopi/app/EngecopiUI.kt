@@ -1,8 +1,8 @@
 package br.com.engecopi.app
 
 import br.com.engecopi.saci.QuerySaci
-import com.github.vok.karibudsl.autoViewProvider
-import com.github.vok.karibudsl.isMargin
+import com.github.mvysny.karibudsl.v8.autoViewProvider
+import com.github.mvysny.karibudsl.v8.isMargin
 import com.vaadin.annotations.Push
 import com.vaadin.annotations.Theme
 import com.vaadin.annotations.Title
@@ -52,7 +52,8 @@ class EngecopiUI : UI() {
 
 private class Content : VerticalLayout(), ViewDisplay {
   init {
-    setSizeFull(); isMargin = false
+    setSizeFull()
+    isMargin = false
   }
 
   override fun showView(view: View?) {

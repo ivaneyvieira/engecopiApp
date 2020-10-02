@@ -1,59 +1,75 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+
+val kotlinVersion = properties["kotlinVersion"] as String
+val karibuVersion = properties["karibuVersion"] as String
+val vaadin8Version = properties["vaadin8Version"] as String
 
 plugins {
-  kotlin("jvm") version "1.3.10"
-  // need to use Gretty here because of https://github.com/johndevs/gradle-vaadin-plugin/issues/317
-  id("com.devsoap.plugin.vaadin") version "1.3.1"
+  kotlin("jvm") version "1.4.10"
+  id("org.gretty") version "2.3.1"
+  id("com.devsoap.plugin.vaadin") version "2.0.0.beta2"
+  war
+}
+
+defaultTasks("clean", "vaadinCompile", "build")
+
+repositories {
+  mavenCentral()
+  maven {
+    url = uri("https://maven.vaadin.com/vaadin-addons")
+  }
 }
 
 defaultTasks("clean", "build")
 
-repositories {
-  mavenCentral()
-  jcenter()
-  maven("https://dl.bintray.com/mvysny/github")
+val compileKotlin: KotlinCompile by tasks
+compileKotlin.kotlinOptions {
+  jvmTarget = "1.8"
 }
-
-tasks.withType<KotlinCompile> {
-  kotlinOptions.jvmTarget = "1.8"
+val compileTestKotlin: KotlinCompile by tasks
+compileTestKotlin.kotlinOptions {
+  jvmTarget = "1.8"
 }
 
 vaadin {
-  version = "8.6.1"
+  version = "8.9.4"
+}
+
+gretty {
+  contextPath = "/"
+  servletContainer = "jetty9.4"
 }
 
 dependencies {
   // Karibu-DSL dependency
-  compile("com.github.vok.karibudsl:karibu-dsl-v8:0.4.9")
-  
-  // include proper kotlin version
-  compile(kotlin("stdlib-jdk8"))
+  implementation("com.github.mvysny.karibudsl:karibu-dsl-v8:$karibuVersion")
+  implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+  implementation("org.jetbrains.kotlin:kotlin-reflect")
   
   // logging
   // currently we are logging through the SLF4J API to LogBack. See src/main/resources/logback.xml file for the logger configuration
-  compile("ch.qos.logback:logback-classic:1.2.3")
+  implementation("ch.qos.logback:logback-classic:1.2.3")
   // this will allow us to configure Vaadin to log to SLF4J
-  compile("org.slf4j:jul-to-slf4j:1.7.25")
+  implementation("org.slf4j:jul-to-slf4j:1.7.25")
   
-  // test support
-  testCompile("com.github.kaributesting:karibu-testing-v8:0.4.14")
-  testCompile("com.github.mvysny.dynatest:dynatest:0.8")
   
-  // workaround until https://youtrack.jetbrains.com/issue/IDEA-178071 is fixed
-  compile("com.vaadin:vaadin-themes:8.6.1")
-  compile("com.vaadin:vaadin-client-compiled:8.6.1")
+  implementation("com.vaadin:vaadin-themes:$vaadin8Version")
+  implementation("com.vaadin:vaadin-server:$vaadin8Version")
+  implementation("com.vaadin:vaadin-client-compiled:$vaadin8Version")
+  implementation("javax.servlet:javax.servlet-api:3.1.0")
   
   //Dependencias do projeto
-  compile("org.sql2o:sql2o:1.5.4")
-  compile("mysql:mysql-connector-java:5.1.45")
-  compile("org.imgscalr:imgscalr-lib:4.2")
+  implementation("org.sql2o:sql2o:1.5.4")
+  implementation("mysql:mysql-connector-java:5.1.45")
+  implementation("org.imgscalr:imgscalr-lib:4.2")
   
-  compile("org.vaadin.addons:vaadin-excel-exporter:2.0")
+  implementation("org.vaadin.addons:vaadin-excel-exporter:2.0")
   
-  compile("de.steinwedel.vaadin.addon:messagebox:4.0.21")
-  compile("org.vaadin:viritin:2.5")
-  // heroku app runner
-  testRuntime("com.github.jsimone:webapp-runner:8.5.30.0")
+  implementation("de.steinwedel.vaadin.addon:messagebox:4.0.21")
+  implementation("org.vaadin:viritin:2.5")
+
 }
 
+tasks.getByName<War>("war") {
+  enabled = true
+}

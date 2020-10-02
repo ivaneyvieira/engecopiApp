@@ -1,10 +1,10 @@
 package br.com.engecopi.app.forms.processaPedido
 
 import br.com.engecopi.saci.beans.PedidoProduto
-import com.github.vok.karibudsl.column
-import com.github.vok.karibudsl.grid
-import com.github.vok.karibudsl.panel
-import com.github.vok.karibudsl.showColumns
+import com.github.mvysny.karibudsl.v8.column
+import com.github.mvysny.karibudsl.v8.grid
+import com.github.mvysny.karibudsl.v8.panel
+import com.github.mvysny.karibudsl.v8.showColumns
 import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.ui.CssLayout
 import com.vaadin.ui.renderers.NumberRenderer
