@@ -7,12 +7,12 @@ DO @FATOR := IF(@TIPO = 'E', 1, -1);
 DO @DOC := IF(@TIPO = 'E', 'AJUS ENT', 'AJUS SAI');
 DO @TIPO_NOTA := 7;
 DO @OBS := CASE @TIPO_NOTA
-             WHEN 9
-               THEN '66'
-             WHEN 7
-               THEN 'GARANTIA'
-             ELSE ''
-           END;
+	     WHEN 9
+	       THEN '66'
+	     WHEN 7
+	       THEN 'GARANTIA'
+	     ELSE ''
+	   END;
 
 DROP TABLE IF EXISTS T;
 CREATE TEMPORARY TABLE T
@@ -23,24 +23,26 @@ SELECT X.storeno,
        ROUND(qtty * 1000)                                             AS qtty,
        ROUND(IF(I.last_cost = 0, I.cm_varejo_otn, I.last_cost)) / 100 AS cost,
        V.no                                                           AS vendno,
+       IF(V.state = 'PI', '5949', '6949')                             AS cfopS,
+       IF(V.state = 'PI', '1949', '2949')                             AS cfopE,
        CAST(CONCAT(F.no, ' ', MID(F.sname, 1, 4)) AS CHAR)            AS frabricante,
        C.no                                                           AS custno,
        N.empno
 FROM sqldados.xaprd         AS X
   INNER JOIN sqldados.nf    AS N
-               USING (storeno, pdvno, xano)
+	       USING (storeno, pdvno, xano)
   INNER JOIN sqldados.stk   AS I
-               ON I.storeno = X.storeno AND I.prdno = X.prdno AND I.grade = X.grade
+	       ON I.storeno = X.storeno AND I.prdno = X.prdno AND I.grade = X.grade
   INNER JOIN sqldados.store AS S
-               ON S.no = X.storeno
+	       ON S.no = X.storeno
   INNER JOIN sqldados.prd   AS P
-               ON P.no = X.prdno
+	       ON P.no = X.prdno
   INNER JOIN sqldados.vend  AS F
-               ON F.no = P.mfno
+	       ON F.no = P.mfno
   INNER JOIN sqldados.vend  AS V
-               ON V.cgc = S.cgc
+	       ON V.cgc = S.cgc
   INNER JOIN sqldados.custp AS C
-               ON C.cpf_cgc = S.cgc
+	       ON C.cpf_cgc = S.cgc
 WHERE X.storeno = @LOJA
   AND X.nfno = @NFNO
   AND X.nfse = @NFSE;
@@ -58,34 +60,34 @@ UPDATE sqldados.stk INNER JOIN T USING (storeno, prdno, grade)
 SET longReserva2 = T.ordno;
 
 DO @INVDEL := (SELECT MAX(invno)
-               FROM sqldados.inv
-               WHERE ordno = @NFNO
-                 AND storeno = @LOJA
-                 AND invse = @SERIE
-                 AND c1 = @DOC);
+	       FROM sqldados.inv
+	       WHERE ordno = @NFNO
+		 AND storeno = @LOJA
+		 AND invse = @SERIE
+		 AND c1 = @DOC);
 
 DO @INVNO := (SELECT MAX(invno) + 1
-              FROM sqldados.inv);
+	      FROM sqldados.inv);
 DO @NUMERO := IFNULL((SELECT MAX(no) + 1
-                      FROM sqldados.lastno
-                      WHERE se = @SERIE
-                        AND storeno = @LOJA), 1);
+		      FROM sqldados.lastno
+		      WHERE se = @SERIE
+			AND storeno = @LOJA), 1);
 
 INSERT INTO sqldados.inv (invno, vendno, ordno, xfrno, issue_date, date, comp_date, ipi, icm,
-                          freight, netamt, grossamt, subst_trib, discount, prdamt, despesas,
-                          base_ipi, aliq, cfo, nfNfno, auxLong1, auxLong2, auxMoney1, auxMoney2,
-                          dataSaida, amtServicos, amtIRRF, amtINSS, amtISS, auxMoney3, auxMoney4,
-                          auxMoney5, auxLong3, auxLong4, auxLong5, auxLong6, auxLong7, auxLong8,
-                          auxLong9, auxLong10, auxLong11, auxLong12, auxMoney6, auxMoney7,
-                          auxMoney8, auxMoney9, auxMoney10, auxMoney11, auxMoney12, auxMoney13, l1,
-                          l2, l3, l4, l5, l6, l7, l8, m1, m2, m3, m4, m5, m6, m7, m8, weight,
-                          carrno, packages, storeno, indxno, book_bits, type, usernoFirst,
-                          usernoLast, nfStoreno, bits, padbyte, auxShort1, auxShort2, auxShort3,
-                          auxShort4, auxShort5, auxShort6, auxShort7, auxShort8, auxShort9,
-                          auxShort10, auxShort11, auxShort12, auxShort13, auxShort14, bits2, bits3,
-                          bits4, bits5, s1, s2, s3, s4, s5, s6, s7, s8, nfname, invse, account,
-                          remarks, contaCredito, contaDebito, nfNfse, auxStr1, auxStr2, auxStr3,
-                          auxStr4, auxStr5, auxStr6, c1, c2)
+			  freight, netamt, grossamt, subst_trib, discount, prdamt, despesas,
+			  base_ipi, aliq, cfo, nfNfno, auxLong1, auxLong2, auxMoney1, auxMoney2,
+			  dataSaida, amtServicos, amtIRRF, amtINSS, amtISS, auxMoney3, auxMoney4,
+			  auxMoney5, auxLong3, auxLong4, auxLong5, auxLong6, auxLong7, auxLong8,
+			  auxLong9, auxLong10, auxLong11, auxLong12, auxMoney6, auxMoney7,
+			  auxMoney8, auxMoney9, auxMoney10, auxMoney11, auxMoney12, auxMoney13, l1,
+			  l2, l3, l4, l5, l6, l7, l8, m1, m2, m3, m4, m5, m6, m7, m8, weight,
+			  carrno, packages, storeno, indxno, book_bits, type, usernoFirst,
+			  usernoLast, nfStoreno, bits, padbyte, auxShort1, auxShort2, auxShort3,
+			  auxShort4, auxShort5, auxShort6, auxShort7, auxShort8, auxShort9,
+			  auxShort10, auxShort11, auxShort12, auxShort13, auxShort14, bits2, bits3,
+			  bits4, bits5, s1, s2, s3, s4, s5, s6, s7, s8, nfname, invse, account,
+			  remarks, contaCredito, contaDebito, nfNfse, auxStr1, auxStr2, auxStr3,
+			  auxStr4, auxStr5, auxStr6, c1, c2)
 SELECT @INVNO                                             AS                        invno,
        vendno,
        ordno,
@@ -104,7 +106,7 @@ SELECT @INVNO                                             AS                    
        0                                                  AS                        despesas,
        0                                                  AS                        base_ipi,
        0                                                  AS                        aliq,
-       1949                                               AS                        cfo,
+       T.cfopE                                            AS                        cfo,
        0                                                  AS                        nfNfno,
        0 /*Valor desconhecido*/                           AS                        auxLong1,
        0                                                  AS                        auxLong2,
@@ -194,7 +196,7 @@ SELECT @INVNO                                             AS                    
        @SERIE                                             AS                        invse,
        2                                                  AS                        account,
        CAST(CONCAT(@OBS, ' ', GROUP_CONCAT(DISTINCT frabricante ORDER BY frabricante SEPARATOR
-                                           ' ')) AS CHAR) AS                        remarks,
+					   ' ')) AS CHAR) AS                        remarks,
        ''                                                 AS                        contaCredito,
        ''                                                 AS                        contaDebito,
        ''                                                 AS                        nfNfse,
@@ -211,16 +213,16 @@ WHERE @TIPO = 'E'
 GROUP BY storeno, ordno;
 
 INSERT INTO sqldados.iprd (invno, qtty, fob, cost, date, ipi, auxLong1, auxLong2, frete, seguro,
-                           despesas, freteIpi, qttyRessar, baseIcmsSubst, icmsSubst, icms, discount,
-                           fob4, cost4, icmsAliq,
-                           cfop, auxLong3, auxLong4, auxLong5, auxMy1, auxMy2, auxMy3, baseIcms,
-                           baseIpi, ipiAmt,
-                           reducaoBaseIcms, lucroTributado, l1, l2, l3, l4, l5, l6, l7, l8, m1, m2,
-                           m3, m4, m5, m6, m7, m8,
-                           storeno, bits, auxShort1, auxShort2, taxtype, auxShort3, auxShort4,
-                           auxShort5, seqno, bits2, bits3,
-                           bits4, s1, s2, s3, s4, s5, s6, s7, s8, prdno, grade, auxChar, auxChar2,
-                           cstIcms, cstIpi, c1)
+			   despesas, freteIpi, qttyRessar, baseIcmsSubst, icmsSubst, icms, discount,
+			   fob4, cost4, icmsAliq,
+			   cfop, auxLong3, auxLong4, auxLong5, auxMy1, auxMy2, auxMy3, baseIcms,
+			   baseIpi, ipiAmt,
+			   reducaoBaseIcms, lucroTributado, l1, l2, l3, l4, l5, l6, l7, l8, m1, m2,
+			   m3, m4, m5, m6, m7, m8,
+			   storeno, bits, auxShort1, auxShort2, taxtype, auxShort3, auxShort4,
+			   auxShort5, seqno, bits2, bits3,
+			   bits4, s1, s2, s3, s4, s5, s6, s7, s8, prdno, grade, auxChar, auxChar2,
+			   cstIcms, cstIpi, c1)
 SELECT @INVNO           AS invno,
        qtty,
        cost             AS fob,
@@ -241,7 +243,7 @@ SELECT @INVNO           AS invno,
        cost * 100       AS fob4,
        cost * 100       AS cost4,
        0                AS icmsAliq,
-       1949             AS cfop,
+       T.cfopE          AS cfop,
        0                AS auxLong3,
        0                AS auxLong4,
        0                AS auxLong5,

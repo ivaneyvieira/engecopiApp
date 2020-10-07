@@ -30,6 +30,8 @@ class Pedido(val storeno: Int?,
     return saci.pesquisaNota(storeno, numeroPedido, tipo)
   }
   
+  fun isEngecopi() = cliente?.contains("ENGECOPI", ignoreCase = true) ?: false
+  
   fun isDataValida(): Boolean {
     val datePedido = date ?: return false
     val dateNow = Date()

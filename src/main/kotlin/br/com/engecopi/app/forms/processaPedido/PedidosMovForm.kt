@@ -16,7 +16,6 @@ class PedidosMovForm: VerticalLayout() {
   init {
     filtroPedidoPainel.execFiltro = {filtro ->
       val loja = filtro.loja?.numero ?: 0
-      //val lojaNome = filtro.loja?.descricao ?: "N/D"
       val numPedido = filtro.numPedido ?: ""
       val pedido = saci.pedidoNota(loja, numPedido)
   
@@ -26,9 +25,21 @@ class PedidosMovForm: VerticalLayout() {
           filtro.tipoNota = 7
         }
       }
+      val tipoNota = filtro.tipoNota
       val tipo = filtro.tipoMov?.cod ?: ""
       val pedidoValido = validaPedido(pedido)
       pedidoPainel.setPedido(pedidoValido, tipo)
+      when {
+        pedidoValido == null                        -> {
+          Notification.show("Esse pedido não foi encontrado", Notification.Type.WARNING_MESSAGE)
+        }
+        tipoNota == 7 && pedidoValido.isEngecopi()  -> {
+          Notification.show("O cliente não pode ser loja", Notification.Type.WARNING_MESSAGE)
+        }
+        tipoNota == 9 && !pedidoValido.isEngecopi() -> {
+          Notification.show("O cliente deve ser uma loja", Notification.Type.WARNING_MESSAGE)
+        }
+      }
       setProdutosGrid(pedidoValido)
     }
     
@@ -49,10 +60,16 @@ class PedidosMovForm: VerticalLayout() {
       val pedidoValido = validaPedido(pedido)
       
       when {
-        pedidoValido == null     -> {
+        pedidoValido == null                        -> {
           Notification.show("Esse pedido não foi encontrado", Notification.Type.WARNING_MESSAGE)
         }
-        pedidoValido.status == 1 -> {
+        tipoNota == 7 && pedidoValido.isEngecopi() -> {
+          Notification.show("O cliente não pode ser loja", Notification.Type.WARNING_MESSAGE)
+        }
+        tipoNota == 9 && !pedidoValido.isEngecopi() -> {
+          Notification.show("O cliente deve ser uma loja", Notification.Type.WARNING_MESSAGE)
+        }
+        pedidoValido.status == 1                    -> {
           processa(pedido, loja, numPedido, tipo, tipoNota)
           filtroPedidoPainel.execFiltro(filtro)
         }
