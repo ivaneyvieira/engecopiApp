@@ -26,7 +26,9 @@ SELECT E.storeno,
        IF(V.state = 'PI', '1949', '2949')                             AS cfopE,
        CAST(CONCAT(F.no, ' ', MID(F.sname, 1, 4)) AS CHAR)            AS fabricante,
        C.no                                                           AS custno,
-       E.empno
+       E.empno,
+       CC.no                                                          AS custnoC,
+       CV.no                                                          AS vendnoC
 FROM sqldados.eoprd         AS E
   INNER JOIN sqldados.eord  AS O
 	       ON O.ordno = E.ordno AND O.storeno = E.storeno
@@ -36,12 +38,16 @@ FROM sqldados.eoprd         AS E
 	       ON S.no = E.storeno
   INNER JOIN sqldados.prd   AS P
 	       ON P.no = E.prdno
-  INNER JOIN sqldados.vend  AS F
+  INNER JOIN sqldados.vend  AS F/*Fabricante*/
 	       ON F.no = P.mfno
-  INNER JOIN sqldados.vend  AS V
+  INNER JOIN sqldados.vend  AS V /*Loja*/
 	       ON V.cgc = S.cgc
-  INNER JOIN sqldados.custp AS C
+  INNER JOIN sqldados.custp AS C /*LOja*/
 	       ON C.cpf_cgc = S.cgc
+  LEFT JOIN  sqldados.custp AS CC /*Cliente*/
+	       ON CC.no = O.custno
+  LEFT JOIN  sqldados.vend  AS CV /*Cliente*/
+	       ON CC.cpf_cgc = CV.cgc
 WHERE E.storeno = @LOJA
   AND E.ordno = @PEDIDO;
 
@@ -92,7 +98,7 @@ INSERT INTO sqldados.inv (invno, vendno, ordno, xfrno, issue_date, date, comp_da
 			  remarks, contaCredito, contaDebito, nfNfse, auxStr1, auxStr2, auxStr3,
 			  auxStr4, auxStr5, auxStr6, c1, c2)
 SELECT @INVNO                                                             AS                        invno,
-       vendno,
+       IF(@TIPO_NOTA = 7, vendnoC, vendno)                                AS                        vendno,
        ordno,
        0                                                                  AS                        xfrno,
        current_date * 1                                                   AS                        issue_date,
@@ -327,7 +333,7 @@ INSERT INTO sqldados.nf (xano, nfno, custno, issuedate, delivdate, sec_amt, fre_
 			 remarksCancel, c1, c2, wshash)
 SELECT @XANO                                                              AS xano,
        @NFNO                                                              AS nfno,
-       custno,
+       IF(@TIPO_NOTA = 7, custnoC, custno)                                AS custno,
        current_date * 1                                                   AS issuedate,
        current_date * 1                                                   AS delivdate,
        0                                                                  AS sec_amt,
