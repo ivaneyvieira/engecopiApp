@@ -39,6 +39,9 @@ class PedidosMovForm: VerticalLayout() {
         tipoNota == 9 && !pedidoValido.isEngecopi() -> {
           Notification.show("O cliente deve ser uma loja", Notification.Type.WARNING_MESSAGE)
         }
+        pedidoValido.produtoValido() == false -> {
+          Notification.show("O pedido possui um produto com código maior que 980000", Notification.Type.WARNING_MESSAGE)
+        }
       }
       setProdutosGrid(pedidoValido)
     }
@@ -143,9 +146,7 @@ class PedidosMovForm: VerticalLayout() {
   }
   
   private fun setProdutosGrid(pedido: Pedido?) {
-    val loja = pedido?.loja?.numero
-    val numPedido = pedido?.numero
-    val produtos = saci.pedidoProduto(loja, numPedido)
+    val produtos = pedido?.produtos()
     gridPainel.grid.dataProvider = ListDataProvider(produtos)
   }
   

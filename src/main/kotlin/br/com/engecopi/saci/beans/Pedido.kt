@@ -32,6 +32,10 @@ class Pedido(val storeno: Int?,
   
   fun isEngecopi() = cliente?.contains("ENGECOPI", ignoreCase = true) ?: false
   
+  fun produtos() = saci.pedidoProduto(loja?.numero, numero)
+  
+  fun produtoValido() = produtos().any {(it.prdno ?: "000000") < "980001"}
+  
   fun isDataValida(): Boolean {
     val datePedido = date ?: return false
     val dateNow = Date()
