@@ -27,13 +27,13 @@ class PedidoPainel : CssLayout() {
   val statusPedido = textReadOnly("Status")
 
   fun setPedido(pedido: Pedido?, tipo: String?) {
-    lojaPedido.value = pedido?.loja()?.toString() ?: ""
-    numeroPedido.value = pedido?.ordno?.toString() ?: ""
+    lojaPedido.value = pedido?.loja?.toString() ?: ""
+    numeroPedido.value = pedido?.numero ?: ""
     dataPedido.value = pedido?.date?.format() ?: ""
     usuarioPedido.value = pedido?.username ?: ""
     clientePedido.value = pedido?.cliente ?: ""
     val nota = pedido?.notaFiscal(tipo ?: "")
-    notaPedido.value = if(nota == null) "" else if(nota.cancelado == true) "" else nota.numero
+    notaPedido.value = if (nota == null) "" else if(nota.cancelado == true) "" else nota.numero
     statusPedido.value = when {
       pedido == null     -> ""
       pedido.status == 1 -> "Não Processado"

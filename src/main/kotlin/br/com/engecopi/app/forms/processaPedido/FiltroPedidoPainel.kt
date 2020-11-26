@@ -50,16 +50,6 @@ class FiltroPedidoPainel: CssLayout() {
     setWidth("150px")
     bind(binderFiltroPedido).bind(FiltroPedido::loja)
   }
-<<<<<<< HEAD
-  
-  val numPedido = textField("Pedido") {
-    addStyleName("align-right")
-    bind(binderFiltroPedido).withConverter(StringToIntegerConverter("Pedido inválido"))
-      .withValidator({it != null}, "Pedido com valor nulo")
-      .bind(FiltroPedido::numPedido)
-  }
-  val btnPesquisa = button("Pesquisa", {
-=======
   val numPedido = textField("Pedido/Nota") {
     addStyleName("align-right")
     bind(binderFiltroPedido)
@@ -67,7 +57,6 @@ class FiltroPedidoPainel: CssLayout() {
       .bind(FiltroPedido::numPedido)
   }
   val btnPesquisa = button("Pesquisa") {
->>>>>>> develop
     addClickListener {
       if(binderFiltroPedido.writeBeanIfValid(filtroPedido)) {
         filtroPedido?.let {
@@ -76,8 +65,8 @@ class FiltroPedidoPainel: CssLayout() {
         }
       }
     }
-  })
-  val btnProcessa = button("Processamento", {
+  }
+  val btnProcessa = button("Processamento") {
     addClickListener {
       if(binderFiltroPedido.writeBeanIfValid(filtroPedido)) {
         filtroPedido?.let {
@@ -86,8 +75,8 @@ class FiltroPedidoPainel: CssLayout() {
         }
       }
     }
-  })
-  val btnDesfazProcessa = button("Desfaz", {
+  }
+  val btnDesfazProcessa = button("Desfaz") {
     addClickListener {
       if(binderFiltroPedido.writeBeanIfValid(filtroPedido)) {
         filtroPedido?.let {
@@ -96,11 +85,7 @@ class FiltroPedidoPainel: CssLayout() {
         }
       }
     }
-<<<<<<< HEAD
-  })
-=======
   }
->>>>>>> develop
   
   init {
     caption = "Filtro"

@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-SELECT E.storeno AS storeno, E.ordno AS ordno, cast(date AS DATE) AS date, userno AS userno,
-       IFNULL(U.name, 'N/D') AS username, IFNULL(C.name, 'N/D') AS cliente, E.status AS status
-=======
 SELECT E.storeno             AS storeno,
        CAST(E.ordno AS CHAR) AS numero,
        cast(date AS DATE)    AS date,
@@ -11,16 +7,11 @@ SELECT E.storeno             AS storeno,
        E.status              AS status,
        'PEDIDO'              AS tipo,
        IFNULL(S.no, 0)       AS storeno_custno
->>>>>>> develop
 FROM sqldados.eord         AS E
   LEFT JOIN sqldados.users AS U
               ON U.no = E.userno
   LEFT JOIN sqldados.custp AS C
               ON C.no = E.custno
-<<<<<<< HEAD
-WHERE E.storeno = :storeno AND E.ordno = :ordno AND E.status IN (1, 4)
-
-=======
   LEFT JOIN sqldados.store AS S
               ON S.cgc = C.cpf_cgc
 WHERE E.status IN (1, 4)
@@ -51,4 +42,3 @@ WHERE N.tipo = 2
   AND N.nfno = :numero
   AND N.nfse = :serie
 GROUP BY N.storeno, N.nfno, N.nfse
->>>>>>> develop

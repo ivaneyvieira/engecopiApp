@@ -6,14 +6,8 @@ DO @PRD := '';
 DO @LJ := 0;
 DO @REF := MID(@DTREF, 1, 6);
 
-<<<<<<< HEAD
-drop table if exists Lojas;
-create temporary table Lojas
-(
-=======
 DROP TABLE IF EXISTS Lojas;
 CREATE TEMPORARY TABLE Lojas (
->>>>>>> develop
   PRIMARY KEY (storeno)
 )
 SELECT no AS storeno
@@ -39,12 +33,7 @@ SELECT storeno AS loja, prdno, grade, @DATA AS date, 'SaldoAnterior' AS tipo, co
 FROM sqldados.stkchk
   INNER JOIN Lojas
                USING (storeno)
-<<<<<<< HEAD
-where (prdno = @PRD OR @PRD='')
-       AND ym = @MES;
-=======
 WHERE (prdno = @PRD OR @PRD = '') AND ym = @MES;
->>>>>>> develop
 
 DROP TABLE IF EXISTS PreSaida;
 CREATE TEMPORARY TABLE PreSaida (
@@ -82,16 +71,6 @@ SELECT loja, prdno, grade, date, SUM(cost) AS cost, 'NF Saida' AS tipo, SUM(quan
 FROM PreSaida
 GROUP BY loja, prdno, grade, date;
 
-<<<<<<< HEAD
-drop table if exists NFCupom;
-create temporary table NFCupom
-( cost  bigint(15) )
-select X.storeno as loja,
-       X.prdno, X.grade, X.date, 'NF Cupom' as tipo,
-       SUM(-X.price*100*X.qtty)/1000 as cost,
-       SUM(-X.qtty) as quant, X.storeno, X.pdvno, X.xano
-FROM sqldados.xalog2    AS X
-=======
 DROP TABLE IF EXISTS NFCupom;
 CREATE TEMPORARY TABLE NFCupom (
   cost BIGINT(15)
@@ -100,25 +79,14 @@ SELECT X.storeno AS loja, X.prdno, X.grade, X.date, 'NF Cupom' AS tipo,
        SUM(-X.price * 100 * X.qtty) / 1000 AS cost, SUM(-X.qtty) AS quant, X.storeno, X.pdvno,
        X.xano
 FROM xalog2             AS X
->>>>>>> develop
   LEFT JOIN  TXA
                USING (storeno, pdvno, xano)
   INNER JOIN sqlpdv.pxa AS P
                USING (storeno, pdvno, xano)
   INNER JOIN Lojas      AS L
                ON L.storeno = X.storeno
-<<<<<<< HEAD
-where icm_aliq & 4 = 0
-      AND X.xatype <> 11
-      AND X.qtty > 0
-      AND X.date BETWEEN @DATA AND @DTREF
-      AND P.nfse in ('IF', '10')
-      AND TXA.xano is null
-      AND (prdno = @PRD OR @PRD='')
-=======
 WHERE icm_aliq & 4 = 0 AND X.xatype <> 11 AND X.qtty > 0 AND X.date BETWEEN @DATA AND @DTREF AND
       P.nfse IN ('IF', '10') AND TXA.xano IS NULL AND (prdno = @PRD OR @PRD = '')
->>>>>>> develop
 GROUP BY X.storeno, prdno, grade, date;
 
 DROP TABLE IF EXISTS Devolucao;

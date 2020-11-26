@@ -2,10 +2,7 @@ package br.com.engecopi.app.forms.processaPedido
 
 import br.com.engecopi.app.model.TipoMov.ENTRADA
 import br.com.engecopi.saci.beans.Pedido
-<<<<<<< HEAD
-=======
 import br.com.engecopi.saci.saci
->>>>>>> develop
 import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.ui.Notification
 import com.vaadin.ui.Notification.Type.WARNING_MESSAGE
@@ -17,29 +14,6 @@ class PedidosMovForm: VerticalLayout() {
   val gridPainel = GridPainel()
   
   init {
-<<<<<<< HEAD
-    filtroPedidoPainel.execFiltro = { filtro ->
-      val query = QuerySaci.querySaci
-      val loja = filtro.loja?.numero ?: 0
-      val numPedido = filtro.numPedido ?: 0
-      val pedido = query.pedido(loja, numPedido)
-      val tipo = filtro.tipoMov?.cod
-      if(pedido == null)
-        Notification.show("Pedido não encontrado", Notification.Type.WARNING_MESSAGE)
-  
-      pedidoPainel.setPedido(pedido, tipo)
-      val produtos = query.pedidoProduto(loja, numPedido)
-      gridPainel.grid.dataProvider = ListDataProvider(produtos)
-    }
-
-    filtroPedidoPainel.execProcessa = { filtro ->
-      val query = QuerySaci.querySaci
-      val loja = filtro.loja?.numero ?: 0
-      val numPedido = filtro.numPedido ?: 0
-      val tipo = filtro.tipoMov?.cod ?: ""
-      val pedido = query.pedido(loja, numPedido)
-      val nota = query.pesquisaNota(loja, numPedido, tipo)
-=======
     filtroPedidoPainel.execFiltro = {filtro ->
       val loja = filtro.loja?.numero ?: 0
       val numPedido = filtro.numPedido ?: ""
@@ -88,15 +62,10 @@ class PedidosMovForm: VerticalLayout() {
       val nota = saci.pesquisaNota(loja, numPedido, tipo)
       val pedidoValido = validaPedido(pedido)
       
->>>>>>> develop
       when {
         pedidoValido == null                        -> {
           Notification.show("Esse pedido não foi encontrado", Notification.Type.WARNING_MESSAGE)
         }
-<<<<<<< HEAD
-        pedido.status == 1 -> {
-          query.processaPedido(loja, numPedido, tipo)
-=======
         tipoNota == 7 && pedidoValido.isEngecopi() -> {
           Notification.show("O cliente não pode ser loja", Notification.Type.WARNING_MESSAGE)
         }
@@ -105,25 +74,16 @@ class PedidosMovForm: VerticalLayout() {
         }
         pedidoValido.status == 1                    -> {
           processa(pedido, loja, numPedido, tipo, tipoNota)
->>>>>>> develop
           filtroPedidoPainel.execFiltro(filtro)
         }
         else                     -> {
           when {
             nota == null           -> {
-<<<<<<< HEAD
-              query.processaPedido(loja, numPedido, tipo)
-              filtroPedidoPainel.execFiltro(filtro)
-            }
-            nota.cancelado == true -> {
-              query.processaPedido(loja, numPedido, tipo)
-=======
               processa(pedido, loja, numPedido, tipo, tipoNota)
               filtroPedidoPainel.execFiltro(filtro)
             }
             nota.cancelado == true -> {
               processa(pedido, loja, numPedido, tipo, tipoNota)
->>>>>>> develop
               filtroPedidoPainel.execFiltro(filtro)
             }
             else                   -> {
@@ -133,31 +93,18 @@ class PedidosMovForm: VerticalLayout() {
         }
       }
     }
-<<<<<<< HEAD
-
-    filtroPedidoPainel.desfazProcessa = { filtro ->
-      val query = QuerySaci.querySaci
-=======
     
     filtroPedidoPainel.desfazProcessa = {filtro ->
->>>>>>> develop
       val loja = filtro.loja?.numero ?: 0
-      val numPedido = filtro.numPedido ?: 0
+      val numPedido = filtro.numPedido ?: ""
       val tipo = filtro.tipoMov?.cod ?: ""
-<<<<<<< HEAD
-      val pedido = query.pedido(loja, numPedido)
-      val nota = query.pesquisaNota(loja, numPedido, tipo)
-      when {
-        pedido == null -> {
-=======
       val pedido = saci.pedidoNota(loja, numPedido)
       val nota = saci.pesquisaNota(loja, numPedido, tipo)
       when(pedido) {
         null -> {
->>>>>>> develop
           Notification.show("Esse pedido não foi encontrado", Notification.Type.WARNING_MESSAGE)
         }
-        else           -> {
+        else -> {
           when {
             nota == null           -> {
               Notification.show("Esse pedido não foi processado", Notification.Type.WARNING_MESSAGE)
@@ -166,11 +113,7 @@ class PedidosMovForm: VerticalLayout() {
               Notification.show("Esse pedido não foi processado", Notification.Type.WARNING_MESSAGE)
             }
             else                   -> {
-<<<<<<< HEAD
-              query.desfazPedido(loja, numPedido, tipo)
-=======
               desfaz(pedido, loja, numPedido, tipo)
->>>>>>> develop
             }
           }
           filtroPedidoPainel.execFiltro(filtro)

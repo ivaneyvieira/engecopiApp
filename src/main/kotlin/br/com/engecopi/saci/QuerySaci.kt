@@ -22,62 +22,20 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     }
   }
   
-<<<<<<< HEAD
-  fun pedido(storeno: Int, ordno: Int): Pedido? {
-    val sql = "/sql/pedido.sql"
-=======
   fun pedidoNota(storeno: Int, numero: String): Pedido? {
     val sql = "/sql/pedido.sql"
     val num = numero.split("/")
                 .getOrNull(0) ?: ""
     val serie = numero.split("/")
                   .getOrNull(1) ?: ""
->>>>>>> develop
     return query(sql) {q ->
       q.addParameter("storeno", storeno)
-        .addParameter("ordno", ordno)
+        .addParameter("numero", num)
+        .addParameter("serie", serie)
         .executeAndFetchFirst(Pedido::class.java)
     }
   }
   
-<<<<<<< HEAD
-  fun pedidoProduto(storeno: Int, ordno: Int): List<PedidoProduto> {
-    val sql = "/sql/pedidoProduto.sql"
-    return query(sql) {q ->
-      q.addParameter("storeno", storeno)
-        .addParameter("ordno", ordno)
-        .executeAndFetch(PedidoProduto::class.java)
-    }
-  }
-
-  fun processaPedido(
-    storeno: Int,
-    ordno: Int,
-    tipo: String
-                    ) {
-    val sql = "/sql/processaPedido.sql"
-    execute(sql, Pair("storeno", "$storeno"),
-            Pair("ordno", "$ordno"),
-            Pair("tipo", "'$tipo'"))
-  }
-
-  fun desfazPedido(
-    storeno: Int,
-    ordno: Int,
-    tipo: String
-                  ) {
-    val sql = "/sql/desfazPedido.sql"
-    execute(sql, Pair("storeno", "$storeno"),
-            Pair("ordno", "$ordno"),
-            Pair("tipo", "'$tipo'"))
-  }
-
-  fun saldoKardec(
-    dataInicial: LocalDate,
-    dataFinal: LocalDate,
-    monitor: (String, Int, Int) -> Unit
-                 ) {
-=======
   fun pedidoProduto(storeno: Int?, numero: String?): List<PedidoProduto> {
     storeno ?: return emptyList()
     numero ?: return emptyList()
@@ -128,7 +86,6 @@ class QuerySaci: QueryDB(driver, url, username, password) {
   }
   
   fun saldoKardec(dataInicial: LocalDate, dataFinal: LocalDate, monitor: (String, Int, Int) -> Unit) {
->>>>>>> develop
     val sql = "/sql/saldoKardec.sql"
     val sdf = DateTimeFormatter.ofPattern("yyyyMMdd")
     val di = dataInicial.format(sdf)
@@ -137,18 +94,6 @@ class QuerySaci: QueryDB(driver, url, username, password) {
             Pair("dataFinal", df),
             monitor = monitor)
   }
-<<<<<<< HEAD
-
-  fun pesquisaNota(
-    storeno: Int,
-    ordno: Int,
-    tipo: String
-                  ): NotaFiscal? {
-    val sql = "/sql/pesquisaNota.sql"
-    return query(sql) {q ->
-      q.addParameter("storeno", storeno)
-        .addParameter("ordno", ordno)
-=======
   
   fun pesquisaNota(storeno: Int?, numero: String?, tipo: String): NotaFiscal? {
     storeno ?: return null
@@ -157,7 +102,6 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     return query(sql) {q ->
       q.addParameter("storeno", storeno)
         .addParameter("ordno", numero)
->>>>>>> develop
         .addParameter("tipo", tipo)
         .executeAndFetchFirst(NotaFiscal::class.java)
     }
@@ -255,15 +199,10 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     internal val password = db.password
   
     //internal val sqldir = db.sqldir
-<<<<<<< HEAD
-    val querySaci = QuerySaci()
-    val ipServer =
-      QuerySaci.db.url.split("/")
-        .getOrNull(2)
-=======
     val ipServer = QuerySaci.db.url
       .split("/")
       .getOrNull(2)
->>>>>>> develop
   }
 }
+
+val saci = QuerySaci()

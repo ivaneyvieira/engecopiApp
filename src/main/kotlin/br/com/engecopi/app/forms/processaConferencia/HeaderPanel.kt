@@ -2,20 +2,12 @@ package br.com.engecopi.app.forms.processaConferencia
 
 import br.com.engecopi.saci.beans.AjusteInventario
 import br.com.engecopi.saci.beans.Inventario
-<<<<<<< HEAD
-import com.github.vok.karibudsl.cssLayout
-import com.github.vok.karibudsl.expandRatio
-import com.github.vok.karibudsl.getAll
-import com.github.vok.karibudsl.horizontalLayout
-import com.github.vok.karibudsl.isMargin
-=======
 import br.com.engecopi.saci.saci
 import com.github.mvysny.karibudsl.v8.cssLayout
 import com.github.mvysny.karibudsl.v8.expandRatio
 import com.github.mvysny.karibudsl.v8.getAll
 import com.github.mvysny.karibudsl.v8.horizontalLayout
 import com.github.mvysny.karibudsl.v8.isMargin
->>>>>>> develop
 import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.server.Sizeable.Unit.PIXELS
 import com.vaadin.ui.Alignment
@@ -34,7 +26,6 @@ import java.time.format.DateTimeFormatter
 
 class HeaderPanel(val form: ProcessaConferenciaForm): VerticalLayout() {
   private val btnW = 120F
-  val saci = QuerySaci.querySaci
   fun inventarios() = saci.inventarios()
   
   val comboInventario = ComboBox<Inventario>("Inventário").apply {

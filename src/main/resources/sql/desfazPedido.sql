@@ -8,28 +8,6 @@ DO @DOC := IF(@TIPO = 'E', 'AJUS ENT', 'AJUS SAI');
 DROP TABLE IF EXISTS T;
 CREATE TEMPORARY TABLE T
 SELECT E.storeno, E.ordno, E.prdno, E.grade, qtty,
-<<<<<<< HEAD
-       ROUND(IF(I.last_cost = 0, I.cm_varejo_otn, I.last_cost)) / 100 AS cost,
-      V.no                                                           AS vendno,
-      C.no                                                           AS custno,
-      E.empno
-    FROM sqldados.eoprd AS E
-      INNER JOIN sqldados.eord AS O
-        ON O.ordno = E.ordno
-           AND O.storeno = E.storeno
-      INNER JOIN sqldados.stk AS I
-        ON I.storeno = E.storeno
-           AND I.prdno = E.prdno
-           AND I.grade = E.grade
-      INNER JOIN sqldados.store AS S
-        ON S.no = E.storeno
-      INNER JOIN sqldados.vend AS V
-        ON V.cgc = S.cgc
-      INNER JOIN sqldados.custp AS C
-        ON C.cpf_cgc = S.cgc
-    WHERE E.storeno = @LOJA
-          AND E.ordno = @PEDIDO;
-=======
        ROUND(IF(I.last_cost = 0, I.cm_varejo_otn, I.last_cost)) / 100 AS cost, V.no AS vendno,
        C.no AS custno, E.empno
 FROM sqldados.eoprd         AS E
@@ -44,7 +22,6 @@ FROM sqldados.eoprd         AS E
   INNER JOIN sqldados.custp AS C
                ON C.cpf_cgc = S.cgc
 WHERE E.storeno = @LOJA AND E.ordno = @PEDIDO;
->>>>>>> develop
 
 UPDATE sqldados.stk INNER JOIN T USING (storeno, prdno, grade)
 SET longReserva1 = qtty_atacado;

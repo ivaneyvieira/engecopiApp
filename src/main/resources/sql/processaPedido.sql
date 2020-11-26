@@ -4,32 +4,6 @@ DO @SERIE := 66;
 DO @TIPO := :tipo;
 DO @FATOR := IF(@TIPO = 'E', 1, -1);
 DO @DOC := IF(@TIPO = 'E', 'AJUS ENT', 'AJUS SAI');
-<<<<<<< HEAD
-
-DROP TABLE IF EXISTS T;
-CREATE TEMPORARY TABLE T
-SELECT E.storeno, E.ordno, E.prdno, E.grade, qtty,
-       ROUND(IF(I.last_cost = 0, I.cm_varejo_otn, I.last_cost)) / 100 AS cost,
-      V.no                                                           AS vendno,
-      C.no                                                           AS custno,
-      E.empno
-    FROM sqldados.eoprd AS E
-      INNER JOIN sqldados.eord AS O
-        ON O.ordno = E.ordno
-           AND O.storeno = E.storeno
-      INNER JOIN sqldados.stk AS I
-        ON I.storeno = E.storeno
-           AND I.prdno = E.prdno
-           AND I.grade = E.grade
-      INNER JOIN sqldados.store AS S
-        ON S.no = E.storeno
-      INNER JOIN sqldados.vend AS V
-        ON V.cgc = S.cgc
-      INNER JOIN sqldados.custp AS C
-        ON C.cpf_cgc = S.cgc
-    WHERE E.storeno = @LOJA
-          AND E.ordno = @PEDIDO;
-=======
 DO @TIPO_NOTA := :t_nota;
 DO @TIPO_NOTA_NOVO := CASE @TIPO_NOTA WHEN 9 THEN 9 WHEN 7 THEN 2 ELSE 0 END;
 DO @OBS := CASE @TIPO_NOTA
@@ -79,7 +53,6 @@ FROM sqldados.eoprd         AS E
 	       ON CC.cpf_cgc = CV.cgc
 WHERE E.storeno = @LOJA
   AND E.ordno = @PEDIDO;
->>>>>>> develop
 
 UPDATE sqldados.stk INNER JOIN T USING (storeno, prdno, grade)
 SET longReserva1 = qtty_atacado
@@ -106,18 +79,11 @@ DELETE FROM sqldados.iprd
 WHERE invno = @INVDEL
 */
 DO @INVNO := (SELECT MAX(invno) + 1
-<<<<<<< HEAD
-              FROM sqldados.inv);
-DO @NFNO := IFNULL((SELECT MAX(no) + 1
-                    FROM sqldados.lastno
-                    WHERE se = @SERIE AND storeno = @LOJA), 1);
-=======
 	      FROM sqldados.inv);
 DO @NFNO := IFNULL((SELECT MAX(no) + 1
 		    FROM sqldados.lastno
 		    WHERE se = @SERIE
 		      AND storeno = @LOJA), 1);
->>>>>>> develop
 
 INSERT INTO sqldados.inv (invno, vendno, ordno, xfrno, issue_date, date, comp_date, ipi, icm,
 			  freight, netamt, grossamt, subst_trib, discount, prdamt, despesas,
