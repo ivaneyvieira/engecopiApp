@@ -9,6 +9,7 @@ CREATE TEMPORARY TABLE T (
   storeno INT,
   nota    VARCHAR(10)
 )
+<<<<<<< HEAD
     select
       barcode * 1                                   as userno,
       LPAD(barcode, 16, ' ')                        as barcode,
@@ -22,147 +23,105 @@ CREATE TEMPORARY TABLE T (
     from sqldados.coletor
     where date >= @DATA
     ORDER BY id;
+=======
+SELECT barcode * 1 AS userno, LPAD(barcode, 16, ' ') AS barcode, qtty, seq, date,
+       usuario AS coletor, id, RIGHT(usuario, 2) * 1 AS storeno,
+       IF(usuario = 'NOTA', @NOTA := barcode, @NOTA) AS nota
+FROM sqldados.coletor
+WHERE date >= @DATA
+ORDER BY id;
+>>>>>>> develop
 
 /*USUARIO*/
 DROP TABLE IF EXISTS T2;
 CREATE TEMPORARY TABLE T2
-    select
-      E.no   as empno,
-      E.name as sname,
-      seq,
-      date,
-      coletor,
-      T.storeno
-    from T
-      inner join sqldados.users AS E
-        on E.no = T.userno
-    WHERE coletor <> 'NOTA'
-    group by seq, date, coletor;
+SELECT E.no AS empno, E.name AS sname, seq, date, coletor, T.storeno
+FROM T
+  INNER JOIN sqldados.users AS E
+               ON E.no = T.userno
+WHERE coletor <> 'NOTA'
+GROUP BY seq, date, coletor;
 
 DROP TABLE IF EXISTS TId;
-CREATE TEMPORARY TABLE TId
-(
+CREATE TEMPORARY TABLE TId (
   PRIMARY KEY (nota, barcode, id)
 )
-    select
-      nota,
-      barcode,
-      MAX(id) as id
-    from T
-    group by nota, barcode;
+SELECT nota, barcode, MAX(id) AS id
+FROM T
+GROUP BY nota, barcode;
 
 DROP TABLE IF EXISTS T3;
 /*Totalizador de quantidade por barcode*/
-CREATE TEMPORARY TABLE T3
-(
+CREATE TEMPORARY TABLE T3 (
   PRIMARY KEY (nota, barcode),
-  qtty int
+  qtty INT
 )
-    select
-      nota,
-      barcode,
-      MAX(qtty) * 1000 as qtty
-    from T
-      INNER JOIN TId
-      USING (nota, barcode, id)
-    group by nota, barcode;
+SELECT nota, barcode, MAX(qtty) * 1000 AS qtty
+FROM T
+  INNER JOIN TId
+               USING (nota, barcode, id)
+GROUP BY nota, barcode;
 
 DROP TABLE IF EXISTS T4;
 CREATE TEMPORARY TABLE T4
-    SELECT
-      seq,
-      coletor,
-      barcode,
-      empno,
-      sname   as operador,
-      T3.qtty as inventario,
-      T.storeno,
-      nota
-    FROM T
-      INNER JOIN T2
-      USING (seq, date, coletor)
-      INNER JOIN T3
-      USING (nota, barcode);
+SELECT seq, coletor, barcode, empno, sname AS operador, T3.qtty AS inventario, T.storeno, nota
+FROM T
+  INNER JOIN T2
+               USING (seq, date, coletor)
+  INNER JOIN T3
+               USING (nota, barcode);
 
 DROP TABLE IF EXISTS T5;
-CREATE TEMPORARY TABLE T5
-(
+CREATE TEMPORARY TABLE T5 (
   PRIMARY KEY (nota, storeno, prdno, grade),
-  nota varchar(10)
+  nota VARCHAR(10)
 )
-    select
-      T4.*,
-      P.prdno,
-      P.grade,
-      name                       as descricao,
-      S.qtty_varejo              as estoque,
-      inventario - S.qtty_varejo as diferenca
-    from T4
-      inner join sqlpdv.prdstk AS P
-        ON P.barcode = T4.barcode
-           AND P.storeno = T4.storeno
-      inner join sqldados.stk AS S
-        ON P.storeno = S.storeno
-           AND P.prdno = S.prdno
-           AND P.grade = S.grade
-    GROUP BY nota, T4.storeno, P.barcode;
+SELECT T4.*, P.prdno, P.grade, name AS descricao, S.qtty_varejo AS estoque,
+       inventario - S.qtty_varejo AS diferenca
+FROM T4
+  INNER JOIN sqlpdv.prdstk AS P
+               ON P.barcode = T4.barcode AND P.storeno = T4.storeno
+  INNER JOIN sqldados.stk  AS S
+               ON P.storeno = S.storeno AND P.prdno = S.prdno AND P.grade = S.grade
+GROUP BY nota, T4.storeno, P.barcode;
 
 DROP TABLE IF EXISTS T6;
-CREATE TEMPORARY TABLE T6
-(
+CREATE TEMPORARY TABLE T6 (
   PRIMARY KEY (storeno)
 )
-    select
-      S.no as storeno,
-      V.no as vendno,
-      C.no as custno
-    from sqldados.store AS S
-      inner join sqldados.vend AS V
-        ON S.cgc = V.cgc
-      inner join sqldados.custp AS C
-        ON C.cpf_cgc = S.cgc
-    GROUP BY S.no;
+SELECT S.no AS storeno, V.no AS vendno, C.no AS custno
+FROM sqldados.store         AS S
+  INNER JOIN sqldados.vend  AS V
+               ON S.cgc = V.cgc
+  INNER JOIN sqldados.custp AS C
+               ON C.cpf_cgc = S.cgc
+GROUP BY S.no;
 
 DROP TABLE IF EXISTS T7;
 /*NOTA*/
-CREATE TEMPORARY TABLE T7
-(
+CREATE TEMPORARY TABLE T7 (
   PRIMARY KEY (nota),
-  nota varchar(10)
+  nota VARCHAR(10)
 )
-    select
-      nota,
-      MIN(date) as date
-    from T
-    where coletor = 'NOTA'
-    GROUP BY nota;
+SELECT nota, MIN(date) AS date
+FROM T
+WHERE coletor = 'NOTA'
+GROUP BY nota;
 
-DELETE FROM ajusteInventario
-WHERE date >= @DATA AND (nfSaida = "" AND nfEntrada = "");
+DELETE
+FROM sqldados.ajusteInventario
+WHERE date >= @DATA AND (nfSaida = '' AND nfEntrada = '');
 
-INSERT IGNORE INTO ajusteInventario (vendno, ordno, qtty, cost,
-                                     sp, storeno, prdno, grade, custno, numero, date, operador, barcode,
-                                     inventario, saldo)
-  select
-    vendno,
-    0                   as ordno,
-    diferenca           as qtty,
-    ROUND(P.cost / 100) as cost,
-    P.sp,
-    T5.storeno,
-    prdno,
-    grade,
-    custno,
-    T7.nota             as numero,
-    T7.date,
-    operador,
-    TRIM(T5.barcode)    as barcode,
-    inventario,
-    estoque             as saldo
-  from T5
-    inner join T6
-    USING (storeno)
-    inner join sqldados.prd AS P
-      ON P.no = T5.prdno
-    inner join T7
-    using (nota);
+INSERT IGNORE INTO sqldados.ajusteInventario (vendno, ordno, qtty, cost, sp, storeno, prdno, grade,
+                                              custno, numero, date, operador, barcode, inventario,
+                                              saldo)
+SELECT vendno, 0 AS ordno, diferenca AS qtty, ROUND(P.cost / 100) AS cost, P.sp, T5.storeno, prdno,
+       grade, custno, T7.nota AS numero, T7.date, operador, TRIM(T5.barcode) AS barcode, inventario,
+       estoque AS saldo
+FROM T5
+  INNER JOIN T6
+               USING (storeno)
+  INNER JOIN sqldados.prd AS P
+               ON P.no = T5.prdno
+  INNER JOIN T7
+               USING (nota);

@@ -3,43 +3,54 @@ package br.com.engecopi.app.forms.processaPedido
 import br.com.engecopi.app.model.FiltroPedido
 import br.com.engecopi.app.model.Loja
 import br.com.engecopi.app.model.TipoMov
-import com.github.vok.karibudsl.beanValidationBinder
-import com.github.vok.karibudsl.bind
-import com.github.vok.karibudsl.button
-import com.github.vok.karibudsl.comboBox
-import com.github.vok.karibudsl.horizontalLayout
-import com.github.vok.karibudsl.isMargin
-import com.github.vok.karibudsl.panel
-import com.github.vok.karibudsl.radioButtonGroup
-import com.github.vok.karibudsl.textField
-import com.vaadin.data.converter.StringToIntegerConverter
+import com.github.mvysny.karibudsl.v8.beanValidationBinder
+import com.github.mvysny.karibudsl.v8.bind
+import com.github.mvysny.karibudsl.v8.button
+import com.github.mvysny.karibudsl.v8.comboBox
+import com.github.mvysny.karibudsl.v8.horizontalLayout
+import com.github.mvysny.karibudsl.v8.isMargin
+import com.github.mvysny.karibudsl.v8.panel
+import com.github.mvysny.karibudsl.v8.radioButtonGroup
+import com.github.mvysny.karibudsl.v8.textField
 import com.vaadin.ui.Alignment
 import com.vaadin.ui.CssLayout
 import com.vaadin.ui.themes.ValoTheme
 
-class FiltroPedidoPainel : CssLayout() {
+class FiltroPedidoPainel: CssLayout() {
   private val binderFiltroPedido = beanValidationBinder<FiltroPedido>()
   private var filtroPedido: FiltroPedido? = FiltroPedido()
   lateinit var execFiltro: (FiltroPedido) -> Unit
   lateinit var execProcessa: (FiltroPedido) -> Unit
   lateinit var desfazProcessa: (FiltroPedido) -> Unit
-  
-  val tipoMov = radioButtonGroup<TipoMov>("Tipo:") {
+  val tipoMov = radioButtonGroup<TipoMov>("Tipo") {
     styleName = ValoTheme.OPTIONGROUP_HORIZONTAL
     
     setItems(TipoMov.values().toList())
-    setItemIconGenerator { it.icon }
+    setItemIconGenerator {it.icon}
     bind(binderFiltroPedido).bind(FiltroPedido::tipoMov)
   }
-  
+  val tipoNota = comboBox<Int>("Tipo Nota") {
+    setItems(9, 7)
+    setItemCaptionGenerator {
+      when(it) {
+        7    -> "Garantia"
+        9    -> "Perda"
+        else -> ""
+      }
+    }
+    setWidth("120px")
+    value = 9
+    bind(binderFiltroPedido).bind(FiltroPedido::tipoNota)
+  }
   val loja = comboBox<Loja>("Loja") {
-    setWidth("300px")
     isEmptySelectionAllowed = false
     isTextInputAllowed = false
     setItems(Loja.values().toList())
-    setItemCaptionGenerator { it.numero.toString() + " - " + it.descricao }
+    setItemCaptionGenerator {it.numero.toString() + " - " + it.descricao}
+    setWidth("150px")
     bind(binderFiltroPedido).bind(FiltroPedido::loja)
   }
+<<<<<<< HEAD
   
   val numPedido = textField("Pedido") {
     addStyleName("align-right")
@@ -48,10 +59,20 @@ class FiltroPedidoPainel : CssLayout() {
       .bind(FiltroPedido::numPedido)
   }
   val btnPesquisa = button("Pesquisa", {
+=======
+  val numPedido = textField("Pedido/Nota") {
+    addStyleName("align-right")
+    bind(binderFiltroPedido)
+      .withValidator({it != null}, "Pedido com valor nulo")
+      .bind(FiltroPedido::numPedido)
+  }
+  val btnPesquisa = button("Pesquisa") {
+>>>>>>> develop
     addClickListener {
       if(binderFiltroPedido.writeBeanIfValid(filtroPedido)) {
         filtroPedido?.let {
           execFiltro(it)
+          binderFiltroPedido.readBean(it)
         }
       }
     }
@@ -61,6 +82,7 @@ class FiltroPedidoPainel : CssLayout() {
       if(binderFiltroPedido.writeBeanIfValid(filtroPedido)) {
         filtroPedido?.let {
           execProcessa(it)
+          binderFiltroPedido.readBean(it)
         }
       }
     }
@@ -70,10 +92,15 @@ class FiltroPedidoPainel : CssLayout() {
       if(binderFiltroPedido.writeBeanIfValid(filtroPedido)) {
         filtroPedido?.let {
           desfazProcessa(it)
+          binderFiltroPedido.readBean(it)
         }
       }
     }
+<<<<<<< HEAD
   })
+=======
+  }
+>>>>>>> develop
   
   init {
     caption = "Filtro"
@@ -83,7 +110,7 @@ class FiltroPedidoPainel : CssLayout() {
       horizontalLayout {
         setWidth("100%")
         isMargin = true
-        addComponents(tipoMov, loja, numPedido, btnPesquisa, btnProcessa, btnDesfazProcessa)
+        addComponents(tipoMov, tipoNota, loja, numPedido, btnPesquisa, btnProcessa, btnDesfazProcessa)
         setExpandRatio(numPedido, 1f)
         setComponentAlignment(btnProcessa, Alignment.BOTTOM_RIGHT)
         setComponentAlignment(btnPesquisa, Alignment.BOTTOM_RIGHT)

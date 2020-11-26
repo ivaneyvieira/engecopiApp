@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 select distinct nota as numero, MAX(date) as date, MAX(storeno) as storeno
 from (
        select
@@ -14,5 +15,14 @@ from (
        where date > 20180101
        ORDER BY id
      ) AS T
+=======
+SELECT DISTINCT nota AS numero, MAX(date) AS date, MAX(storeno) AS storeno
+FROM (SELECT id, seq, barcode * 1 AS userno, LPAD(barcode, 16, ' ') AS barcode, qtty, date,
+             usuario AS coletor, RIGHT(usuario, 2) * 1 AS storeno,
+             IF(usuario = 'NOTA', @NOTA := barcode, @NOTA) AS nota
+      FROM sqldados.coletor
+      WHERE date > 20180101
+      ORDER BY id) AS T
+>>>>>>> develop
 GROUP BY numero
-order by date desc, barcode*1 desc
+ORDER BY date DESC, barcode * 1 DESC

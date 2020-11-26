@@ -1,7 +1,6 @@
 package br.com.engecopi.app.forms.saldoKardec
 
 import br.com.engecopi.app.model.FiltroSaldoKardec
-import br.com.engecopi.saci.QuerySaci
 import br.com.engecopi.saci.beans.SaldoKardec
 import br.com.engecopi.utils.toDate
 import com.vaadin.ui.VerticalLayout
@@ -38,7 +37,7 @@ class SaldoKardecForm : VerticalLayout() {
       }
   }
 
-  private fun execExcel(filtro: FiltroSaldoKardec) {
+  private fun execExcel() {
     gridPanel.setItens(saci.pesquisaSaldoKardec())
     val exportToExcelUtility = customizeExportExcelUtility(ExportType.XLSX)
     exportToExcelUtility.export()

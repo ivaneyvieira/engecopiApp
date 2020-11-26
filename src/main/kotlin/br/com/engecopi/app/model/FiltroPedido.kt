@@ -5,8 +5,14 @@ import com.vaadin.server.Resource
 
 data class FiltroPedido(
   var tipoMov: TipoMov? = TipoMov.SAIDA,
+<<<<<<< HEAD
   var loja: Loja? = Loja.JS,
   var numPedido: Int? = null
+=======
+  var tipoNota: Int = 9,
+  var loja: Loja? = Loja.JS,
+  var numPedido: String? = null
+>>>>>>> develop
                        )
 
 enum class TipoMov(val cod: String, val descricao: String, val icon: Resource) {
@@ -15,12 +21,12 @@ enum class TipoMov(val cod: String, val descricao: String, val icon: Resource) {
 }
 
 enum class Loja(val numero: Int, val descricao: String) {
-  JS(1, "José dos Santos e Silva"),
-  DS(2, "Dom Severino"),
-  MR(3, "Miguel Rosa"),
-  MF(4, "Magalhães Filho"),
-  PK(5, "Presidente Kennedy"),
-  FS(6, "Frei Serafim"),
-  NS(7, "Nossa Senhora de Fátima"),
+  JS(1, "JS"),
+  DS(2, "DS"),
+  MR(3, "MR"),
+  MF(4, "MF"),
+  PK(5, "PK"),
+  //  FS(6, "FS"),
+  //  NS(7, "NF"),
   AD(10, "ADM")
 }
