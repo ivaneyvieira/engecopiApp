@@ -2,7 +2,6 @@ bin
 out
 build
 .idea
-gradle*
 src/main/webapp/VAADIN/widgetsets
 src/main/webapp/VAADIN/gwt-unitCache
 src/main/webapp/VAADIN/themes/mytheme/addons.scss
@@ -17,3 +16,5 @@ src/main/webapp/VAADIN/themes/mytheme/styles.css.gz
 *.iml
 Procfile
 deploy.sh
+gradle
+gradlew*
