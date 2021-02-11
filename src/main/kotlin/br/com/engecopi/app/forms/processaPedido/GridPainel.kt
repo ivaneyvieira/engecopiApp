@@ -30,7 +30,7 @@ class GridPainel : CssLayout() {
     }
     column(PedidoProduto::localizacao) {
       caption = "Localização"
-      expandRatio = 5
+      this.setWidth(120.0)
     }
     column(PedidoProduto::quant) {
       setRenderer(NumberRenderer(DecimalFormat("0")))

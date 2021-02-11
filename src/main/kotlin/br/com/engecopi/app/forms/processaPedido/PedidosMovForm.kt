@@ -5,7 +5,8 @@ import br.com.engecopi.saci.beans.Pedido
 import br.com.engecopi.saci.saci
 import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.ui.Notification
-import com.vaadin.ui.Notification.Type.WARNING_MESSAGE
+import com.vaadin.ui.Notification.*
+import com.vaadin.ui.Notification.Type.*
 import com.vaadin.ui.VerticalLayout
 
 class PedidosMovForm: VerticalLayout() {
@@ -31,16 +32,16 @@ class PedidosMovForm: VerticalLayout() {
       pedidoPainel.setPedido(pedidoValido, tipo)
       when {
         pedidoValido == null                        -> {
-          Notification.show("Esse pedido não foi encontrado", Notification.Type.WARNING_MESSAGE)
+          Notification.show("Esse pedido não foi encontrado", WARNING_MESSAGE)
         }
         tipoNota == 7 && pedidoValido.isEngecopi()  -> {
-          Notification.show("O cliente não pode ser loja", Notification.Type.WARNING_MESSAGE)
+          Notification.show("O cliente não pode ser loja", WARNING_MESSAGE)
         }
         tipoNota == 9 && !pedidoValido.isEngecopi() -> {
-          Notification.show("O cliente deve ser uma loja", Notification.Type.WARNING_MESSAGE)
+          Notification.show("O cliente deve ser uma loja", WARNING_MESSAGE)
         }
         pedidoValido.produtoValido() == false -> {
-          Notification.show("O pedido possui um produto com código maior que 980000", Notification.Type.WARNING_MESSAGE)
+          Notification.show("O pedido possui um produto com código maior que 980000", WARNING_MESSAGE)
         }
       }
       setProdutosGrid(pedidoValido)
@@ -64,13 +65,13 @@ class PedidosMovForm: VerticalLayout() {
       
       when {
         pedidoValido == null                        -> {
-          Notification.show("Esse pedido não foi encontrado", Notification.Type.WARNING_MESSAGE)
+          show("Esse pedido não foi encontrado", WARNING_MESSAGE)
         }
         tipoNota == 7 && pedidoValido.isEngecopi() -> {
-          Notification.show("O cliente não pode ser loja", Notification.Type.WARNING_MESSAGE)
+          show("O cliente não pode ser loja", WARNING_MESSAGE)
         }
         tipoNota == 9 && !pedidoValido.isEngecopi() -> {
-          Notification.show("O cliente deve ser uma loja", Notification.Type.WARNING_MESSAGE)
+          show("O cliente deve ser uma loja", WARNING_MESSAGE)
         }
         pedidoValido.status == 1                    -> {
           processa(pedido, loja, numPedido, tipo, tipoNota)
@@ -87,7 +88,7 @@ class PedidosMovForm: VerticalLayout() {
               filtroPedidoPainel.execFiltro(filtro)
             }
             else                   -> {
-              Notification.show("Nota já processada", Notification.Type.WARNING_MESSAGE)
+              show("Nota já processada", Type.WARNING_MESSAGE)
             }
           }
         }
@@ -102,15 +103,15 @@ class PedidosMovForm: VerticalLayout() {
       val nota = saci.pesquisaNota(loja, numPedido, tipo)
       when(pedido) {
         null -> {
-          Notification.show("Esse pedido não foi encontrado", Notification.Type.WARNING_MESSAGE)
+          show("Esse pedido não foi encontrado", WARNING_MESSAGE)
         }
         else -> {
           when {
             nota == null           -> {
-              Notification.show("Esse pedido não foi processado", Notification.Type.WARNING_MESSAGE)
+              show("Esse pedido não foi processado", WARNING_MESSAGE)
             }
             nota.cancelado == true -> {
-              Notification.show("Esse pedido não foi processado", Notification.Type.WARNING_MESSAGE)
+              show("Esse pedido não foi processado", WARNING_MESSAGE)
             }
             else                   -> {
               desfaz(pedido, loja, numPedido, tipo)
@@ -130,15 +131,15 @@ class PedidosMovForm: VerticalLayout() {
     val lojaNome = pedido?.loja?.descricao
     return when {
       pedido == null         -> {
-        Notification.show("Pedido não encontrado", WARNING_MESSAGE)
+        show("Pedido não encontrado", WARNING_MESSAGE)
         null
       }
       !pedido.isDataValida() -> {
-        Notification.show("Pedido tem mais de 30 dias", WARNING_MESSAGE)
+        show("Pedido tem mais de 30 dias", WARNING_MESSAGE)
         null
       }
       !pedido.isLojaValida() -> {
-        Notification.show("O cliente da nota/pedidos não é $lojaNome", WARNING_MESSAGE)
+        show("O cliente da nota/pedidos não é $lojaNome", WARNING_MESSAGE)
         null
       }
       else                   -> pedido

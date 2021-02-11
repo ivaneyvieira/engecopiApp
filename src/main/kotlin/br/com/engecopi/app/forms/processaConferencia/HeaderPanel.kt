@@ -137,7 +137,7 @@ class HeaderPanel(val form: ProcessaConferenciaForm): VerticalLayout() {
         .withCaption("Adicionar produto")
         .withMessage(form)
         .withNoButton(ButtonOption.caption("Cancelar"))
-        .withYesButton(Runnable {
+        .withYesButton({
           salvarNovo(codigo = codigo.value,
                      grade = cmbGrade.value ?: "",
                      qtty = quant.value)

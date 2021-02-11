@@ -14,11 +14,11 @@ class DB(banco: String) {
   //val sqldir = prop?.getProperty("$banco.sqldir") ?: ""
 
   companion object {
-    private fun propertieFile(): String? {
+    private fun propertieFile(): String {
       return "/etc/engecopi/db.conf"
     }
 
-    private fun properties(): Properties? {
+    private fun properties(): Properties {
       val properties = Properties()
       val configFile = FileInputStream(propertieFile())
       properties.load(configFile)

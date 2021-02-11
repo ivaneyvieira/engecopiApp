@@ -1,6 +1,5 @@
 package br.com.engecopi.saci.beans
 
-import br.com.engecopi.saci.QuerySaci
 import br.com.engecopi.saci.saci
 
 class Inventario(
