@@ -64,8 +64,3 @@ dependencies {
   implementation("org.vaadin:viritin:2.5")
 }
 
-/*
-tasks.getByName<War>("war") {
-  enabled = true
-}
-*/

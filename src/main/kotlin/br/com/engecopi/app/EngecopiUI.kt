@@ -47,7 +47,7 @@ class EngecopiUI: UI() {
 private class Content: VerticalLayout(), ViewDisplay {
   init {
     setSizeFull()
-    isMargin = false
+    setMargin(false)
   }
   
   override fun showView(view: View?) {
