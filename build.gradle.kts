@@ -58,7 +58,7 @@ dependencies {
   implementation("mysql:mysql-connector-java:5.1.45")
   implementation("org.imgscalr:imgscalr-lib:4.2")
   
-  implementation("org.vaadin.addons:vaadin-excel-exporter:2.0")
+  //implementation("org.vaadin.addons:vaadin-excel-exporter:2.0")
   
   implementation("de.steinwedel.vaadin.addon:messagebox:4.0.21")
   implementation("org.vaadin:viritin:2.5")
