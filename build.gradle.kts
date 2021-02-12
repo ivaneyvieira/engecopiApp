@@ -8,7 +8,6 @@ plugins {
   kotlin("jvm") version "1.4.20"
   id("org.gretty") version "3.0.3"
   id("com.devsoap.plugin.vaadin") version "2.0.0.beta2"
-  war
 }
 
 defaultTasks("clean", "vaadinCompile", "build")
