@@ -25,7 +25,7 @@ tasks.withType<KotlinCompile> {
 }
 
 vaadin {
-  version = "8.12.1"
+  version = properties["vaadin8Version"] as String?
 }
 
 gretty {
