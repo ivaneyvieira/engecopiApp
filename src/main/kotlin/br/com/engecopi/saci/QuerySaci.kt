@@ -177,8 +177,28 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     }
   }
   
-  fun buscaProdutos(base : Base) = gestorDados{gestor ->
-    gestor.listar(base)
+  fun buscaProdutos(base: Base) = gestorDados {gestor ->
+    gestor.listar(base).orEmpty()
+  }
+  
+  fun executar(base: Base): Int? = gestorDados {gestor ->
+    gestor.executar(base)
+  }
+  
+  fun validarNfSaida(loja: Int, nota : Int)= gestorDados {gestor ->
+    gestor.validarNfSaida(loja, nota) ?: false
+  }
+  
+  fun validarNfEntrada(loja: Int, nota : Int)= gestorDados {gestor ->
+    gestor.validarNfEntrada(loja, nota) ?: false
+  }
+  
+  fun desfazerSaida(loja: Int, nota : Int)= gestorDados {gestor ->
+    gestor.desfazerSaida(loja, nota) ?: false
+  }
+  
+  fun desfazerEntrada(loja: Int, nota : Int)= gestorDados {gestor ->
+    gestor.desfazerEntrada(loja, nota) ?: false
   }
   
   companion object {
