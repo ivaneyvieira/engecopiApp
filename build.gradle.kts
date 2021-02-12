@@ -13,15 +13,19 @@ plugins {
 defaultTasks("clean", "vaadinCompile", "build")
 
 repositories {
-  jcenter()
   mavenCentral()
   maven {
     url = uri("https://maven.vaadin.com/vaadin-addons")
   }
 }
 
-tasks.withType<KotlinCompile> {
-  kotlinOptions.jvmTarget = "1.8"
+val compileKotlin: KotlinCompile by tasks
+compileKotlin.kotlinOptions {
+  jvmTarget = "1.8"
+}
+val compileTestKotlin: KotlinCompile by tasks
+compileTestKotlin.kotlinOptions {
+  jvmTarget = "1.8"
 }
 
 vaadin {
@@ -36,8 +40,8 @@ gretty {
 dependencies {
   // Karibu-DSL dependency
   implementation("com.github.mvysny.karibudsl:karibu-dsl-v8:$karibuVersion")
-  implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-  implementation("org.jetbrains.kotlin:kotlin-reflect")
+  implementation(kotlin("stdlib-jdk8"))
+  implementation(kotlin("reflect"))
   
   // logging
   // currently we are logging through the SLF4J API to LogBack. See src/main/resources/logback.xml file for the logger configuration
