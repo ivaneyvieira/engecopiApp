@@ -7,10 +7,10 @@ class DB(banco: String) {
 
   private val prop = properties()
 
-  val driver = prop?.getProperty("$banco.driver") ?: ""
-  val url = prop?.getProperty("$banco.url") ?: ""
-  val username = prop?.getProperty("$banco.username") ?: ""
-  val password = prop?.getProperty("$banco.password") ?: ""
+  val driver = prop.getProperty("$banco.driver") ?: ""
+  val url = prop.getProperty("$banco.url") ?: ""
+  val username = prop.getProperty("$banco.username") ?: ""
+  val password = prop.getProperty("$banco.password") ?: ""
   //val sqldir = prop?.getProperty("$banco.sqldir") ?: ""
 
   companion object {

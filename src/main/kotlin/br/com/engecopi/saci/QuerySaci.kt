@@ -199,11 +199,11 @@ class QuerySaci: QueryDB(driver, url, username, password) {
   }
   
   fun desfazerSaida(loja: Int, nota : Int)= gestorDados {gestor ->
-    gestor.desfazerSaida(loja, nota) ?: false
+    gestor.desfazerSaida(loja, nota)
   }
   
   fun desfazerEntrada(loja: Int, nota : Int)= gestorDados {gestor ->
-    gestor.desfazerEntrada(loja, nota) ?: false
+    gestor.desfazerEntrada(loja, nota)
   }
   
   companion object {
