@@ -1,4 +1,4 @@
-package br.com.consutec.modelo
+package br.com.engecopi.app.model
 
 import java.math.BigDecimal
 

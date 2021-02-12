@@ -1,8 +1,6 @@
 package br.com.engecopi.app.forms.ajustaEstoque
 
-import br.com.consutec.modelo.Produtos
-import br.com.engecopi.app.forms.processaConferencia.GridPanel
-import br.com.engecopi.app.forms.processaConferencia.HeaderPanel
+import br.com.engecopi.app.model.Produtos
 import com.vaadin.ui.VerticalLayout
 
 class AjustaEstoqueForm : VerticalLayout() {

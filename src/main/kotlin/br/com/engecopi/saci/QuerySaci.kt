@@ -1,7 +1,7 @@
 package br.com.engecopi.saci
 
 import br.com.consutec.dao.GestorDADOS
-import br.com.consutec.modelo.Base
+import br.com.engecopi.app.model.Base
 import br.com.engecopi.saci.beans.AjusteInventario
 import br.com.engecopi.saci.beans.DatasProcessamento
 import br.com.engecopi.saci.beans.Inventario

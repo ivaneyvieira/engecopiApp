@@ -1,5 +1,7 @@
 package br.com.consutec.modelo;
 
+import br.com.engecopi.app.model.Produtos;
+
 import javax.swing.table.AbstractTableModel;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;

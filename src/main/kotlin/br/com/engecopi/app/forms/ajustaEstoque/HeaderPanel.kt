@@ -1,6 +1,6 @@
 package br.com.engecopi.app.forms.ajustaEstoque
 
-import br.com.consutec.modelo.Base
+import br.com.engecopi.app.model.Base
 import br.com.engecopi.app.model.Loja
 import br.com.engecopi.app.model.TipoMov
 import br.com.engecopi.app.model.TipoMov.ENTRADA
@@ -22,7 +22,6 @@ import com.vaadin.ui.Alignment
 import com.vaadin.ui.Button
 import com.vaadin.ui.CheckBox
 import com.vaadin.ui.ComboBox
-import com.vaadin.ui.FormLayout
 import com.vaadin.ui.Notification.Type.ERROR_MESSAGE
 import com.vaadin.ui.Notification.Type.HUMANIZED_MESSAGE
 import com.vaadin.ui.Notification.show

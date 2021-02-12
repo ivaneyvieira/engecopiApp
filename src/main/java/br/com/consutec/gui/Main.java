@@ -1,8 +1,8 @@
 package br.com.consutec.gui;
 
 import br.com.consutec.dao.GestorDADOS;
-import br.com.consutec.modelo.Base;
-import br.com.consutec.modelo.Produtos;
+import br.com.engecopi.app.model.Base;
+import br.com.engecopi.app.model.Produtos;
 import br.com.consutec.modelo.ProdutosModelo;
 
 import javax.swing.*;
@@ -62,22 +62,6 @@ public class Main extends JFrame {
 		this.rbgroup.add(this.rbentrada);
 		this.rbgroup2.add(this.rbestoque);
 		this.rbgroup2.add(this.rbprecificacao);
-	}
-
-	public static void main(String[] args) {
-		try {
-			for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-				if ("Nimbus".equals(info.getName())) {
-					UIManager.setLookAndFeel(info.getClassName());
-					break;
-				}
-			}
-		} catch (ClassNotFoundException ex) {
-		} catch (InstantiationException ex) {
-		} catch (IllegalAccessException ex) {
-		} catch (UnsupportedLookAndFeelException ex) {
-		}
-		EventQueue.invokeLater(() -> (new Main()).setVisible(true));
 	}
 
 	private void initComponents() {

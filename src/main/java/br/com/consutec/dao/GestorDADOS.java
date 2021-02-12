@@ -1,7 +1,7 @@
 package br.com.consutec.dao;
 
-import br.com.consutec.modelo.Base;
-import br.com.consutec.modelo.Produtos;
+import br.com.engecopi.app.model.Base;
+import br.com.engecopi.app.model.Produtos;
 
 import javax.swing.JOptionPane;
 import java.math.BigDecimal;

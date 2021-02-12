@@ -1,6 +1,6 @@
 package br.com.consutec.gui;
 
-import br.com.consutec.modelo.Produtos;
+import br.com.engecopi.app.model.Produtos;
 import br.com.consutec.modelo.ProdutosModelo;
 import br.com.consutec.modelo.RowNumberTable;
 

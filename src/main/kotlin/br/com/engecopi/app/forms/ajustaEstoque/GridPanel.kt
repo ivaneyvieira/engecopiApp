@@ -1,6 +1,6 @@
 package br.com.engecopi.app.forms.ajustaEstoque
 
-import br.com.consutec.modelo.Produtos
+import br.com.engecopi.app.model.Produtos
 import com.github.mvysny.karibudsl.v8.column
 import com.github.mvysny.karibudsl.v8.grid
 import com.github.mvysny.karibudsl.v8.panel
