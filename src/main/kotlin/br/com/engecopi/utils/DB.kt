@@ -15,7 +15,7 @@ class DB(banco: String) {
 
   companion object {
     private fun propertieFile(): String {
-      return "/etc/engecopi/db.conf"
+      return "/etc/db.conf"
     }
 
     private fun properties(): Properties {
