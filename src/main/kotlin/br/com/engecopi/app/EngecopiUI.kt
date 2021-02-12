@@ -2,8 +2,6 @@ package br.com.engecopi.app
 
 import br.com.engecopi.saci.QuerySaci
 import com.github.mvysny.karibudsl.v8.autoViewProvider
-import com.github.mvysny.karibudsl.v8.isMargin
-import com.vaadin.annotations.Push
 import com.vaadin.annotations.Theme
 import com.vaadin.annotations.Title
 import com.vaadin.navigator.Navigator
@@ -12,8 +10,6 @@ import com.vaadin.navigator.ViewDisplay
 import com.vaadin.server.Page
 import com.vaadin.server.VaadinRequest
 import com.vaadin.shared.Position
-import com.vaadin.shared.communication.PushMode
-import com.vaadin.shared.ui.ui.Transport
 import com.vaadin.ui.Component
 import com.vaadin.ui.Notification
 import com.vaadin.ui.UI
@@ -22,7 +18,6 @@ import com.vaadin.ui.themes.ValoTheme
 
 @Theme("mytheme")
 @Title("Engecopi App")
-@Push(value = PushMode.MANUAL, transport = Transport.WEBSOCKET_XHR)
 class EngecopiUI: UI() {
   private val content = Content()
   
