@@ -31,7 +31,7 @@ class EngecopiUI: UI() {
     setContent(content)
     navigator = Navigator(this, content as ViewDisplay)
     navigator.addProvider(autoViewProvider)
-    setErrorHandler {
+    setErrorHandler {e ->
       Notification("Oops",
                    "An error occurred, and we are really sorry about that. Already working on the fix!",
                    Notification.Type.ERROR_MESSAGE).apply {
@@ -39,6 +39,7 @@ class EngecopiUI: UI() {
         position = Position.TOP_CENTER
         show(Page.getCurrent())
       }
+      e.throwable.printStackTrace()
     }
   }
 }

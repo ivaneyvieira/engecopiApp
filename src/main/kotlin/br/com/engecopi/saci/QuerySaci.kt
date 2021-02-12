@@ -178,7 +178,12 @@ class QuerySaci: QueryDB(driver, url, username, password) {
   }
   
   fun buscaProdutos(base: Base) = gestorDados {gestor ->
-    gestor.listar(base).orEmpty()
+    try {
+      gestor.listar(base).orEmpty()
+    }catch(e : Exception){
+      e.printStackTrace()
+      emptyList()
+    }
   }
   
   fun executar(base: Base): Int? = gestorDados {gestor ->
