@@ -191,11 +191,11 @@ class QuerySaci: QueryDB(driver, url, username, password) {
   }
   
   fun validarNfSaida(loja: Int, nota : Int)= gestorDados {gestor ->
-    gestor.validarNfSaida(loja, nota) ?: false
+    gestor.validarNfSaida(loja, nota)
   }
   
   fun validarNfEntrada(loja: Int, nota : Int)= gestorDados {gestor ->
-    gestor.validarNfEntrada(loja, nota) ?: false
+    gestor.validarNfEntrada(loja, nota)
   }
   
   fun desfazerSaida(loja: Int, nota : Int)= gestorDados {gestor ->
@@ -207,7 +207,7 @@ class QuerySaci: QueryDB(driver, url, username, password) {
   }
   
   companion object {
-    val db = DB("saci")
+    private val db = DB("saci")
     internal val driver = db.driver
     internal val url = db.url
     internal val username = db.username
