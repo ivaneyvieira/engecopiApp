@@ -9,7 +9,7 @@ services:
       TZ: "America/Fortaleza"
       EBEAN_PROPS: /etc/ebean.properties
     volumes:
-      - ./build/libs/engecopiApp.war:/usr/local/tomcat/webapps/engecopiApp.war:z
+      - ./build/libs/producao.war:/usr/local/tomcat/webapps/engecopiApp.war:z
       - ./db.conf:/etc/db.conf:z
     restart: always
     networks:
