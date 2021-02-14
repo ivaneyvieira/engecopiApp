@@ -18,3 +18,5 @@ Procfile
 deploy.sh
 gradle
 gradlew*
+docker-compose.yml
+db.conf
