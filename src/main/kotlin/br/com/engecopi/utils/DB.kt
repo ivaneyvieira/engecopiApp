@@ -11,7 +11,6 @@ class DB(banco: String) {
   val url = prop.getProperty("$banco.url") ?: ""
   val username = prop.getProperty("$banco.username") ?: ""
   val password = prop.getProperty("$banco.password") ?: ""
-  //val sqldir = prop?.getProperty("$banco.sqldir") ?: ""
 
   companion object {
     private fun propertieFile(): String {

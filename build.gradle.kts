@@ -13,15 +13,11 @@ plugins {
 defaultTasks("clean", "vaadinCompile", "build")
 
 repositories {
-  mavenCentral()
-  maven {
-    url = uri("https://maven.vaadin.com/vaadin-addons")
-  }
+  jcenter()
 }
 
-val compileKotlin: KotlinCompile by tasks
-compileKotlin.kotlinOptions {
-  jvmTarget = "1.8"
+tasks.withType<KotlinCompile> {
+  kotlinOptions.jvmTarget = "1.8"
 }
 
 vaadin {
@@ -35,32 +31,28 @@ gretty {
 
 dependencies {
   // Karibu-DSL dependency
-  implementation("com.github.mvysny.karibudsl:karibu-dsl-v8:$karibuVersion")
-  implementation(kotlin("stdlib-jdk8"))
-  implementation(kotlin("reflect"))
+  compile("com.github.mvysny.karibudsl:karibu-dsl-v8:1.0.4")
+  compile(kotlin("stdlib-jdk8"))
+  compile(kotlin("reflect"))
   
   // logging
-  // currently we are logging through the SLF4J API to LogBack. See src/main/resources/logback.xml file for the logger configuration
-  implementation("ch.qos.logback:logback-classic:1.2.3")
+  // currently we are logging through the SLF4J API to SLF4J-Simple. See src/main/resources/simplelogger.properties file for the logger configuration
+  compile("org.slf4j:slf4j-simple:1.7.30")
   // this will allow us to configure Vaadin to log to SLF4J
-  implementation("org.slf4j:slf4j-log4j12:1.7.30")
-  implementation("org.slf4j:slf4j-simple:1.7.30")
-  implementation("org.slf4j:slf4j-api:1.7.30")
-  implementation("org.apache.logging.log4j:log4j-slf4j-impl:2.14.0")
+  compile("org.slf4j:jul-to-slf4j:1.7.30")
   
-  implementation("com.vaadin:vaadin-themes:$vaadin8Version")
-  implementation("com.vaadin:vaadin-server:$vaadin8Version")
-  implementation("com.vaadin:vaadin-client-compiled:$vaadin8Version")
-  implementation("javax.servlet:javax.servlet-api:3.1.0")
+  
+  compile("com.vaadin:vaadin-themes:$vaadin8Version")
+  compile("com.vaadin:vaadin-client-compiled:$vaadin8Version")
   
   //Dependencias do projeto
-  implementation("org.sql2o:sql2o:1.5.4")
-  implementation("mysql:mysql-connector-java:5.1.45")
-  implementation("org.imgscalr:imgscalr-lib:4.2")
+  compile("org.sql2o:sql2o:1.5.4")
+  compile("mysql:mysql-connector-java:5.1.45")
+  compile("org.imgscalr:imgscalr-lib:4.2")
   
-  implementation("org.vaadin.addons:vaadin-excel-exporter:2.0")
+  compile("org.vaadin.addons:vaadin-excel-exporter:2.0")
   
-  implementation("de.steinwedel.vaadin.addon:messagebox:4.0.21")
-  implementation("org.vaadin:viritin:2.5")
+  compile("de.steinwedel.vaadin.addon:messagebox:4.0.21")
+  compile("org.vaadin:viritin:2.5")
 }
 
