@@ -1,0 +1,23 @@
+version: "3"
+services:
+  engecopi_app:
+    image: tomcat:9
+    container_name: engecopiApp
+    ports:
+      - "8021:8080"
+    environment:
+      TZ: "America/Fortaleza"
+      EBEAN_PROPS: /etc/ebean.properties
+    volumes:
+      - ./build/libs/producao.war:/usr/local/tomcat/webapps/engecopiApp.war
+      - ./db.conf:/etc/db.conf
+    restart: always
+    networks:
+      rede_eng_app:
+        ipv4_address: 172.121.1.1
+networks:
+  rede_eng_app:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.121.0.0/16
