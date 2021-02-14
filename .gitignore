@@ -19,3 +19,4 @@ deploy.sh
 gradle
 gradlew*
 db.conf
+docker-compose.yml
