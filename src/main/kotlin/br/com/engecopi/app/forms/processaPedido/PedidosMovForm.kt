@@ -146,7 +146,7 @@ class PedidosMovForm: VerticalLayout() {
   }
   
   private fun setProdutosGrid(pedido: Pedido?) {
-    val produtos = pedido?.produtos()
+    val produtos = pedido?.produtos().orEmpty()
     gridPainel.grid.dataProvider = ListDataProvider(produtos)
   }
   

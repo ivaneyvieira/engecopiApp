@@ -1,7 +1,7 @@
 SELECT 'S'  AS tipo,
        xano AS numero,
        '66' AS serie,
-       1    AS cancelado
+       0    AS cancelado
 FROM sqldados.stkmov
 WHERE remarks LIKE CONCAT('%:PED E', :ordno)
   AND storeno = :storeno
@@ -10,7 +10,7 @@ UNION
 SELECT 'E'  AS tipo,
        xano AS numero,
        '66' AS serie,
-       1    AS cancelado
+       0    AS cancelado
 FROM sqldados.stkmov
 WHERE remarks LIKE CONCAT('%:PED S', :ordno)
   AND storeno = :storeno
