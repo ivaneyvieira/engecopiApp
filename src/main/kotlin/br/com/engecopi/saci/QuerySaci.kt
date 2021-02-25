@@ -1,7 +1,7 @@
 package br.com.engecopi.saci
 
-import br.com.engecopi.app.model.GestorDADOS
 import br.com.engecopi.app.model.Base
+import br.com.engecopi.app.model.GestorDADOS
 import br.com.engecopi.saci.beans.AjusteInventario
 import br.com.engecopi.saci.beans.DatasProcessamento
 import br.com.engecopi.saci.beans.Inventario
@@ -9,20 +9,12 @@ import br.com.engecopi.saci.beans.NotaFiscal
 import br.com.engecopi.saci.beans.Pedido
 import br.com.engecopi.saci.beans.PedidoProduto
 import br.com.engecopi.saci.beans.SaldoKardec
-import br.com.engecopi.saci.beans.UserSenha
 import br.com.engecopi.utils.DB
 import br.com.engecopi.utils.lpad
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 class QuerySaci: QueryDB(driver, url, username, password) {
-  fun userSenha(login: String): UserSenha? {
-    val sql = "/sql/userSenha.sql"
-    return query(sql) {q ->
-      q.addParameter("login", login).executeAndFetchFirst(UserSenha::class.java)
-    }
-  }
-  
   fun pedidoNota(storeno: Int, numero: String): Pedido? {
     val sql = "/sql/pedido.sql"
     val num = numero.split("/").getOrNull(0) ?: ""
@@ -45,7 +37,7 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     }
   }
   
-  fun processaPedido(storeno: Int, numero: String, tipo: String, tipo_nota: Int) {
+  fun processaPedidoSTKMOV(storeno: Int, numero: String, tipo: String, tipo_nota: Int) {
     val sql = "/sql/processaPedido.sql"
     execute(sql,
             Pair("storeno", "$storeno"),
@@ -54,18 +46,18 @@ class QuerySaci: QueryDB(driver, url, username, password) {
             Pair("t_nota", "$tipo_nota"))
   }
   
-  fun processaDevolucao(storeno: Int, nfno: String, nfse: String) {
+  fun processaDevolucaoSTKMOV(storeno: Int, nfno: String, nfse: String) {
     val sql = "/sql/processaDevolucao.sql"
     execute(sql, Pair("storeno", "$storeno"), Pair("nfno", nfno), Pair("nfse", "'$nfse'"))
   }
   
-  fun desfazPedido(storeno: Int, numero: String, tipo: String) {
+  fun desfazPedidoSTKMOV(storeno: Int, numero: String, tipo: String) {
     val sql = "/sql/desfazPedido.sql"
     
     execute(sql, Pair("storeno", "$storeno"), Pair("ordno", numero), Pair("tipo", "'$tipo'"))
   }
   
-  fun desfazDevolucao(storeno: Int, nfno: String, nfse: String) {
+  fun desfazDevolucaoSTKMOV(storeno: Int, nfno: String, nfse: String) {
     val sql = "/sql/desfazDevolucao.sql"
     
     execute(sql, Pair("storeno", "$storeno"), Pair("nfno", nfno), Pair("nfse", "'$nfse'"))
@@ -79,7 +71,7 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     execute(sql, Pair("dataInicial", di), Pair("dataFinal", df), monitor = monitor)
   }
   
-  fun pesquisaNota(storeno: Int?, numero: String?, tipo: String): NotaFiscal? {
+  fun pesquisaNotaSTKMOV(storeno: Int?, numero: String?, tipo: String): NotaFiscal? {
     storeno ?: return null
     numero ?: return null
     val sql = "/sql/pesquisaNota.sql"
@@ -128,7 +120,7 @@ class QuerySaci: QueryDB(driver, url, username, password) {
   }
   
   fun apagaAjuste(ajuste: AjusteInventario) {
-    val sql = "/sql/apagaAjuste.sql"
+    val sql = "/sql/apaga Ajuste.sql"
     execute(sql,
             ("numero" to "'${ajuste.numero}'"),
             ("prdno" to "'${ajuste.prdno.lpad(16, " ")}'"),
@@ -170,7 +162,7 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     }
   }
   
-  fun <T> gestorDados(exec: (GestorDADOS) -> T): T {
+  private fun <T> gestorDados(exec: (GestorDADOS) -> T): T {
     return withConnection {con, _ ->
       val dados = GestorDADOS(con.jdbcConnection)
       exec(dados)
@@ -179,8 +171,8 @@ class QuerySaci: QueryDB(driver, url, username, password) {
   
   fun buscaProdutos(base: Base) = gestorDados {gestor ->
     try {
-      gestor.listar(base).orEmpty()
-    }catch(e : Exception){
+      gestor.listar(base)
+    } catch(e: Exception) {
       e.printStackTrace()
       emptyList()
     }
@@ -190,19 +182,19 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     gestor.executar(base)
   }
   
-  fun validarNfSaida(loja: Int, nota : Int)= gestorDados {gestor ->
+  fun validarNfSaida(loja: Int, nota: Int) = gestorDados {gestor ->
     gestor.validarNfSaida(loja, nota)
   }
   
-  fun validarNfEntrada(loja: Int, nota : Int)= gestorDados {gestor ->
+  fun validarNfEntrada(loja: Int, nota: Int) = gestorDados {gestor ->
     gestor.validarNfEntrada(loja, nota)
   }
   
-  fun desfazerSaida(loja: Int, nota : Int)= gestorDados {gestor ->
+  fun desfazerSaida(loja: Int, nota: Int) = gestorDados {gestor ->
     gestor.desfazerSaida(loja, nota)
   }
   
-  fun desfazerEntrada(loja: Int, nota : Int)= gestorDados {gestor ->
+  fun desfazerEntrada(loja: Int, nota: Int) = gestorDados {gestor ->
     gestor.desfazerEntrada(loja, nota)
   }
   

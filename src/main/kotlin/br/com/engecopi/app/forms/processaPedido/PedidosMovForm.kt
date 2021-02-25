@@ -4,15 +4,14 @@ import br.com.engecopi.app.model.TipoMov.ENTRADA
 import br.com.engecopi.saci.beans.Pedido
 import br.com.engecopi.saci.saci
 import com.vaadin.data.provider.ListDataProvider
-import com.vaadin.ui.Notification
 import com.vaadin.ui.Notification.*
 import com.vaadin.ui.Notification.Type.*
 import com.vaadin.ui.VerticalLayout
 
 class PedidosMovForm: VerticalLayout() {
-  val filtroPedidoPainel = FiltroPedidoPainel()
-  val pedidoPainel = PedidoPainel()
-  val gridPainel = GridPainel()
+  private val filtroPedidoPainel = FiltroPedidoPainel()
+  private val pedidoPainel = PedidoPainel()
+  private val gridPainel = GridPainel()
   
   init {
     filtroPedidoPainel.execFiltro = {filtro ->
@@ -32,16 +31,16 @@ class PedidosMovForm: VerticalLayout() {
       pedidoPainel.setPedido(pedidoValido, tipo)
       when {
         pedidoValido == null                        -> {
-          Notification.show("Esse pedido não foi encontrado", WARNING_MESSAGE)
+          show("Esse pedido não foi encontrado", WARNING_MESSAGE)
         }
         tipoNota == 7 && pedidoValido.isEngecopi()  -> {
-          Notification.show("O cliente não pode ser loja", WARNING_MESSAGE)
+          show("O cliente não pode ser loja", WARNING_MESSAGE)
         }
         tipoNota == 9 && !pedidoValido.isEngecopi() -> {
-          Notification.show("O cliente deve ser uma loja", WARNING_MESSAGE)
+          show("O cliente deve ser uma loja", WARNING_MESSAGE)
         }
-        pedidoValido.produtoValido() == false -> {
-          Notification.show("O pedido possui um produto com código maior que 980000", WARNING_MESSAGE)
+        !pedidoValido.produtoValido()               -> {
+          show("O pedido possui um produto com código maior que 980000", WARNING_MESSAGE)
         }
       }
       setProdutosGrid(pedidoValido)
@@ -60,7 +59,7 @@ class PedidosMovForm: VerticalLayout() {
       }
       val tipo = filtro.tipoMov?.cod ?: ""
       val tipoNota = filtro.tipoNota
-      val nota = saci.pesquisaNota(loja, numPedido, tipo)
+      val nota = saci.pesquisaNotaSTKMOV(loja, numPedido, tipo)
       val pedidoValido = validaPedido(pedido)
       
       when {
@@ -88,7 +87,7 @@ class PedidosMovForm: VerticalLayout() {
               filtroPedidoPainel.execFiltro(filtro)
             }
             else                   -> {
-              show("Nota já processada", Type.WARNING_MESSAGE)
+              show("Nota já processada", WARNING_MESSAGE)
             }
           }
         }
@@ -100,7 +99,7 @@ class PedidosMovForm: VerticalLayout() {
       val numPedido = filtro.numPedido ?: ""
       val tipo = filtro.tipoMov?.cod ?: ""
       val pedido = saci.pedidoNota(loja, numPedido)
-      val nota = saci.pesquisaNota(loja, numPedido, tipo)
+      val nota = saci.pesquisaNotaSTKMOV(loja, numPedido, tipo)
       when(pedido) {
         null -> {
           show("Esse pedido não foi encontrado", WARNING_MESSAGE)
@@ -157,12 +156,12 @@ class PedidosMovForm: VerticalLayout() {
                        tipo: String,
                        tipoNota: Int) {
     if(pedido?.tipo == DEVOLUCAO) {
-      val nfno = pedido.numeroPedido?.toString() ?: ""
+      val nfno = pedido.numeroPedido ?: ""
       val nfse = pedido.serie ?: ""
-      saci.processaDevolucao(loja, nfno, nfse)
+      saci.processaDevolucaoSTKMOV(loja, nfno, nfse)
     }
     else
-      saci.processaPedido(loja, numPedido, tipo, tipoNota)
+      saci.processaPedidoSTKMOV(loja, numPedido, tipo, tipoNota)
   }
   
   private fun desfaz(pedido: Pedido?,
@@ -170,21 +169,15 @@ class PedidosMovForm: VerticalLayout() {
                      numPedido: String,
                      tipo: String) {
     if(pedido?.tipo == DEVOLUCAO) {
-      val nfno = pedido.numeroPedido?.toString() ?: ""
+      val nfno = pedido.numeroPedido ?: ""
       val nfse = pedido.serie ?: ""
-      saci.desfazDevolucao(loja, nfno, nfse)
+      saci.desfazDevolucaoSTKMOV(loja, nfno, nfse)
     }
     else
-      saci.desfazPedido(loja, numPedido, tipo)
-  }
-  
-  private fun notaHabilitada(pedido: Pedido, tipo: String?): Boolean {
-    val notaFiscal = pedido.notaFiscal(tipo ?: "")
-    val habilitada = notaFiscal?.let {it.cancelado == false} ?: false
-    return habilitada
+      saci.desfazPedidoSTKMOV(loja, numPedido, tipo)
   }
   
   companion object {
-    val DEVOLUCAO = "DEVOLUCAO"
+    const val DEVOLUCAO = "DEVOLUCAO"
   }
 }

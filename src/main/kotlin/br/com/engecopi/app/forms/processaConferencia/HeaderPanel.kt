@@ -198,11 +198,6 @@ class HeaderPanel(val form: ProcessaConferenciaForm): VerticalLayout() {
     return strDate.toInt()
   }
   
-  private val btnRemoveAjuste = Button("Remove Ajuste").apply {
-    addClickListener {
-    }
-  }
-  
   private fun updateCombo(combo: ComboBox<Inventario>) {
     val inventarios = inventarios().filter {inv ->
       val dateInv =

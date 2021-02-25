@@ -27,7 +27,7 @@ class Pedido(val storeno: Int?,
       ?.getOrNull(1)
   
   fun notaFiscal(tipo: String): NotaFiscal? {
-    return saci.pesquisaNota(storeno, numeroPedido, tipo)
+    return saci.pesquisaNotaSTKMOV(storeno, numeroPedido, tipo)
   }
   
   fun isEngecopi() = cliente?.contains("ENGECOPI", ignoreCase = true) ?: false

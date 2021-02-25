@@ -15,10 +15,9 @@ import com.vaadin.ui.themes.ValoTheme
 import org.vaadin.viritin.fields.IntegerField
 import java.text.DecimalFormat
 
-class GridPanel(val form: ProcessaConferenciaForm): CssLayout() {
-  val edtInv = IntegerField()
-  val grid = grid(AjusteInventario::class, null,
-                  ListDataProvider<AjusteInventario>(emptyList())) {
+class GridPanel(private val form: ProcessaConferenciaForm): CssLayout() {
+  private val edtInv = IntegerField()
+  val grid = grid(AjusteInventario::class, null, ListDataProvider(emptyList())) {
     setSizeFull()
     val binder = this.editor.binder
     val invBinding = binder.bind(edtInv, AjusteInventario::inventario.name)
@@ -75,10 +74,15 @@ class GridPanel(val form: ProcessaConferenciaForm): CssLayout() {
     }
     
     
-    showColumns(AjusteInventario::barcode, AjusteInventario::prdno,
-                AjusteInventario::descricao, AjusteInventario::grade,
-                AjusteInventario::inventario, AjusteInventario::saldo,
-                AjusteInventario::qtty, AjusteInventario::cost, AjusteInventario::operador)
+    showColumns(AjusteInventario::barcode,
+                AjusteInventario::prdno,
+                AjusteInventario::descricao,
+                AjusteInventario::grade,
+                AjusteInventario::inventario,
+                AjusteInventario::saldo,
+                AjusteInventario::qtty,
+                AjusteInventario::cost,
+                AjusteInventario::operador)
     val colBtn = addComponentColumn {ajuste ->
       val button = Button(VaadinIcons.TRASH)
       button.addStyleName(ValoTheme.BUTTON_SMALL)
@@ -87,12 +91,6 @@ class GridPanel(val form: ProcessaConferenciaForm): CssLayout() {
         saci.apagaAjuste(ajuste)
         
         form.headerPanel.updateView(form.headerPanel.comboInventario.value)
-        /*
-                val ajustes = saci
-                        .ajustesInventario(ajuste.numero
-                                           ?: "")
-                form.headerPanel.updateView(ajustes)
-        */
       }
       button
     }
@@ -108,12 +106,6 @@ class GridPanel(val form: ProcessaConferenciaForm): CssLayout() {
       saci.salvaAjuste(ajuste)
       
       form.headerPanel.updateView(form.headerPanel.comboInventario.value)
-      /*
-      val ajustes = saci
-              .ajustesInventario(ajuste.numero
-                                 ?: "")
-      form.headerPanel.updateView(ajustes)
-      */
     }
   }
   

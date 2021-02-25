@@ -32,9 +32,11 @@ SET qtty_atacado = qtty_atacado + @FATOR * T.qtty,
     last_date    = current_date * 1,
     longReserva2 = 0;
 
-UPDATE sqldados.inv
-SET bits = bits | POW(2, 4)
-WHERE ordno = @NFNO AND storeno = @LOJA AND invse = @SERIE AND @TIPO = 'E';
+DELETE
+FROM sqldados.stkmov
+WHERE remarks LIKE CONCAT('%:PED E', @PEDIDO)
+  AND storeno = @LOJA
+  AND @TIPO = 'E';
 
 UPDATE sqldados.nf AS N
 SET s16 = 1 /*Orçamento*/

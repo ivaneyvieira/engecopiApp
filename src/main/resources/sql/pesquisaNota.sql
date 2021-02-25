@@ -1,8 +1,18 @@
-SELECT 'S' AS tipo, cast(nfno AS CHAR) AS numero, nfse AS serie, status = 1 AS cancelado
-FROM sqldados.nf
-WHERE eordno = :ordno AND pdvno = 0 AND storeno = :storeno AND nfse = 66 AND :tipo = 'S'
+SELECT 'S'  AS tipo,
+       xano AS numero,
+       '66' AS serie,
+       1    AS cancelado
+FROM sqldados.stkmov
+WHERE remarks LIKE CONCAT('%:PED E', :ordno)
+  AND storeno = :storeno
+  AND :tipo = 'E'
 UNION
-SELECT 'E' AS tipo, nfname AS numero, invse AS serie, bits & POW(2, 4) > 0 AS cancelado
-FROM sqldados.inv
-WHERE ordno = :ordno AND storeno = :storeno AND invse = 66 AND :tipo = 'E'
-ORDER BY 4, 2 DESC
+SELECT 'E'  AS tipo,
+       xano AS numero,
+       '66' AS serie,
+       1    AS cancelado
+FROM sqldados.stkmov
+WHERE remarks LIKE CONCAT('%:PED S', :ordno)
+  AND storeno = :storeno
+  AND :tipo = 'S'
+ORDER BY 4, 2 DESC;
