@@ -194,15 +194,15 @@ class HeaderPanel(private val ajustaEstoqueForm: AjustaEstoqueForm): VerticalLay
     }
   }
   
-  fun baseDados() = Base().apply {
-    this.lojaDestino = loja.value?.numero ?: 0
-    this.operacao = tipoMov.value.operacao()
-    this.codprd = codigo.value ?: ""
-    this.fornecedores = edtFornecedores.value ?: ""
-    this.tipos = edtTipos.value ?: ""
-    this.incluiNfFornecedor = incluirNoras.value ?: false
-    this.fornecedorNf = fornecedorNF.value ?: ""
-  }
+  fun baseDados() = Base(
+    lojaDestino = loja.value?.numero ?: 0,
+    operacao = tipoMov.value.operacao(),
+    codprd = codigo.value ?: "",
+    fornecedores = edtFornecedores.value ?: "",
+    tipos = edtTipos.value ?: "",
+    incluiNfFornecedor = incluirNoras.value ?: false,
+    fornecedorNf = fornecedorNF.value ?: "",
+                        )
 }
 
 private fun TipoMov.operacao(): String {
