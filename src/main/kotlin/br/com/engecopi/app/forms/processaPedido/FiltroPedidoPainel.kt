@@ -22,7 +22,7 @@ class FiltroPedidoPainel: CssLayout() {
   lateinit var execFiltro: (FiltroPedido) -> Unit
   lateinit var execProcessa: (FiltroPedido) -> Unit
   lateinit var desfazProcessa: (FiltroPedido) -> Unit
-  val tipoMov = radioButtonGroup<TipoMov>("Tipo") {
+  private val tipoMov = radioButtonGroup<TipoMov>("Tipo") {
     styleName = ValoTheme.OPTIONGROUP_HORIZONTAL
     
     setItems(TipoMov.values().toList())
@@ -50,13 +50,13 @@ class FiltroPedidoPainel: CssLayout() {
     setWidth("150px")
     bind(binderFiltroPedido).bind(FiltroPedido::loja)
   }
-  val numPedido = textField("Pedido/Nota") {
+  private val numPedido = textField("Pedido/Nota") {
     addStyleName("align-right")
     bind(binderFiltroPedido)
       .withValidator({it != null}, "Pedido com valor nulo")
       .bind(FiltroPedido::numPedido)
   }
-  val btnPesquisa = button("Pesquisa") {
+  private val btnPesquisa = button("Pesquisa") {
     addClickListener {
       if(binderFiltroPedido.writeBeanIfValid(filtroPedido)) {
         filtroPedido?.let {
@@ -66,7 +66,7 @@ class FiltroPedidoPainel: CssLayout() {
       }
     }
   }
-  val btnProcessa = button("Processamento") {
+  private val btnProcessa = button("Processamento") {
     addClickListener {
       if(binderFiltroPedido.writeBeanIfValid(filtroPedido)) {
         filtroPedido?.let {
@@ -76,7 +76,7 @@ class FiltroPedidoPainel: CssLayout() {
       }
     }
   }
-  val btnDesfazProcessa = button("Desfaz") {
+  private val btnDesfazProcessa = button("Desfaz") {
     addClickListener {
       if(binderFiltroPedido.writeBeanIfValid(filtroPedido)) {
         filtroPedido?.let {

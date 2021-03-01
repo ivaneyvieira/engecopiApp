@@ -2,6 +2,7 @@ package br.com.engecopi.saci
 
 import br.com.engecopi.app.model.Base
 import br.com.engecopi.app.model.GestorDADOS
+import br.com.engecopi.app.model.Produtos
 import br.com.engecopi.saci.beans.AjusteInventario
 import br.com.engecopi.saci.beans.DatasProcessamento
 import br.com.engecopi.saci.beans.Inventario
@@ -169,12 +170,14 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     }
   }
   
-  fun buscaProdutos(base: Base) = gestorDados {gestor ->
-    try {
-      gestor.listar(base)
-    } catch(e: Exception) {
-      e.printStackTrace()
-      emptyList()
+  fun buscaProdutos(base: Base): List<Produtos> {
+    val sql = "/sql/buscaProdutos.sql"
+    return query(sql, Produtos::class) {
+      addOptionalParameter("loja", base.lojaDestino)
+      addOptionalParameter("operacao", base.operacao)
+      addOptionalParameter("prdno", base.codprd)
+      addOptionalParameter("vends", base.fornecedores)
+      addOptionalParameter("types", base.tipos)
     }
   }
   

@@ -18,13 +18,13 @@ class PedidoPainel : CssLayout() {
     }
   }
 
-  val lojaPedido = textReadOnly("Loja")
-  val numeroPedido = textReadOnly("Número")
-  val dataPedido = textReadOnly("Data")
-  val usuarioPedido = textReadOnly("Usuário")
-  val clientePedido = textReadOnly("Cliente")
-  val notaPedido = textReadOnly("NF")
-  val statusPedido = textReadOnly("Status")
+  private val lojaPedido = textReadOnly("Loja")
+  private val numeroPedido = textReadOnly("Número")
+  private val dataPedido = textReadOnly("Data")
+  private val usuarioPedido = textReadOnly("Usuário")
+  private val clientePedido = textReadOnly("Cliente")
+  private val notaPedido = textReadOnly("NF")
+  private val statusPedido = textReadOnly("Status")
 
   fun setPedido(pedido: Pedido?, tipo: String?) {
     lojaPedido.value = pedido?.loja?.toString() ?: ""

@@ -1,17 +1,15 @@
 package br.com.engecopi.app.model
 
-import java.math.BigDecimal
-
-class Produtos {
-  var prdno: String? = null
-  var grade: String? = null
-  var descricao: String? = null
-  var fornecedor: Long? = null
-  var centrodelucro: String? = null
-  var tipo: Long? = null
-  var qtdAtacado: BigDecimal? = null
-  var qtdNfForn: BigDecimal? = null
-  var qtdConsiderada: BigDecimal? = null
-  var custo: BigDecimal? = null
-  var total: BigDecimal? = null
-}
+class Produtos(
+        var prdno: String,
+        var grade: String,
+        var descricao: String,
+        var fornecedor: Long,
+        var centrodelucro: String,
+        var tipo: Long,
+        var qtdAtacado: Double,
+        var qtdNfForn: Double,
+        var qtdConsiderada: Double,
+        var custo: Double,
+        var total: Double,
+              )

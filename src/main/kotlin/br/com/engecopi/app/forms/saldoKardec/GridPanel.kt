@@ -13,7 +13,7 @@ import java.text.DecimalFormat
 
 class GridPanel : CssLayout() {
   val grid = grid(SaldoKardec::class, null,
-                  ListDataProvider<SaldoKardec>(emptyList())) {
+                  ListDataProvider(emptyList())) {
     setSizeFull()
 
     column(SaldoKardec::codigo) {
@@ -66,6 +66,6 @@ class GridPanel : CssLayout() {
   }
 
   fun setItens(itens: List<SaldoKardec>) {
-    grid.dataProvider = ListDataProvider<SaldoKardec>(itens)
+    grid.dataProvider = ListDataProvider(itens)
   }
 }

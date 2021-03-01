@@ -12,11 +12,10 @@ import org.vaadin.addons.excelexporter.configuration.builder.ExportExcelSheetCon
 import org.vaadin.addons.excelexporter.model.ExportType
 import java.lang.Boolean.TRUE
 import java.time.LocalDate
-import java.util.*
 
 class SaldoKardecForm : VerticalLayout() {
   val filtroPanel = FiltroPanel()
-  val gridPanel = GridPanel()
+  private val gridPanel = GridPanel()
   val progressPanel = ProgressPanel()
 
   init {
@@ -63,7 +62,8 @@ class SaldoKardecForm : VerticalLayout() {
     val grid = gridPanel.grid
     val componentConfig = ExportExcelComponentConfigurationBuilder<SaldoKardec>()
             .withGrid(grid)
-           .withVisibleProperties(Arrays.asList("codigo", "grade", "loja",
+           .withVisibleProperties(
+                   listOf("codigo", "grade", "loja",
                                                  "mes_ano", "saldoEstoque", "saldoKardec",
                                                  "diferecenca").toTypedArray())
             /*  .withHeaderConfigs(Arrays.asList(ComponentHeaderConfigurationBuilder().withAutoFilter(true)
@@ -79,7 +79,7 @@ class SaldoKardecForm : VerticalLayout() {
     val sheetConfig = ExportExcelSheetConfigurationBuilder<SaldoKardec>()
             .withReportTitle("Saldo Kardec")
             .withSheetName("Saldo Kardec")
-            .withComponentConfigs(Arrays.asList(componentConfig))
+            .withComponentConfigs(listOf(componentConfig))
             .withIsHeaderSectionRequired(TRUE)
             .withDateFormat("dd/MM/yyyy")
             .build()
@@ -88,10 +88,10 @@ class SaldoKardecForm : VerticalLayout() {
     /* Configuring Excel */
     val config = ExportExcelConfigurationBuilder<SaldoKardec>()
             .withGeneratedBy("Engecopi")
-            .withSheetConfigs(Arrays.asList(sheetConfig))
+            .withSheetConfigs(listOf(sheetConfig))
             .build()
 
-    return ExportToExcel<SaldoKardec>(exportType, config)
+    return ExportToExcel(exportType, config)
   }
 
 }

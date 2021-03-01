@@ -5,7 +5,7 @@ import com.vaadin.ui.VerticalLayout
 
 class AjustaEstoqueForm : VerticalLayout() {
   
-  val gridPanel = GridPanel(this)
+  private val gridPanel = GridPanel(this)
   val headerPanel = HeaderPanel(this)
   init {
     setSizeFull()

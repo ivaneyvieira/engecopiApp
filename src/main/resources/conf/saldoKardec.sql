@@ -73,7 +73,7 @@ create temporary table NFCupom
       X.prdno, X.grade, X.date, 'NF Cupom' as tipo,
       SUM(-X.price*100*X.qtty)/1000 as cost,
       SUM(-X.qtty) as quant, X.storeno, X.pdvno, X.xano
-    from xalog2 AS X
+    from sqldados.xalog2 AS X
       LEFT JOIN TXA USING(storeno, pdvno, xano)
       inner join sqlpdv.pxa AS P
       USING(storeno, pdvno, xano)

@@ -32,8 +32,6 @@ import com.vaadin.ui.themes.ValoTheme
 import de.steinwedel.messagebox.MessageBox
 
 class HeaderPanel(private val ajustaEstoqueForm: AjustaEstoqueForm): VerticalLayout() {
-  private lateinit var fornecedorNF: TextField
-  private lateinit var incluirNoras: CheckBox
   private lateinit var edtTipos: TextField
   private lateinit var edtFornecedores: TextField
   private lateinit var codigo: TextField
@@ -77,24 +75,10 @@ class HeaderPanel(private val ajustaEstoqueForm: AjustaEstoqueForm): VerticalLay
         this.setWidthFull()
         isExpanded = true
       }
-    }
-    this.horizontalLayout {
-      this.w = 100.perc
-      incluirNoras = checkBox("Incluir Notas") {
-        this.alignment = Alignment.BOTTOM_LEFT
-        this.isExpanded = false
-      }
-      fornecedorNF = textField("Fornecedor") {
-        this.isExpanded = false
-      }
-      horizontalLayout {
-        this.setWidthFull()
-        this.isExpanded = true
-      }
       button("Busca") {
         this.alignment = Alignment.BOTTOM_RIGHT
         this.isExpanded = false
-        
+
         onLeftClick(::clickBusca)
       }
       button("Executar") {
@@ -200,8 +184,6 @@ class HeaderPanel(private val ajustaEstoqueForm: AjustaEstoqueForm): VerticalLay
     codprd = codigo.value ?: "",
     fornecedores = edtFornecedores.value ?: "",
     tipos = edtTipos.value ?: "",
-    incluiNfFornecedor = incluirNoras.value ?: false,
-    fornecedorNf = fornecedorNF.value ?: "",
                         )
 }
 

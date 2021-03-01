@@ -13,7 +13,7 @@ import java.text.DecimalFormat
 
 class GridPainel : CssLayout() {
   val grid = grid(PedidoProduto::class, null,
-                  ListDataProvider<PedidoProduto>(emptyList())) {
+                  ListDataProvider(emptyList())) {
     setSizeFull()
 
     column(PedidoProduto::prdno) {

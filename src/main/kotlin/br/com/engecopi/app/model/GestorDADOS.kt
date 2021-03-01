@@ -1,7 +1,5 @@
 package br.com.engecopi.app.model
 
-import java.math.BigDecimal
-import java.math.RoundingMode.CEILING
 import java.sql.Connection
 import java.sql.SQLException
 import java.text.SimpleDateFormat
@@ -68,7 +66,8 @@ class GestorDADOS(val connection: Connection) {
         val rs1 = stmt1.resultSet
         return if (rs1.next()) {
             rs1.getInt("no")
-        } else 0
+        }
+        else 0
     }
 
     @Throws(Exception::class)
@@ -81,7 +80,8 @@ class GestorDADOS(val connection: Connection) {
         val rs1 = stmt1.resultSet
         return if (rs1.next()) {
             rs1.getInt("no")
-        } else 0
+        }
+        else 0
     }
 
     @Throws(Exception::class)
@@ -92,14 +92,12 @@ class GestorDADOS(val connection: Connection) {
 
         val colunaCusto = "     , ifnull(stk.cm_varejo,0) AS ultimocusto"
 
-        val colunaQtdNotas = when {
-            base.incluiNfFornecedor -> {
-                " 0 "
-            }
-            base.operacao == "entrada" -> {
+        val colunaQtdNotas = when (base.operacao) {
+            "entrada" -> {
                 " ifnull(y.qtty*1000,0) "
             }
-            else -> {
+
+            else      -> {
                 " ifnull(y.qtty*(-1000),0) "
             }
         }
@@ -115,24 +113,22 @@ class GestorDADOS(val connection: Connection) {
         sql1.append(" FROM stk  INNER JOIN prd on (stk.prdno = prd.no)  LEFT JOIN prp on (stk.prdno = prp.prdno AND                    stk.storeno = prp.storeno) LEFT JOIN prdloc on (prdloc.prdno = stk.prdno and                                   prdloc.grade = stk.grade) WHERE stk.storeno = ?  AND dereg&POW(2,2) <> POW(2,2) ")
         if (base.operacao == "entrada") {
             sql1.append(" AND (qtty_atacado > 0 )")
-        } else {
+        }
+        else {
             sql1.append(" AND (qtty_atacado < 0 )")
         }
         sql2.append(sql1.toString())
         sql2.append(" GROUP BY 1,2 ")
         sql2.append(" ) AS x")
         val sqlNotas0 =
-                " LEFT JOIN ( SELECT  xaprd.prdno        , xaprd.grade        , SUM(xaprd.qtty) qtty  FROM  nf  INNER JOIN xaprd ON (nf.storeno = xaprd.storeno AND  nf.pdvno = xaprd.pdvno AND  nf.xano = xaprd.xano)  INNER JOIN custp ON (custp.no = nf.custno)  INNER JOIN vend ON (custp.cpf_cgc = vend.cgc) LEFT  JOIN store ON (store.cgc = custp.cpf_cgc)  WHERE (nf.storeno = ? )  AND   (nf.nfse = '66')  AND   (nf.tipo = 2)  AND   (store.name IS NULL)  AND   (nf.cfo in (6949,5949))  AND   (nf.c1 <> '1')"
-        val sqlNotas1 = if (base.fornecedorNf != "") {
-            "$sqlNotas0 AND   (vend.no = ? ) "
-        } else sqlNotas0
+            " LEFT JOIN ( SELECT  xaprd.prdno        , xaprd.grade        , SUM(xaprd.qtty) qtty  FROM  nf  INNER JOIN xaprd ON (nf.storeno = xaprd.storeno AND  nf.pdvno = xaprd.pdvno AND  nf.xano = xaprd.xano)  INNER JOIN custp ON (custp.no = nf.custno)  INNER JOIN vend ON (custp.cpf_cgc = vend.cgc) LEFT  JOIN store ON (store.cgc = custp.cpf_cgc)  WHERE (nf.storeno = ? )  AND   (nf.nfse = '66')  AND   (nf.tipo = 2)  AND   (store.name IS NULL)  AND   (nf.cfo in (6949,5949))  AND   (nf.c1 <> '1')"
 
-        val sqlNotas = "$sqlNotas1 GROUP BY xaprd.prdno, xaprd.grade  ) y ON (x.prdno = y.prdno " +
+        val sqlNotas = "$sqlNotas0 GROUP BY xaprd.prdno, xaprd.grade  ) y ON (x.prdno = y.prdno " +
                 "and " +
                 "x.grade = y.grade) "
-        if (!base.incluiNfFornecedor) {
-            sql2.append(sqlNotas)
-        }
+
+        sql2.append(sqlNotas)
+
         sql2.append(" ) z ")
 
         sql1.append(" AND (ROUND(prd.no) = ? ) ")
@@ -143,9 +139,9 @@ class GestorDADOS(val connection: Connection) {
 
         sql1.append(" GROUP BY 1,2 ")
         sql1.append(" ) AS x")
-        if (!base.incluiNfFornecedor) {
-            sql1.append(sqlNotas)
-        }
+
+        sql1.append(sqlNotas)
+
         sql1.append(" ) z")
         val sql = sql1.toString()
 
@@ -157,18 +153,19 @@ class GestorDADOS(val connection: Connection) {
         val rs = stmt.resultSet
         while (rs.next()) {
             if (rs.findColumn("prdno") > 0) {
-                val prd = Produtos()
-                prd.prdno = rs.getString("prdno")
-                prd.grade = rs.getString("grade")
-                prd.descricao = rs.getString("descricao")
-                prd.fornecedor = rs.getLong("fornecedor")
-                prd.centrodelucro = rs.getString("centrodelucro")
-                prd.tipo = rs.getLong("tipo")
-                prd.qtdNfForn = rs.getBigDecimal("qttynfs").divide(BigDecimal("1000")).setScale(4, CEILING)
-                prd.qtdAtacado = rs.getBigDecimal("qttyatacado").divide(BigDecimal("1000")).setScale(4, CEILING)
-                prd.qtdConsiderada = rs.getBigDecimal("qttyconsiderada").divide(BigDecimal("1000")).setScale(4, CEILING)
-                prd.custo = rs.getBigDecimal("ultimocusto").divide(BigDecimal("10000")).setScale(4, CEILING)
-                prd.total = rs.getBigDecimal("total").divide(BigDecimal("10000")).setScale(4, CEILING)
+                val prd = Produtos(
+                        prdno = rs.getString("prdno"),
+                        grade = rs.getString("grade"),
+                        descricao = rs.getString("descricao"),
+                        fornecedor = rs.getLong("fornecedor"),
+                        centrodelucro = rs.getString("centrodelucro"),
+                        tipo = rs.getLong("tipo"),
+                        qtdNfForn = rs.getDouble("qttynfs"),
+                        qtdAtacado = rs.getDouble("qttyatacado"),
+                        qtdConsiderada = rs.getDouble("qttyconsiderada"),
+                        custo = rs.getDouble("ultimocusto"),
+                        total = rs.getDouble("total")
+                                  )
                 listagem.add(prd)
             }
         }
@@ -180,7 +177,8 @@ class GestorDADOS(val connection: Connection) {
     fun executar(base: Base): Int? {
         return if (base.operacao == "entrada") {
             gerarEntrada(base)
-        } else {
+        }
+        else {
             gerarSaida(base)
         }
     }
@@ -355,23 +353,23 @@ class GestorDADOS(val connection: Connection) {
         return try {
             cx.autoCommit = false
             val lista = listar(base)
-            var valorTotal = BigDecimal.ZERO
+            var valorTotal = 0.00
             lista.forEach { prd ->
                 val sql1 = StringBuilder()
                 val sql2 = StringBuilder()
 
-                var qtd = prd.qtdConsiderada ?: BigDecimal.ZERO
-                if (qtd < BigDecimal.ZERO) {
-                    qtd.multiply(BigDecimal(-1))
+                var qtd = prd.qtdConsiderada
+                if (qtd < 0) {
+                    -qtd
                 }
-                if (qtd.compareTo(BigDecimal.ZERO) != 0) {
+                if (qtd != 0.00) {
                     sql1.append("INSERT INTO stkmov (xano,qtty,date,cm_fiscal,cm_real,storeno,bits,prdno,grade,remarks)  values (?,?,?,?,?,?,?,?,?,?) ")
                     val stmt1 = cx.prepareStatement(sql1.toString())
                     stmt1.setInt(1, transacaoEstoque)
-                    stmt1.setInt(2, qtd.multiply(BigDecimal("1000")).toInt())
+                    stmt1.setInt(2, qtd.toInt())
                     stmt1.setInt(3, Integer.valueOf(sdf.format(Date())))
-                    stmt1.setLong(4, prd.custo!!.multiply(BigDecimal("10000")).toLong())
-                    stmt1.setLong(5, prd.custo!!.multiply(BigDecimal("10000")).toLong())
+                    stmt1.setLong(4, prd.custo.toLong())
+                    stmt1.setLong(5, prd.custo.toLong())
                     stmt1.setInt(6, base.lojaDestino)
                     stmt1.setInt(7, 1)
                     stmt1.setString(8, prd.prdno)
@@ -381,11 +379,11 @@ class GestorDADOS(val connection: Connection) {
                     sql2.append("INSERT INTO stkmovh (xano,qtty,date,nfno,cm_fiscal,cm_real,auxLong1,auxLong2,  auxLong3,auxLong4,auxLong5,auxMy1,auxMy2,auxMy3,auxMy4,auxMy5,storeno,userno,  tipo,bits,auxShort1,auxShort2,auxShort3,auxShort4,auxShort5,prdno,grade,nfse,  auxStr1,auxStr2,auxStr3,auxStr4)  values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)")
                     val stmt2 = cx.prepareStatement(sql2.toString())
                     stmt2.setInt(1, transacaoEstoque)
-                    stmt2.setInt(2, qtd.multiply(BigDecimal("1000")).toInt())
+                    stmt2.setInt(2, qtd.toInt())
                     stmt2.setInt(3, Integer.valueOf(sdf.format(Date())))
                     stmt2.setInt(4, 0)
-                    stmt2.setLong(5, prd.custo!!.multiply(BigDecimal("10000")).toLong())
-                    stmt2.setLong(6, prd.custo!!.multiply(BigDecimal("10000")).toLong())
+                    stmt2.setLong(5, prd.custo.toLong())
+                    stmt2.setLong(6, prd.custo.toLong())
                     stmt2.setInt(7, 0)
                     stmt2.setInt(8, 0)
                     stmt2.setInt(9, 0)
@@ -413,33 +411,35 @@ class GestorDADOS(val connection: Connection) {
                     stmt2.setInt(31, 0)
                     stmt2.setInt(32, 0)
                     stmt2.executeUpdate()
-                    qtd = if (qtd.toInt() > 0) qtd else qtd.multiply(BigDecimal(-1))
-                    valorTotal = valorTotal.add(qtd.multiply(prd.custo))
+                    qtd = if (qtd.toInt() > 0) qtd else -qtd
+                    valorTotal = valorTotal + (qtd * prd.custo)
                 }
             }
-            if (valorTotal > BigDecimal.ZERO) {
+            if (valorTotal > 0.00) {
                 val sql3 = StringBuilder()
-                sql3.append("INSERT INTO `nf` (`xano`, `nfno`, `custno`, `issuedate`, `delivdate`, `sec_amt`, `fre_amt`, `netamt`, `grossamt`, `discount`, `icms_amt`, `tax_paid`, `ipi_amt`, `base_calculo_ipi`, `iss_amt`, `base_iss_amt`, `isento_amt`, `subst_amt`, `baseIcmsSubst`, `icmsSubst`, `vol_no`, `vol_qtty`, `cfo`, `invno`, `cfo2`, `auxLong1`, `auxLong2`, `auxLong3`, `auxLong4`, `auxMy1`, `auxMy2`, `auxMy3`, `auxMy4`, `eordno`, `l1`, `l2`, `l3`, `l4`, `l5`, `l6`, `l7`, `l8`, `m1`, `m2`, `m3`, `m4`, `m5`, `m6`, `m7`, `m8`, `vol_gross`, `vol_net`, `mult`, `storeno`, `pdvno`, `carrno`, `empno`, `status`, `natopno`, `xatype`, `storeno_from`, `tipo`, `padbits`, `bits`, `usernoCancel`, `custno_addno`, `empnoDiscount`, `auxShort1`, `auxShort2`, `auxShort3`, `auxShort4`, `auxShort5`, `paymno`, `s1`, `s2`, `s3`, `s4`, `s5`, `s6`, `s7`, `s8`, `nfse`, `ship_by`, `vol_make`, `vol_kind`, `remarks`, `padbyte`, `print_remarks`, `remarksCancel`, `c1`, `c2`, `wshash`) VALUES ( ?,  ?,  ?,  ?,  ?,  0,  0,  ?,  ?,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  5949,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  ?,  0,  0,  1,  0,  7,  0,  0,  9,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  '66',  '',  '',  '',  ?,  '',  ?,  '',  '',  '',  ''); ")
+                sql3.append(
+                        "INSERT INTO `nf` (`xano`, `nfno`, `custno`, `issuedate`, `delivdate`, `sec_amt`, `fre_amt`, `netamt`, `grossamt`, `discount`, `icms_amt`, `tax_paid`, `ipi_amt`, `base_calculo_ipi`, `iss_amt`, `base_iss_amt`, `isento_amt`, `subst_amt`, `baseIcmsSubst`, `icmsSubst`, `vol_no`, `vol_qtty`, `cfo`, `invno`, `cfo2`, `auxLong1`, `auxLong2`, `auxLong3`, `auxLong4`, `auxMy1`, `auxMy2`, `auxMy3`, `auxMy4`, `eordno`, `l1`, `l2`, `l3`, `l4`, `l5`, `l6`, `l7`, `l8`, `m1`, `m2`, `m3`, `m4`, `m5`, `m6`, `m7`, `m8`, `vol_gross`, `vol_net`, `mult`, `storeno`, `pdvno`, `carrno`, `empno`, `status`, `natopno`, `xatype`, `storeno_from`, `tipo`, `padbits`, `bits`, `usernoCancel`, `custno_addno`, `empnoDiscount`, `auxShort1`, `auxShort2`, `auxShort3`, `auxShort4`, `auxShort5`, `paymno`, `s1`, `s2`, `s3`, `s4`, `s5`, `s6`, `s7`, `s8`, `nfse`, `ship_by`, `vol_make`, `vol_kind`, `remarks`, `padbyte`, `print_remarks`, `remarksCancel`, `c1`, `c2`, `wshash`) VALUES ( ?,  ?,  ?,  ?,  ?,  0,  0,  ?,  ?,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  5949,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  ?,  0,  0,  1,  0,  7,  0,  0,  9,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  '66',  '',  '',  '',  ?,  '',  ?,  '',  '',  '',  ''); "
+                           )
                 val stmt3 = cx.prepareStatement(sql3.toString())
                 stmt3.setInt(1, transacaoNF)
                 stmt3.setInt(2, numnf)
                 stmt3.setInt(3, cliente)
                 stmt3.setInt(4, Integer.valueOf(sdf.format(Date())))
                 stmt3.setInt(5, Integer.valueOf(sdf.format(Date())))
-                stmt3.setInt(6, valorTotal.multiply(BigDecimal(1)).toInt())
-                stmt3.setInt(7, valorTotal.multiply(BigDecimal(100)).toInt())
+                stmt3.setInt(6, valorTotal.toInt())
+                stmt3.setInt(7, valorTotal.toInt())
                 stmt3.setInt(8, base.lojaDestino)
                 stmt3.setString(9, transacaoEstoque.toString())
                 stmt3.setString(10, "CNF")
                 stmt3.executeUpdate()
                 lista.forEach { prd ->
                     val sql4 = StringBuilder()
-                    val qtd = prd.qtdConsiderada ?: BigDecimal.ZERO
+                    val qtd = prd.qtdConsiderada
                     sql4.append("INSERT INTO `xaprd` (`xano`, `nfno`, `price`, `date`, `qtty`, `storeno`, `pdvno`, `prdno`, `grade`, `nfse`, `padbyte`, `wshash`) VALUES ( ?,  ?,  ?,  ?,  ?,  ?,  0,  ?,  ?,  '66' ,  0,  ''); ")
                     val stmt4 = cx.prepareStatement(sql4.toString())
                     stmt4.setInt(1, transacaoNF)
                     stmt4.setInt(2, numnf)
-                    stmt4.setInt(3, prd.custo!!.multiply(BigDecimal(100)).toInt())
+                    stmt4.setInt(3, prd.custo.toInt())
                     stmt4.setInt(4, Integer.valueOf(sdf.format(Date())))
                     stmt4.setInt(5, if (qtd.toInt() > 0) qtd.toInt() else qtd.toInt() * -1)
                     stmt4.setInt(6, base.lojaDestino)
@@ -450,27 +450,22 @@ class GestorDADOS(val connection: Connection) {
                 lista.forEach { prd ->
                     val sql5 = StringBuilder()
 
-                    val qtd = prd.qtdConsiderada ?: BigDecimal.ZERO
+                    val qtd = prd.qtdConsiderada
                     sql5.append("UPDATE stk SET stk.qtty_varejo = (stk.qtty_varejo + ?),                 stk.qtty_atacado =  ?   WHERE ( stk.storeno = ? ) AND ( stk.prdno = ? ) AND ( stk.grade = ? ) ")
                     val stmt5 = cx.prepareStatement(sql5.toString())
-                    stmt5.setBigDecimal(1, qtd.multiply(BigDecimal(1000)))
-                    stmt5.setBigDecimal(2, prd.qtdNfForn!!.multiply(BigDecimal(1000)))
+                    stmt5.setDouble(1, qtd)
+                    stmt5.setDouble(2, prd.qtdNfForn)
                     stmt5.setInt(3, base.lojaDestino)
                     stmt5.setString(4, prd.prdno)
                     stmt5.setString(5, prd.grade)
                     stmt5.executeUpdate()
                 }
-                if (!base.incluiNfFornecedor) {
-                    val sql7 = StringBuilder()
-                    sql7.append("UPDATE nf  INNER JOIN custp ON (custp.no = nf.custno)  INNER JOIN vend ON (custp.cpf_cgc = vend.cgc)  LEFT  JOIN store ON (store.cgc = custp.cpf_cgc)  SET nf.c1 = '1'           WHERE (nf.storeno = ? )  AND   (nf.nfse = '66')  AND   (nf.tipo = 2)  AND   (store.name IS NULL)  AND   (nf.c1 <> '1')  AND   (nf.cfo in (6949,5949)) ")
-                    if (base.fornecedorNf != "") {
-                        sql7.append(" AND   (vend.no = ? ) ")
-                    }
+                val sql7 = StringBuilder()
+                sql7.append("UPDATE nf  INNER JOIN custp ON (custp.no = nf.custno)  INNER JOIN vend ON (custp.cpf_cgc = vend.cgc)  LEFT  JOIN store ON (store.cgc = custp.cpf_cgc)  SET nf.c1 = '1'           WHERE (nf.storeno = ? )  AND   (nf.nfse = '66')  AND   (nf.tipo = 2)  AND   (store.name IS NULL)  AND   (nf.c1 <> '1')  AND   (nf.cfo in (6949,5949)) ")
 
-                    val stmt7 = cx.prepareStatement(sql7.toString())
-                    stmt7.setInt(1, base.lojaDestino)
-                    stmt7.executeUpdate()
-                }
+                val stmt7 = cx.prepareStatement(sql7.toString())
+                stmt7.setInt(1, base.lojaDestino)
+                stmt7.executeUpdate()
             }
             numnf
         } catch (se: SQLException) {
@@ -496,22 +491,22 @@ class GestorDADOS(val connection: Connection) {
         return try {
             cx.autoCommit = false
             val lista = listar(base)
-            var valorTotal = BigDecimal.ZERO
+            var valorTotal = 0.00
             lista.forEach { prd ->
                 val sql1 = StringBuilder()
                 val sql2 = StringBuilder()
-                var qtd = prd.qtdConsiderada ?: BigDecimal.ZERO
-                if (qtd > BigDecimal.ZERO) {
-                    qtd.multiply(BigDecimal(-1))
+                var qtd = prd.qtdConsiderada
+                if (qtd > 0.0) {
+                    -qtd
                 }
-                if (qtd.compareTo(BigDecimal.ZERO) != 0) {
+                if (qtd != 0.00) {
                     sql1.append("INSERT INTO stkmov (xano,qtty,date,cm_fiscal,cm_real,storeno,bits,prdno,grade,remarks)  values (?,?,?,?,?,?,?,?,?,?) ")
                     val stmt1 = cx.prepareStatement(sql1.toString())
                     stmt1.setInt(1, transacaoEstoque)
-                    stmt1.setInt(2, qtd.multiply(BigDecimal("1000")).toInt())
+                    stmt1.setInt(2, qtd.toInt())
                     stmt1.setInt(3, Integer.valueOf(sdf.format(Date())))
-                    stmt1.setLong(4, prd.custo!!.multiply(BigDecimal("10000")).toLong())
-                    stmt1.setLong(5, prd.custo!!.multiply(BigDecimal("10000")).toLong())
+                    stmt1.setLong(4, prd.custo.toLong())
+                    stmt1.setLong(5, prd.custo.toLong())
                     stmt1.setInt(6, base.lojaDestino)
                     stmt1.setInt(7, 1)
                     stmt1.setString(8, prd.prdno)
@@ -521,11 +516,11 @@ class GestorDADOS(val connection: Connection) {
                     sql2.append("INSERT INTO stkmovh (xano,qtty,date,nfno,cm_fiscal,cm_real,auxLong1,auxLong2,  auxLong3,auxLong4,auxLong5,auxMy1,auxMy2,auxMy3,auxMy4,auxMy5,storeno,userno,  tipo,bits,auxShort1,auxShort2,auxShort3,auxShort4,auxShort5,prdno,grade,nfse,  auxStr1,auxStr2,auxStr3,auxStr4)  values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)")
                     val stmt2 = cx.prepareStatement(sql2.toString())
                     stmt2.setInt(1, transacaoEstoque)
-                    stmt2.setInt(2, qtd.multiply(BigDecimal("1000")).toInt())
+                    stmt2.setInt(2, qtd.toInt())
                     stmt2.setInt(3, Integer.valueOf(sdf.format(Date())))
                     stmt2.setInt(4, 0)
-                    stmt2.setLong(5, prd.custo!!.multiply(BigDecimal("10000")).toLong())
-                    stmt2.setLong(6, prd.custo!!.multiply(BigDecimal("10000")).toLong())
+                    stmt2.setLong(5, prd.custo.toLong())
+                    stmt2.setLong(6, prd.custo.toLong())
                     stmt2.setInt(7, 0)
                     stmt2.setInt(8, 0)
                     stmt2.setInt(9, 0)
@@ -553,20 +548,22 @@ class GestorDADOS(val connection: Connection) {
                     stmt2.setInt(31, 0)
                     stmt2.setInt(32, 0)
                     stmt2.executeUpdate()
-                    qtd = if (qtd.toInt() > 0) qtd else qtd.multiply(BigDecimal(-1))
-                    valorTotal = valorTotal.add(qtd.multiply(prd.custo))
+                    qtd = if (qtd.toInt() > 0) qtd else -qtd
+                    valorTotal = valorTotal + (qtd)
                 }
             }
-            if (valorTotal > BigDecimal.ZERO) {
+            if (valorTotal > 0.00) {
                 val sql3 = StringBuilder()
-                sql3.append("insert into inv (vendno,ordno,xfrno,issue_date,date,comp_date,ipi,  icm,freight,netamt,grossamt,subst_trib,discount,prdamt,despesas,  base_ipi,aliq,cfo,nfNfno,auxLong1,auxLong2,auxMoney1,auxMoney2,  dataSaida,amtServicos,amtIRRF,amtINSS,amtISS,auxMoney3,auxMoney4,  auxMoney5,auxLong3,auxLong4,auxLong5,auxLong6,auxLong7,auxLong8,  auxLong9,auxLong10,auxLong11,auxLong12,auxMoney6,auxMoney7,auxMoney8,  auxMoney9,auxMoney10,auxMoney11,auxMoney12,auxMoney13,l1,l2,l3,  l4,l5,l6,l7,l8,m1,m2,m3,m4,m5,m6,m7,m8,weight,carrno,  packages,storeno,indxno,book_bits,type,usernoFirst,usernoLast,  nfStoreno,bits,padbyte,auxShort1,auxShort2,auxShort3,auxShort4,  auxShort5,auxShort6,auxShort7,auxShort8,auxShort9,auxShort10,  auxShort11,auxShort12,auxShort13,auxShort14,bits2,bits3,bits4,  bits5,s1,s2,s3,s4,s5,s6,s7,s8,nfname,invse,account,  remarks,contaCredito,contaDebito,nfNfse,auxStr1,auxStr2,auxStr3,  auxStr4,auxStr5,auxStr6,c1,c2) values (?,0,0,?,?,?,0,0,0,0,?,0,0,?,0,0,0,1949,0,0,0,0,0,?,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,?,0,3,4,0,0,0,35,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,?,?,'2.01.20','','','','',?,?,'','','','','','') ")
+                sql3.append(
+                        "insert into inv (vendno,ordno,xfrno,issue_date,date,comp_date,ipi,  icm,freight,netamt,grossamt,subst_trib,discount,prdamt,despesas,  base_ipi,aliq,cfo,nfNfno,auxLong1,auxLong2,auxMoney1,auxMoney2,  dataSaida,amtServicos,amtIRRF,amtINSS,amtISS,auxMoney3,auxMoney4,  auxMoney5,auxLong3,auxLong4,auxLong5,auxLong6,auxLong7,auxLong8,  auxLong9,auxLong10,auxLong11,auxLong12,auxMoney6,auxMoney7,auxMoney8,  auxMoney9,auxMoney10,auxMoney11,auxMoney12,auxMoney13,l1,l2,l3,  l4,l5,l6,l7,l8,m1,m2,m3,m4,m5,m6,m7,m8,weight,carrno,  packages,storeno,indxno,book_bits,type,usernoFirst,usernoLast,  nfStoreno,bits,padbyte,auxShort1,auxShort2,auxShort3,auxShort4,  auxShort5,auxShort6,auxShort7,auxShort8,auxShort9,auxShort10,  auxShort11,auxShort12,auxShort13,auxShort14,bits2,bits3,bits4,  bits5,s1,s2,s3,s4,s5,s6,s7,s8,nfname,invse,account,  remarks,contaCredito,contaDebito,nfNfse,auxStr1,auxStr2,auxStr3,  auxStr4,auxStr5,auxStr6,c1,c2) values (?,0,0,?,?,?,0,0,0,0,?,0,0,?,0,0,0,1949,0,0,0,0,0,?,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,?,0,3,4,0,0,0,35,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,?,?,'2.01.20','','','','',?,?,'','','','','','') "
+                           )
                 val stmt3 = cx.prepareStatement(sql3.toString())
                 stmt3.setInt(1, fornecedor)
                 stmt3.setInt(2, Integer.valueOf(sdf.format(Date())))
                 stmt3.setInt(3, Integer.valueOf(sdf.format(Date())))
                 stmt3.setInt(4, Integer.valueOf(sdf.format(Date())))
-                stmt3.setInt(5, valorTotal.multiply(BigDecimal(100)).toInt())
-                stmt3.setInt(6, valorTotal.multiply(BigDecimal(100)).toInt())
+                stmt3.setInt(5, valorTotal.toInt())
+                stmt3.setInt(6, valorTotal.toInt())
                 stmt3.setInt(7, Integer.valueOf(sdf.format(Date())))
                 stmt3.setInt(8, base.lojaDestino)
                 stmt3.setString(9, numeroNF.toString())
@@ -578,14 +575,18 @@ class GestorDADOS(val connection: Connection) {
                 val i = 0
                 lista.forEach { prd ->
                     val sql5 = StringBuilder()
-                    val qtd = prd.qtdConsiderada ?: BigDecimal.ZERO
-                    sql5.append("INSERT INTO `iprd` (`invno`, `qtty`, `fob`, `cost`, `date`, `ipi`, `auxLong1`, `auxLong2`, `frete`, `seguro`, `despesas`, `freteIpi`, `qttyRessar`, `baseIcmsSubst`, `icmsSubst`, `icms`, `discount`, `fob4`, `cost4`, `icmsAliq`, `cfop`, `auxLong3`, `auxLong4`, `auxLong5`, `auxMy1`, `auxMy2`, `auxMy3`, `baseIcms`, `baseIpi`, `ipiAmt`, `reducaoBaseIcms`, `lucroTributado`, `l1`, `l2`, `l3`, `l4`, `l5`, `l6`, `l7`, `l8`, `m1`, `m2`, `m3`, `m4`, `m5`, `m6`, `m7`, `m8`, `storeno`, `bits`, `auxShort1`, `auxShort2`, `taxtype`, `auxShort3`, `auxShort4`, `auxShort5`, `seqno`, `bits2`, `bits3`, `bits4`, `s1`, `s2`, `s3`, `s4`, `s5`, `s6`, `s7`, `s8`, `prdno`, `grade`, `auxChar`, `auxChar2`, `cstIcms`, `cstIpi`, `c1`) VALUES (?,  ?,  ?,  ?,  ?,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1949,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  ?,  0,  0,  0,  0,  0,  0,  0,  ?,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  ?,  ?,  '',  '',  '090',  '',  '');")
+                    val qtd = prd.qtdConsiderada
+                    sql5.append(
+                            "INSERT INTO `iprd` (`invno`, `qtty`, `fob`, `cost`, `date`, `ipi`, `auxLong1`, `auxLong2`, `frete`, `seguro`, `despesas`, `freteIpi`, `qttyRessar`, `baseIcmsSubst`, `icmsSubst`, `icms`, `discount`, `fob4`, `cost4`, `icmsAliq`, `cfop`, `auxLong3`, `auxLong4`, `auxLong5`, `auxMy1`, `auxMy2`, `auxMy3`, `baseIcms`, `baseIpi`, `ipiAmt`, `reducaoBaseIcms`, `lucroTributado`, `l1`, `l2`, `l3`, `l4`, `l5`, `l6`, `l7`, `l8`, `m1`, `m2`, `m3`, `m4`, `m5`, `m6`, `m7`, `m8`, `storeno`, `bits`, `auxShort1`, `auxShort2`, `taxtype`, `auxShort3`, `auxShort4`, `auxShort5`, `seqno`, `bits2`, `bits3`, `bits4`, `s1`, `s2`, `s3`, `s4`, `s5`, `s6`, `s7`, `s8`, `prdno`, `grade`, `auxChar`, `auxChar2`, `cstIcms`, `cstIpi`, `c1`) VALUES (?,  ?,  ?,  ?,  ?,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1949,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  ?,  0,  0,  0,  0,  0,  0,  0,  ?,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  ?,  ?,  '',  '',  '090',  '',  '');"
+                               )
                     val stmt5 = cx.prepareStatement(sql5.toString())
                     stmt5.setInt(1, invno)
-                    stmt5.setInt(2, if (qtd.toInt() > 0) qtd.multiply(BigDecimal(1000)).toInt()
-                    else qtd.multiply(BigDecimal(-1000)).toInt())
-                    stmt5.setInt(3, prd.custo!!.multiply(BigDecimal(100)).toInt())
-                    stmt5.setInt(4, prd.custo!!.multiply(BigDecimal(100)).toInt())
+                    stmt5.setInt(
+                            2, if (qtd.toInt() > 0) qtd.toInt()
+                    else -qtd.toInt()
+                                )
+                    stmt5.setInt(3, prd.custo.toInt())
+                    stmt5.setInt(4, prd.custo.toInt())
                     stmt5.setInt(5, Integer.valueOf(sdf.format(Date())))
                     stmt5.setInt(6, base.lojaDestino)
                     stmt5.setInt(7, i)
@@ -595,27 +596,22 @@ class GestorDADOS(val connection: Connection) {
                 }
                 lista.forEach { prd ->
                     val sql6 = StringBuilder()
-                    val qtd = prd.qtdConsiderada ?: BigDecimal.ZERO
+                    val qtd = prd.qtdConsiderada
                     sql6.append("UPDATE stk SET stk.qtty_varejo = (stk.qtty_varejo + ? ),                 stk.qtty_atacado = ( ? )  WHERE ( stk.storeno = ? ) AND ( stk.prdno = ? ) AND ( stk.grade = ? ) ")
                     val stmt6 = cx.prepareStatement(sql6.toString())
-                    stmt6.setBigDecimal(1, qtd.multiply(BigDecimal(1000)))
-                    stmt6.setBigDecimal(2, prd.qtdNfForn!!.multiply(BigDecimal(1000)))
+                    stmt6.setDouble(1, qtd)
+                    stmt6.setDouble(2, prd.qtdNfForn)
                     stmt6.setInt(3, base.lojaDestino)
                     stmt6.setString(4, prd.prdno)
                     stmt6.setString(5, prd.grade)
                     stmt6.executeUpdate()
                 }
-                if (!base.incluiNfFornecedor) {
-                    val sql7 = StringBuilder()
-                    sql7.append("UPDATE nf  INNER JOIN custp ON (custp.no = nf.custno)  INNER JOIN vend ON (custp.cpf_cgc = vend.cgc)  LEFT  JOIN store ON (store.cgc = custp.cpf_cgc)  SET nf.c1 = '1'           WHERE (nf.storeno = ? )  AND   (nf.nfse = '66' )  AND   (nf.tipo = 2)  AND   (store.name IS NULL)  AND   (nf.c1 <> '1')  AND   (nf.cfo in (6949,5949)) ")
-                    if (base.fornecedorNf != "") {
-                        sql7.append(" AND   (vend.no = ? ) ")
-                    }
+                val sql7 = StringBuilder()
+                sql7.append("UPDATE nf  INNER JOIN custp ON (custp.no = nf.custno)  INNER JOIN vend ON (custp.cpf_cgc = vend.cgc)  LEFT  JOIN store ON (store.cgc = custp.cpf_cgc)  SET nf.c1 = '1'           WHERE (nf.storeno = ? )  AND   (nf.nfse = '66' )  AND   (nf.tipo = 2)  AND   (store.name IS NULL)  AND   (nf.c1 <> '1')  AND   (nf.cfo in (6949,5949)) ")
 
-                    val stmt7 = cx.prepareStatement(sql7.toString())
-                    stmt7.setInt(1, base.lojaDestino)
-                    stmt7.executeUpdate()
-                }
+                val stmt7 = cx.prepareStatement(sql7.toString())
+                stmt7.setInt(1, base.lojaDestino)
+                stmt7.executeUpdate()
             }
             numeroNF
         } catch (se: SQLException) {
@@ -631,7 +627,7 @@ class GestorDADOS(val connection: Connection) {
         }
     }
 
-    private fun getInvno( base: Base, numeroNF: Int, fornecedor: Int): Int {
+    private fun getInvno(base: Base, numeroNF: Int, fornecedor: Int): Int {
         val cx: Connection = connection
         val sql4 = StringBuilder()
         sql4.append("SELECT invno FROM inv WHERE storeno = ? and nfname = ? and vendno = ? and invse = 66 ")

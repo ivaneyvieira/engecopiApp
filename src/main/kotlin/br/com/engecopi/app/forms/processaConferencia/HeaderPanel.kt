@@ -149,7 +149,7 @@ class HeaderPanel(val form: ProcessaConferenciaForm): VerticalLayout() {
     }
   }
   
-  fun salvarNovo(codigo: String, grade: String, qtty: Int) {
+  private fun salvarNovo(codigo: String, grade: String, qtty: Int) {
     comboInventario.value?.let {inv ->
       if(!inv.processado()) {
         val loja: Int = inv.storeno ?: 0
@@ -264,7 +264,7 @@ class HeaderPanel(val form: ProcessaConferenciaForm): VerticalLayout() {
       emptyList()
     else
       ajustes
-    form.gridPanel.grid.dataProvider = ListDataProvider<AjusteInventario>(list)
+    form.gridPanel.grid.dataProvider = ListDataProvider(list)
     btnNovoProduto.isEnabled = inv.processado() == false
     btnProcessa.isEnabled = inv.processado() == false
     btnDesfaz.isEnabled = inv.processado() == true

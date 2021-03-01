@@ -24,8 +24,8 @@ class FiltroPanel: CssLayout() {
     bind(binder).bind(FiltroSaldoKardec::dataFinal)
     dateFormat = "dd/MM/yyyy"
   }
-  val filtro: FiltroSaldoKardec? = FiltroSaldoKardec()
-  val btnExcel = button("Gera Planilha") {
+  val filtro: FiltroSaldoKardec = FiltroSaldoKardec()
+  private val btnExcel = button("Gera Planilha") {
     isEnabled = false
     addClickListener {
       if(binder.writeBeanIfValid(filtro)) {
@@ -33,12 +33,10 @@ class FiltroPanel: CssLayout() {
       }
     }
   }
-  val btnProcessa = button("Processamento") {
-    addClickListener {_ ->
+  private val btnProcessa = button("Processamento") {
+    addClickListener {
       if(binder.writeBeanIfValid(filtro)) {
-        filtro?.let {
-          execFiltro(it)
-        }
+        execFiltro(filtro)
       }
     }
   }

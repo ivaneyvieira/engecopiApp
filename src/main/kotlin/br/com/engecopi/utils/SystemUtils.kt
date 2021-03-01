@@ -9,6 +9,7 @@ import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.io.InputStream
+import java.nio.charset.Charset
 import java.nio.file.Files
 import java.nio.file.Paths
 import javax.imageio.ImageIO
@@ -16,7 +17,7 @@ import javax.imageio.ImageIO
 object SystemUtils {
   private val enviroment = System.getenv()
   fun variable(`var`: String, def: String): String {
-    val envResult = SystemUtils.enviroment[`var`]
+    val envResult = enviroment[`var`]
     return if (envResult == null || envResult.trim { it <= ' ' } == "") {
       def
     } else envResult
@@ -87,7 +88,6 @@ object SystemUtils {
     val resource = SystemUtils::class.java.getResource(filename) ?: throw  exception
     val path = Paths.get(resource.toURI()) ?: throw  exception
     val encoded = Files.readAllBytes(path) ?: throw  exception
-    return String(encoded)
+    return String(encoded, Charset.defaultCharset())
   }
-  
 }

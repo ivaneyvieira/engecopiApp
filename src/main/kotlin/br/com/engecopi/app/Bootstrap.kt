@@ -18,14 +18,10 @@ class Bootstrap: ServletContextListener {
   }
   
   companion object { //private val log = LoggerFactory.getLogger(Bootstrap::class.java)
-    init { // let java.util.logging log to slf4j
-      //SLF4JBridgeHandler.removeHandlersForRootLogger()
-      // SLF4JBridgeHandler.install()
-    }
   }
 }
 
-@WebServlet(urlPatterns = arrayOf("/*"), name = "MyUIServlet", asyncSupported = true)
+@WebServlet(urlPatterns = ["/*"], name = "MyUIServlet", asyncSupported = true)
 @VaadinServletConfiguration(ui = EngecopiUI::class, productionMode = false)
 class MyUIServlet: VaadinServlet() //@ApplicationPath("/rest")
 //class ApplicationConfig : Application()
