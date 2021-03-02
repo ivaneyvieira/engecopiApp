@@ -1,7 +1,7 @@
 package br.com.engecopi.utils
 
 import java.io.FileInputStream
-import java.util.Properties
+import java.util.*
 
 class DB(banco: String) {
 

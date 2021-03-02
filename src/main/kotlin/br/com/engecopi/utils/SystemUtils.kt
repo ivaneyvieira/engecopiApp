@@ -20,9 +20,10 @@ object SystemUtils {
     val envResult = enviroment[`var`]
     return if (envResult == null || envResult.trim { it <= ' ' } == "") {
       def
-    } else envResult
+    }
+    else envResult
   }
-  
+
   fun resize(imagem: ByteArray?, width: Int, height: Int): ByteArray? {
     return try {
       if (imagem == null) return null
@@ -33,14 +34,14 @@ object SystemUtils {
       ByteArray(0)
     }
   }
-  
+
   @Throws(IOException::class)
   private fun toBufferedImage(imagem: ByteArray?): BufferedImage? {
     if (imagem == null) return null
     val `in` = ByteArrayInputStream(imagem)
     return ImageIO.read(`in`)
   }
-  
+
   @Throws(IOException::class)
   private fun toByteArray(image: BufferedImage): ByteArray? {
     val baos = ByteArrayOutputStream()
@@ -50,18 +51,19 @@ object SystemUtils {
     baos.close()
     return imageInByte
   }
-  
+
   fun md5(md5: String): String? {
     return DigestUtils.md5Hex(md5)
   }
-  
+
   fun getResourceAsStream(name: String?): InputStream? {
     var nameRet = name
     nameRet = resolveName(nameRet)
-    val cl = SystemUtils::class.java.classLoader ?: return ClassLoader.getSystemResourceAsStream(nameRet)
+    val cl =
+      SystemUtils::class.java.classLoader ?: return ClassLoader.getSystemResourceAsStream(nameRet)
     return cl.getResourceAsStream(nameRet)
   }
-  
+
   private fun resolveName(name: String?): String? {
     var nameRet = name
     if (nameRet == null) {
@@ -77,12 +79,13 @@ object SystemUtils {
       if (index != -1) {
         nameRet = baseName.substring(0, index).replace('.', '/') + "/" + nameRet
       }
-    } else {
+    }
+    else {
       nameRet = nameRet.substring(1)
     }
     return nameRet
   }
-  
+
   fun readFile(filename: String): String {
     val exception = Exception("Recurso não encontrado: $filename")
     val resource = SystemUtils::class.java.getResource(filename) ?: throw  exception

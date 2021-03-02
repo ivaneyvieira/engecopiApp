@@ -1,10 +1,6 @@
 package br.com.engecopi.app.forms.saldoKardec
 
-import com.github.mvysny.karibudsl.v8.isMargin
-import com.github.mvysny.karibudsl.v8.label
-import com.github.mvysny.karibudsl.v8.panel
-import com.github.mvysny.karibudsl.v8.progressBar
-import com.github.mvysny.karibudsl.v8.verticalLayout
+import com.github.mvysny.karibudsl.v8.*
 import com.vaadin.ui.CssLayout
 import com.vaadin.ui.Label
 import com.vaadin.ui.ProgressBar
@@ -35,6 +31,6 @@ class ProgressPanel : CssLayout() {
   fun update(caption: String, value: Float) {
     isVisible = caption != ""
     progressBar.value = value
-    progressCaption.value  = caption
+    progressCaption.value = caption
   }
 }

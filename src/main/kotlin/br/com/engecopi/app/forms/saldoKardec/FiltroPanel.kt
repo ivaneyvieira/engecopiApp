@@ -1,18 +1,12 @@
 package br.com.engecopi.app.forms.saldoKardec
 
 import br.com.engecopi.app.model.FiltroSaldoKardec
-import com.github.mvysny.karibudsl.v8.beanValidationBinder
-import com.github.mvysny.karibudsl.v8.bind
-import com.github.mvysny.karibudsl.v8.button
-import com.github.mvysny.karibudsl.v8.dateField
-import com.github.mvysny.karibudsl.v8.horizontalLayout
-import com.github.mvysny.karibudsl.v8.isMargin
-import com.github.mvysny.karibudsl.v8.panel
+import com.github.mvysny.karibudsl.v8.*
 import com.vaadin.ui.Alignment
 import com.vaadin.ui.CssLayout
 import com.vaadin.ui.themes.ValoTheme
 
-class FiltroPanel: CssLayout() {
+class FiltroPanel : CssLayout() {
   private val binder = beanValidationBinder<FiltroSaldoKardec>()
   lateinit var execExcel: () -> Unit
   lateinit var execFiltro: (FiltroSaldoKardec) -> Unit
@@ -28,19 +22,19 @@ class FiltroPanel: CssLayout() {
   private val btnExcel = button("Gera Planilha") {
     isEnabled = false
     addClickListener {
-      if(binder.writeBeanIfValid(filtro)) {
+      if (binder.writeBeanIfValid(filtro)) {
         execExcel()
       }
     }
   }
   private val btnProcessa = button("Processamento") {
     addClickListener {
-      if(binder.writeBeanIfValid(filtro)) {
+      if (binder.writeBeanIfValid(filtro)) {
         execFiltro(filtro)
       }
     }
   }
-  
+
   init {
     caption = "Filtro"
     setWidth("100%")

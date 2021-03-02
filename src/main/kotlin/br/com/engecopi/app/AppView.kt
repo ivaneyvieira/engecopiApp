@@ -4,21 +4,15 @@ import br.com.engecopi.app.forms.ajustaEstoque.AjustaEstoqueForm
 import br.com.engecopi.app.forms.processaConferencia.ProcessaConferenciaForm
 import br.com.engecopi.app.forms.processaPedido.PedidosMovForm
 import br.com.engecopi.app.forms.saldoKardec.SaldoKardecForm
-import com.github.mvysny.karibudsl.v8.AutoView
-import com.github.mvysny.karibudsl.v8.expandRatio
-import com.github.mvysny.karibudsl.v8.isMargin
-import com.github.mvysny.karibudsl.v8.label
-import com.github.mvysny.karibudsl.v8.panel
-import com.github.mvysny.karibudsl.v8.tabSheet
-import com.github.mvysny.karibudsl.v8.verticalLayout
+import com.github.mvysny.karibudsl.v8.*
 import com.vaadin.navigator.View
 import com.vaadin.navigator.ViewChangeListener
 import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.themes.ValoTheme
 
 @AutoView("")
-class AppView: VerticalLayout(), View {
-  
+class AppView : VerticalLayout(), View {
+
   init {
     setSizeFull()
     isMargin = false
@@ -31,12 +25,12 @@ class AppView: VerticalLayout(), View {
       addTab(SaldoKardecForm(), "Compara Saldo vs Kardec")
       addTab(ProcessaConferenciaForm(), "Conferência")
       expandRatio = 1f
-      addSelectedTabChangeListener {tab ->
+      addSelectedTabChangeListener { tab ->
         val tabKardec = tab.tabSheet.selectedTab as? SaldoKardecForm
         tabKardec?.updateDataFiltro()
       }
     }
-    
+
     panel {
       addStyleName(ValoTheme.PANEL_BORDERLESS)
       verticalLayout {
@@ -46,7 +40,7 @@ class AppView: VerticalLayout(), View {
       }
     }
   }
-  
+
   override fun enter(event: ViewChangeListener.ViewChangeEvent?) {
   }
 }

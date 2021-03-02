@@ -9,19 +9,19 @@ import javax.servlet.annotation.WebListener
 import javax.servlet.annotation.WebServlet
 
 @WebListener
-class Bootstrap: ServletContextListener {
+class Bootstrap : ServletContextListener {
   override fun contextInitialized(sce: ServletContextEvent?) {
     Locale.setDefault(Locale("pt", "BR"))
   }
-  
+
   override fun contextDestroyed(sce: ServletContextEvent?) {
   }
-  
+
   companion object { //private val log = LoggerFactory.getLogger(Bootstrap::class.java)
   }
 }
 
 @WebServlet(urlPatterns = ["/*"], name = "MyUIServlet", asyncSupported = true)
 @VaadinServletConfiguration(ui = EngecopiUI::class, productionMode = false)
-class MyUIServlet: VaadinServlet() //@ApplicationPath("/rest")
+class MyUIServlet : VaadinServlet() //@ApplicationPath("/rest")
 //class ApplicationConfig : Application()

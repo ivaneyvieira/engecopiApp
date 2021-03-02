@@ -12,8 +12,10 @@ import com.vaadin.ui.themes.ValoTheme
 import java.text.DecimalFormat
 
 class GridPanel : CssLayout() {
-  val grid = grid(SaldoKardec::class, null,
-                  ListDataProvider(emptyList())) {
+  val grid = grid(
+          SaldoKardec::class, null,
+          ListDataProvider(emptyList())
+                 ) {
     setSizeFull()
 
     column(SaldoKardec::codigo) {
@@ -50,9 +52,11 @@ class GridPanel : CssLayout() {
       setStyleGenerator { "v-align-right" }
     }
 
-    showColumns(SaldoKardec::codigo, SaldoKardec::grade, SaldoKardec::loja,
-                SaldoKardec::mes_ano, SaldoKardec::saldoEstoque, SaldoKardec::saldoKardec,
-                SaldoKardec::diferecenca)
+    showColumns(
+            SaldoKardec::codigo, SaldoKardec::grade, SaldoKardec::loja,
+            SaldoKardec::mes_ano, SaldoKardec::saldoEstoque, SaldoKardec::saldoKardec,
+            SaldoKardec::diferecenca
+               )
   }
 
   init {

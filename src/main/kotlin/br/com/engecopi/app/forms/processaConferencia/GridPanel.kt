@@ -15,7 +15,7 @@ import com.vaadin.ui.themes.ValoTheme
 import org.vaadin.viritin.fields.IntegerField
 import java.text.DecimalFormat
 
-class GridPanel(private val form: ProcessaConferenciaForm): CssLayout() {
+class GridPanel(private val form: ProcessaConferenciaForm) : CssLayout() {
   private val edtInv = IntegerField()
   val grid = grid(AjusteInventario::class, null, ListDataProvider(emptyList())) {
     setSizeFull()
@@ -44,7 +44,7 @@ class GridPanel(private val form: ProcessaConferenciaForm): CssLayout() {
     column(AjusteInventario::inventario) {
       expandRatio = 1
       setRenderer(NumberRenderer(DecimalFormat("0")))
-      setStyleGenerator {"v-align-right"}
+      setStyleGenerator { "v-align-right" }
       caption = "Inventario"
       editorBinding = invBinding
       this.isEditable = true
@@ -52,63 +52,65 @@ class GridPanel(private val form: ProcessaConferenciaForm): CssLayout() {
     column(AjusteInventario::saldo) {
       expandRatio = 1
       setRenderer(NumberRenderer(DecimalFormat("0")))
-      setStyleGenerator {"v-align-right"}
+      setStyleGenerator { "v-align-right" }
       caption = "Saldo"
     }
     column(AjusteInventario::qtty) {
       expandRatio = 1
       setRenderer(NumberRenderer(DecimalFormat("0")))
-      setStyleGenerator {"v-align-right"}
+      setStyleGenerator { "v-align-right" }
       caption = "Quantidade"
     }
-    
+
     column(AjusteInventario::cost) {
       expandRatio = 1
       setRenderer(NumberRenderer(DecimalFormat("0.0000")))
-      setStyleGenerator {"v-align-right"}
+      setStyleGenerator { "v-align-right" }
       caption = "Custo Real"
     }
     column(AjusteInventario::operador) {
       expandRatio = 1
       caption = "Operador"
     }
-    
-    
-    showColumns(AjusteInventario::barcode,
-                AjusteInventario::prdno,
-                AjusteInventario::descricao,
-                AjusteInventario::grade,
-                AjusteInventario::inventario,
-                AjusteInventario::saldo,
-                AjusteInventario::qtty,
-                AjusteInventario::cost,
-                AjusteInventario::operador)
-    val colBtn = addComponentColumn {ajuste ->
+
+
+    showColumns(
+            AjusteInventario::barcode,
+            AjusteInventario::prdno,
+            AjusteInventario::descricao,
+            AjusteInventario::grade,
+            AjusteInventario::inventario,
+            AjusteInventario::saldo,
+            AjusteInventario::qtty,
+            AjusteInventario::cost,
+            AjusteInventario::operador
+               )
+    val colBtn = addComponentColumn { ajuste ->
       val button = Button(VaadinIcons.TRASH)
       button.addStyleName(ValoTheme.BUTTON_SMALL)
       button.description = "Apaga a linha"
       button.addClickListener {
         saci.apagaAjuste(ajuste)
-        
+
         form.headerPanel.updateView(form.headerPanel.comboInventario.value)
       }
       button
     }
-    
-    colBtn.setStyleGenerator {"center"}
+
+    colBtn.setStyleGenerator { "center" }
     colBtn.expandRatio = 1
-    
+
     editor.isEnabled = true
     editor.saveCaption = "Salvar"
     editor.cancelCaption = "Cancelar"
-    editor.addSaveListener {edit ->
+    editor.addSaveListener { edit ->
       val ajuste = edit.bean
       saci.salvaAjuste(ajuste)
-      
+
       form.headerPanel.updateView(form.headerPanel.comboInventario.value)
     }
   }
-  
+
   init {
     caption = "Produtos"
     setSizeFull()

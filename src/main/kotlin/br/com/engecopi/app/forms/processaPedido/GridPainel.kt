@@ -12,8 +12,10 @@ import com.vaadin.ui.themes.ValoTheme
 import java.text.DecimalFormat
 
 class GridPainel : CssLayout() {
-  val grid = grid(PedidoProduto::class, null,
-                  ListDataProvider(emptyList())) {
+  val grid = grid(
+          PedidoProduto::class, null,
+          ListDataProvider(emptyList())
+                 ) {
     setSizeFull()
 
     column(PedidoProduto::prdno) {
@@ -45,8 +47,10 @@ class GridPainel : CssLayout() {
       expandRatio = 1
     }
 
-    showColumns(PedidoProduto::prdno, PedidoProduto::descricao, PedidoProduto::grade,
-                PedidoProduto::localizacao, PedidoProduto::quant, PedidoProduto::preco)
+    showColumns(
+            PedidoProduto::prdno, PedidoProduto::descricao, PedidoProduto::grade,
+            PedidoProduto::localizacao, PedidoProduto::quant, PedidoProduto::preco
+               )
   }
 
   init {
