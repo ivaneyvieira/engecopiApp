@@ -39,7 +39,7 @@ class QuerySaci : QueryDB(driver, url, username, password) {
   }
 
   fun processaPedidoSTKMOV(storeno: Int, numero: String, tipo: String, tipo_nota: Int) {
-    val sql = "/sql/processaPedido.sql"
+    val sql = if (tipo_nota == 9) "/sql/processaPedido.sql" else "/sql/processaPedidoNF.sql"
     execute(
       sql,
       Pair("storeno", "$storeno"),
@@ -49,20 +49,18 @@ class QuerySaci : QueryDB(driver, url, username, password) {
            )
   }
 
-  fun processaDevolucaoSTKMOV(storeno: Int, nfno: String, nfse: String) {
-    val sql = "/sql/processaDevolucao.sql"
+  fun processaDevolucaoSTKMOV(storeno: Int, nfno: String, nfse: String, tipo_nota: Int) {
+    val sql = if (tipo_nota == 9) "/sql/processaDevolucao.sql" else "/sql/processaDevolucaoNF.sql"
     execute(sql, Pair("storeno", "$storeno"), Pair("nfno", nfno), Pair("nfse", "'$nfse'"))
   }
 
-  fun desfazPedidoSTKMOV(storeno: Int, numero: String, tipo: String) {
-    val sql = "/sql/desfazPedido.sql"
-
+  fun desfazPedidoSTKMOV(storeno: Int, numero: String, tipo: String, tipo_nota: Int) {
+    val sql = if (tipo_nota == 9) "/sql/desfazPedido.sql" else "/sql/desfazPedidoNF.sql"
     execute(sql, Pair("storeno", "$storeno"), Pair("ordno", numero), Pair("tipo", "'$tipo'"))
   }
 
-  fun desfazDevolucaoSTKMOV(storeno: Int, nfno: String, nfse: String) {
-    val sql = "/sql/desfazDevolucao.sql"
-
+  fun desfazDevolucaoSTKMOV(storeno: Int, nfno: String, nfse: String, tipo_nota: Int) {
+    val sql = if(tipo_nota == 9) "/sql/desfazDevolucao.sql" else "/sql/desfazDevolucaoNF.sql"
     execute(sql, Pair("storeno", "$storeno"), Pair("nfno", nfno), Pair("nfse", "'$nfse'"))
   }
 

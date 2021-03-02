@@ -9,13 +9,15 @@ data class FiltroPedido(var tipoMov: TipoMov? = TipoMov.SAIDA,
                         var numPedido: String? = null)
 
 enum class TipoMov(val cod: String, val descricao: String, val icon: Resource) {
-  SAIDA("S", "Saída", VaadinIcons.OUTBOX), ENTRADA("E", "Entrada", VaadinIcons.INBOX)
+  SAIDA("S", "Saída", VaadinIcons.OUTBOX),
+  ENTRADA("E", "Entrada", VaadinIcons.INBOX)
 }
 
 enum class Loja(val numero: Int, val descricao: String) {
-  JS(1, "JS"), DS(2, "DS"), MR(3, "MR"), MF(4, "MF"), PK(5, "PK"),
-
-  //  FS(6, "FS"),
-  //  NS(7, "NF"),
+  JS(1, "JS"),
+  DS(2, "DS"),
+  MR(3, "MR"),
+  MF(4, "MF"),
+  PK(5, "PK"),
   AD(10, "ADM")
 }

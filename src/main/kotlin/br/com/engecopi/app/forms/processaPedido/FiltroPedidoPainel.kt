@@ -23,6 +23,7 @@ class FiltroPedidoPainel : CssLayout() {
   }
   val tipoNota = comboBox<Int>("Tipo Nota") {
     setItems(9, 7)
+    isEmptySelectionAllowed = false
     setItemCaptionGenerator {
       when (it) {
         7    -> "Garantia"

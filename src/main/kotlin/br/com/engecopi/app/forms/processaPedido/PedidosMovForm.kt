@@ -107,6 +107,7 @@ class PedidosMovForm : VerticalLayout() {
       val loja = filtro.loja?.numero ?: 0
       val numPedido = filtro.numPedido ?: ""
       val tipo = filtro.tipoMov?.cod ?: ""
+      val tipoNota = filtro.tipoNota
       val pedido = saci.pedidoNota(loja, numPedido)
       val nota = saci.pesquisaNotaSTKMOV(loja, numPedido, tipo)
       when (pedido) {
@@ -125,7 +126,7 @@ class PedidosMovForm : VerticalLayout() {
             }
 
             else                   -> {
-              desfaz(pedido, loja, numPedido, tipo)
+              desfaz(pedido, loja, numPedido, tipo, tipoNota)
             }
           }
           filtroPedidoPainel.execFiltro(filtro)
@@ -169,18 +170,18 @@ class PedidosMovForm : VerticalLayout() {
     if (pedido?.tipo == DEVOLUCAO) {
       val nfno = pedido.numeroPedido ?: ""
       val nfse = pedido.serie ?: ""
-      saci.processaDevolucaoSTKMOV(loja, nfno, nfse)
+      saci.processaDevolucaoSTKMOV(loja, nfno, nfse, tipoNota)
     }
     else saci.processaPedidoSTKMOV(loja, numPedido, tipo, tipoNota)
   }
 
-  private fun desfaz(pedido: Pedido?, loja: Int, numPedido: String, tipo: String) {
+  private fun desfaz(pedido: Pedido?, loja: Int, numPedido: String, tipo: String, tipoNota: Int) {
     if (pedido?.tipo == DEVOLUCAO) {
       val nfno = pedido.numeroPedido ?: ""
       val nfse = pedido.serie ?: ""
-      saci.desfazDevolucaoSTKMOV(loja, nfno, nfse)
+      saci.desfazDevolucaoSTKMOV(loja, nfno, nfse, tipoNota)
     }
-    else saci.desfazPedidoSTKMOV(loja, numPedido, tipo)
+    else saci.desfazPedidoSTKMOV(loja, numPedido, tipo, tipoNota)
   }
 
   companion object {
