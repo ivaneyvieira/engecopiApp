@@ -25,8 +25,8 @@ class FiltroPedidoPainel : CssLayout() {
     setItems(9, 7)
     setItemCaptionGenerator {
       when (it) {
-        7 -> "Garantia"
-        9 -> "Perda"
+        7    -> "Garantia"
+        9    -> "Perda"
         else -> ""
       }
     }
@@ -88,13 +88,7 @@ class FiltroPedidoPainel : CssLayout() {
         setWidth("100%")
         isMargin = true
         addComponents(
-                tipoMov,
-                tipoNota,
-                loja,
-                numPedido,
-                btnPesquisa,
-                btnProcessa,
-                btnDesfazProcessa
+          tipoMov, tipoNota, loja, numPedido, btnPesquisa, btnProcessa, btnDesfazProcessa
                      )
         setExpandRatio(numPedido, 1f)
         setComponentAlignment(btnProcessa, Alignment.BOTTOM_RIGHT)

@@ -43,17 +43,16 @@ class HeaderPanel(val form: ProcessaConferenciaForm) : VerticalLayout() {
     setWidth(btnW, PIXELS)
     addClickListener {
       comboInventario.value?.let { inv ->
-        if (inv.processado())
-          MessageBox.createWarning()
-            .withCaption("Aviso")
-            .withMessage("O ajuste já está processado!")
-            .open()
-        else
-          inv.numero?.let { numero ->
-            saci.processaAjuste(numero)
-            updateCombo(comboInventario)
-            updateView(inv)
-          }
+        if (inv.processado()) MessageBox
+          .createWarning()
+          .withCaption("Aviso")
+          .withMessage("O ajuste já está processado!")
+          .open()
+        else inv.numero?.let { numero ->
+          saci.processaAjuste(numero)
+          updateCombo(comboInventario)
+          updateView(inv)
+        }
       }
     }
   }
@@ -61,16 +60,15 @@ class HeaderPanel(val form: ProcessaConferenciaForm) : VerticalLayout() {
     setWidth(btnW, PIXELS)
     addClickListener {
       comboInventario.value?.let { inv ->
-        if (!inv.processado())
-          MessageBox.createWarning()
-            .withCaption("Aviso")
-            .withMessage("O ajuste não já está processado!")
-            .open()
-        else
-          inv.numero?.let { numero ->
-            saci.defazAjuste(numero)
-            updateView(inv)
-          }
+        if (!inv.processado()) MessageBox
+          .createWarning()
+          .withCaption("Aviso")
+          .withMessage("O ajuste não já está processado!")
+          .open()
+        else inv.numero?.let { numero ->
+          saci.defazAjuste(numero)
+          updateView(inv)
+        }
       }
     }
   }
@@ -80,9 +78,7 @@ class HeaderPanel(val form: ProcessaConferenciaForm) : VerticalLayout() {
       saci.novoAjuste()
       updateCombo(comboInventario)
 
-      comboInventario.value =
-        comboInventario.dataProvider.getAll()
-          .firstOrNull()
+      comboInventario.value = comboInventario.dataProvider.getAll().firstOrNull()
     }
   }
   private val btnAtualizaAjuste = Button("Atualiza ").apply {
@@ -123,20 +119,17 @@ class HeaderPanel(val form: ProcessaConferenciaForm) : VerticalLayout() {
         addStyleName(ValoTheme.TEXTFIELD_ALIGN_RIGHT)
       }
       val form = FormLayout(codigo, cmbGrade, quant)
-      MessageBox.create()
+      MessageBox
+        .create()
         .withCaption("Adicionar produto")
         .withMessage(form)
         .withNoButton(ButtonOption.caption("Cancelar"))
         .withYesButton(
-                {
-                  salvarNovo(
-                          codigo = codigo.value,
-                          grade = cmbGrade.value ?: "",
-                          qtty = quant.value
-                            )
-                },
-                ButtonOption.caption("Salvar"),
-                ButtonOption.focus()
+          {
+            salvarNovo(
+              codigo = codigo.value, grade = cmbGrade.value ?: "", qtty = quant.value
+                      )
+          }, ButtonOption.caption("Salvar"), ButtonOption.focus()
                       )
         .withWidth("380px")
         .open()
@@ -159,9 +152,7 @@ class HeaderPanel(val form: ProcessaConferenciaForm) : VerticalLayout() {
   }
 
   private val dataInicial = DateField("Data Inicial").apply {
-    value =
-      LocalDate.now()
-        .minusDays(60)
+    value = LocalDate.now().minusDays(60)
     dateFormat = "dd/MM/yyyy"
     addValueChangeListener { updateCombo(comboInventario) }
   }
@@ -194,14 +185,10 @@ class HeaderPanel(val form: ProcessaConferenciaForm) : VerticalLayout() {
 
   private fun updateCombo(combo: ComboBox<Inventario>) {
     val inventarios = inventarios().filter { inv ->
-      val dateInv =
-        inv.date
-          ?: 0
-      if (dateInv < dataSaci(dataInicial.value))
-        false
+      val dateInv = inv.date ?: 0
+      if (dateInv < dataSaci(dataInicial.value)) false
       else {
-        if (dateInv > dataSaci(dataFinal.value))
-          false
+        if (dateInv > dataSaci(dataFinal.value)) false
         else {
           when (comboTipo.value) {
             1    -> true
@@ -213,9 +200,7 @@ class HeaderPanel(val form: ProcessaConferenciaForm) : VerticalLayout() {
       }
     }
     val inv = combo.value
-    val value =
-      inventarios.find { it.numero == inv?.numero }
-        ?: inventarios.firstOrNull()
+    val value = inventarios.find { it.numero == inv?.numero } ?: inventarios.firstOrNull()
     combo.setItems(inventarios)
     value?.let { combo.setSelectedItem(it) }
   }
@@ -248,16 +233,13 @@ class HeaderPanel(val form: ProcessaConferenciaForm) : VerticalLayout() {
     nfEntrada.value = ""
     nfSaida.value = ""
     numLoja.value = ""
-    ajustes.firstOrNull()
-      ?.let { ajuste ->
+    ajustes.firstOrNull()?.let { ajuste ->
         nfEntrada.value = ajuste.nfEntrada + if (ajuste.nfEntrada.isNullOrBlank()) "" else "/66"
         nfSaida.value = ajuste.nfSaida + if (ajuste.nfSaida.isNullOrBlank()) "" else "/66"
         numLoja.value = "${ajuste.storeno}"
       }
-    val list: List<AjusteInventario> = if (comboInventario.value.processado())
-      emptyList()
-    else
-      ajustes
+    val list: List<AjusteInventario> = if (comboInventario.value.processado()) emptyList()
+    else ajustes
     form.gridPanel.grid.dataProvider = ListDataProvider(list)
     btnNovoProduto.isEnabled = inv.processado() == false
     btnProcessa.isEnabled = inv.processado() == false

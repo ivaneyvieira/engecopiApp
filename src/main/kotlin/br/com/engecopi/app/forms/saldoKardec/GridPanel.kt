@@ -13,8 +13,7 @@ import java.text.DecimalFormat
 
 class GridPanel : CssLayout() {
   val grid = grid(
-          SaldoKardec::class, null,
-          ListDataProvider(emptyList())
+    SaldoKardec::class, null, ListDataProvider(emptyList())
                  ) {
     setSizeFull()
 
@@ -53,9 +52,13 @@ class GridPanel : CssLayout() {
     }
 
     showColumns(
-            SaldoKardec::codigo, SaldoKardec::grade, SaldoKardec::loja,
-            SaldoKardec::mes_ano, SaldoKardec::saldoEstoque, SaldoKardec::saldoKardec,
-            SaldoKardec::diferecenca
+      SaldoKardec::codigo,
+      SaldoKardec::grade,
+      SaldoKardec::loja,
+      SaldoKardec::mes_ano,
+      SaldoKardec::saldoEstoque,
+      SaldoKardec::saldoKardec,
+      SaldoKardec::diferecenca
                )
   }
 

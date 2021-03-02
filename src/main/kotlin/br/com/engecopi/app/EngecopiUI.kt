@@ -29,9 +29,9 @@ class EngecopiUI : UI() {
     navigator.addProvider(autoViewProvider)
     setErrorHandler { e ->
       Notification(
-              "Oops",
-              "An error occurred, and we are really sorry about that. Already working on the fix!",
-              Notification.Type.ERROR_MESSAGE
+        "Oops",
+        "An error occurred, and we are really sorry about that. Already working on the fix!",
+        Notification.Type.ERROR_MESSAGE
                   ).apply {
         styleName = "${ValoTheme.NOTIFICATION_CLOSABLE} ${ValoTheme.NOTIFICATION_ERROR}"
         position = Position.TOP_CENTER

@@ -5,28 +5,22 @@ import br.com.engecopi.saci.saci
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-class Pedido(
-        val storeno: Int?,
-        val numero: String?,
-        val date: Date?,
-        val userno: Int?,
-        val username: String?,
-        val cpf_cgc: String?,
-        val cliente: String?,
-        val status: Int?,
-        val tipo: String?,
-        val storeno_custno: Int
-            ) {
+class Pedido(val storeno: Int?,
+             val numero: String?,
+             val date: Date?,
+             val userno: Int?,
+             val username: String?,
+             val cpf_cgc: String?,
+             val cliente: String?,
+             val status: Int?,
+             val tipo: String?,
+             val storeno_custno: Int) {
   val loja
-    get() =
-      Loja.values()
-        .firstOrNull { it.numero == storeno }
+    get() = Loja.values().firstOrNull { it.numero == storeno }
   val numeroPedido
-    get() = numero?.split("/")
-      ?.getOrNull(0)
+    get() = numero?.split("/")?.getOrNull(0)
   val serie
-    get() = numero?.split("/")
-      ?.getOrNull(1)
+    get() = numero?.split("/")?.getOrNull(1)
 
   fun notaFiscal(tipo: String): NotaFiscal? {
     return saci.pesquisaNotaSTKMOV(storeno, numeroPedido, tipo)
@@ -46,8 +40,7 @@ class Pedido(
     return days < 30
   }
 
-  fun isLojaValida(): Boolean {
-    //    return storeno == storeno_custno
+  fun isLojaValida(): Boolean { //    return storeno == storeno_custno
     return storeno == storeno
   }
 }

@@ -23,5 +23,5 @@ class Bootstrap : ServletContextListener {
 
 @WebServlet(urlPatterns = ["/*"], name = "MyUIServlet", asyncSupported = true)
 @VaadinServletConfiguration(ui = EngecopiUI::class, productionMode = false)
-class MyUIServlet : VaadinServlet() //@ApplicationPath("/rest")
-//class ApplicationConfig : Application()
+class MyUIServlet :
+  VaadinServlet() //@ApplicationPath("/rest") //class ApplicationConfig : Application()

@@ -71,17 +71,17 @@ class GridPanel(val ajustaEstoqueForm: AjustaEstoqueForm) : CssLayout() {
     }
 
     showColumns(
-            Produtos::prdno,
-            Produtos::grade,
-            Produtos::descricao,
-            Produtos::fornecedor,
-            Produtos::centrodelucro,
-            Produtos::tipo,
-            Produtos::qtdNfForn,
-            Produtos::qtdAtacado,
-            Produtos::qtdConsiderada,
-            Produtos::custo,
-            Produtos::total
+      Produtos::prdno,
+      Produtos::grade,
+      Produtos::descricao,
+      Produtos::fornecedor,
+      Produtos::centrodelucro,
+      Produtos::tipo,
+      Produtos::qtdNfForn,
+      Produtos::qtdAtacado,
+      Produtos::qtdConsiderada,
+      Produtos::custo,
+      Produtos::total
                )
   }
 

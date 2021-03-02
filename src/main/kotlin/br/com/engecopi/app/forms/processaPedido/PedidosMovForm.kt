@@ -165,35 +165,22 @@ class PedidosMovForm : VerticalLayout() {
     gridPainel.grid.dataProvider = ListDataProvider(produtos)
   }
 
-  private fun processa(
-          pedido: Pedido?,
-          loja: Int,
-          numPedido: String,
-          tipo: String,
-          tipoNota: Int
-                      ) {
+  private fun processa(pedido: Pedido?, loja: Int, numPedido: String, tipo: String, tipoNota: Int) {
     if (pedido?.tipo == DEVOLUCAO) {
       val nfno = pedido.numeroPedido ?: ""
       val nfse = pedido.serie ?: ""
       saci.processaDevolucaoSTKMOV(loja, nfno, nfse)
     }
-    else
-      saci.processaPedidoSTKMOV(loja, numPedido, tipo, tipoNota)
+    else saci.processaPedidoSTKMOV(loja, numPedido, tipo, tipoNota)
   }
 
-  private fun desfaz(
-          pedido: Pedido?,
-          loja: Int,
-          numPedido: String,
-          tipo: String
-                    ) {
+  private fun desfaz(pedido: Pedido?, loja: Int, numPedido: String, tipo: String) {
     if (pedido?.tipo == DEVOLUCAO) {
       val nfno = pedido.numeroPedido ?: ""
       val nfse = pedido.serie ?: ""
       saci.desfazDevolucaoSTKMOV(loja, nfno, nfse)
     }
-    else
-      saci.desfazPedidoSTKMOV(loja, numPedido, tipo)
+    else saci.desfazPedidoSTKMOV(loja, numPedido, tipo)
   }
 
   companion object {

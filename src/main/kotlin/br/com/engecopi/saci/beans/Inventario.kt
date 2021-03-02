@@ -2,11 +2,7 @@ package br.com.engecopi.saci.beans
 
 import br.com.engecopi.saci.saci
 
-class Inventario(
-        var numero: String?,
-        var date: Int?,
-        var storeno: Int?
-                ) {
+class Inventario(var numero: String?, var date: Int?, var storeno: Int?) {
   fun dataFormat(): String? {
     return date?.let {
       val dateStr = it.toString()

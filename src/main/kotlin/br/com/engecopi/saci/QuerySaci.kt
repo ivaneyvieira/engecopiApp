@@ -15,7 +15,10 @@ class QuerySaci : QueryDB(driver, url, username, password) {
     val num = numero.split("/").getOrNull(0) ?: ""
     val serie = numero.split("/").getOrNull(1) ?: ""
     return query(sql) { q ->
-      q.addParameter("storeno", storeno).addParameter("numero", num).addParameter("serie", serie)
+      q
+        .addParameter("storeno", storeno)
+        .addParameter("numero", num)
+        .addParameter("serie", serie)
         .executeAndFetchFirst(Pedido::class.java)
     }
   }
@@ -27,7 +30,10 @@ class QuerySaci : QueryDB(driver, url, username, password) {
     val num = numero.split("/").getOrNull(0) ?: ""
     val serie = numero.split("/").getOrNull(1) ?: ""
     return query(sql) { q ->
-      q.addParameter("storeno", storeno).addParameter("numero", num).addParameter("serie", serie)
+      q
+        .addParameter("storeno", storeno)
+        .addParameter("numero", num)
+        .addParameter("serie", serie)
         .executeAndFetch(PedidoProduto::class.java)
     }
   }
@@ -35,11 +41,11 @@ class QuerySaci : QueryDB(driver, url, username, password) {
   fun processaPedidoSTKMOV(storeno: Int, numero: String, tipo: String, tipo_nota: Int) {
     val sql = "/sql/processaPedido.sql"
     execute(
-            sql,
-            Pair("storeno", "$storeno"),
-            Pair("ordno", numero),
-            Pair("tipo", "'$tipo'"),
-            Pair("t_nota", "$tipo_nota")
+      sql,
+      Pair("storeno", "$storeno"),
+      Pair("ordno", numero),
+      Pair("tipo", "'$tipo'"),
+      Pair("t_nota", "$tipo_nota")
            )
   }
 
@@ -60,11 +66,9 @@ class QuerySaci : QueryDB(driver, url, username, password) {
     execute(sql, Pair("storeno", "$storeno"), Pair("nfno", nfno), Pair("nfse", "'$nfse'"))
   }
 
-  fun saldoKardec(
-          dataInicial: LocalDate,
-          dataFinal: LocalDate,
-          monitor: (String, Int, Int) -> Unit
-                 ) {
+  fun saldoKardec(dataInicial: LocalDate,
+                  dataFinal: LocalDate,
+                  monitor: (String, Int, Int) -> Unit) {
     val sql = "/sql/saldoKardec.sql"
     val sdf = DateTimeFormatter.ofPattern("yyyyMMdd")
     val di = dataInicial.format(sdf)
@@ -77,7 +81,10 @@ class QuerySaci : QueryDB(driver, url, username, password) {
     numero ?: return null
     val sql = "/sql/pesquisaNota.sql"
     return query(sql) { q ->
-      q.addParameter("storeno", storeno).addParameter("ordno", numero).addParameter("tipo", tipo)
+      q
+        .addParameter("storeno", storeno)
+        .addParameter("ordno", numero)
+        .addParameter("tipo", tipo)
         .executeAndFetchFirst(NotaFiscal::class.java)
     }
   }
@@ -123,10 +130,10 @@ class QuerySaci : QueryDB(driver, url, username, password) {
   fun apagaAjuste(ajuste: AjusteInventario) {
     val sql = "/sql/apaga Ajuste.sql"
     execute(
-            sql,
-            ("numero" to "'${ajuste.numero}'"),
-            ("prdno" to "'${ajuste.prdno.lpad(16, " ")}'"),
-            ("grade" to "'${ajuste.grade}'")
+      sql,
+      ("numero" to "'${ajuste.numero}'"),
+      ("prdno" to "'${ajuste.prdno.lpad(16, " ")}'"),
+      ("grade" to "'${ajuste.grade}'")
            )
   }
 
@@ -141,24 +148,24 @@ class QuerySaci : QueryDB(driver, url, username, password) {
   fun addProdutoAjuste(loja: Int, codigo: String, grade: String, nota: Int, qtty: Int, data: Int) {
     val sql = "/sql/addProdutoAjuste.sql"
     execute(
-            sql,
-            ("loja" to "$loja"),
-            ("codigo" to "'$codigo'"),
-            ("grade" to "'$grade'"),
-            ("nota" to "$nota"),
-            ("qtty" to "$qtty"),
-            ("data" to "$data")
+      sql,
+      ("loja" to "$loja"),
+      ("codigo" to "'$codigo'"),
+      ("grade" to "'$grade'"),
+      ("nota" to "$nota"),
+      ("qtty" to "$qtty"),
+      ("data" to "$data")
            )
   }
 
   fun salvaAjuste(ajuste: AjusteInventario) {
     val sql = "/sql/salvaAjuste.sql"
     execute(
-            sql,
-            ("numero" to "'${ajuste.numero}'"),
-            ("prdno" to "'${ajuste.prdno.lpad(16, " ")}'"),
-            ("grade" to "'${ajuste.grade}'"),
-            ("quant" to "${ajuste.inventario}")
+      sql,
+      ("numero" to "'${ajuste.numero}'"),
+      ("prdno" to "'${ajuste.prdno.lpad(16, " ")}'"),
+      ("grade" to "'${ajuste.grade}'"),
+      ("quant" to "${ajuste.inventario}")
            )
   }
 

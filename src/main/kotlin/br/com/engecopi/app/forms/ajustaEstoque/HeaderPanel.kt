@@ -103,12 +103,9 @@ class HeaderPanel(private val ajustaEstoqueForm: AjustaEstoqueForm) : VerticalLa
     }
     MessageBox.create().withCaption("Desfazer").withMessage(form).withYesButton({
       confirmaDesfazer(
-              edtLoja.value?.numero,
-              edtNota.value,
-              edtTipoMov.value
+        edtLoja.value?.numero, edtNota.value, edtTipoMov.value
                       )
-    })
-      .withNoButton({ println("No button was pressed.") }).open()
+    }).withNoButton({ println("No button was pressed.") }).open()
   }
 
   private fun confirmaDesfazer(numLoja: Int?, nota: String?, tipo: TipoMov?) {
@@ -128,8 +125,8 @@ class HeaderPanel(private val ajustaEstoqueForm: AjustaEstoqueForm) : VerticalLa
           ENTRADA -> saci.desfazerEntrada(numLoja, numNota)
         }
         show(
-                "Movimentacao referente a nota: $numNota da loja: $numLoja foi desfeita com sucesso!",
-                HUMANIZED_MESSAGE
+          "Movimentacao referente a nota: $numNota da loja: $numLoja foi desfeita com sucesso!",
+          HUMANIZED_MESSAGE
             )
       }
       else {
@@ -142,9 +139,13 @@ class HeaderPanel(private val ajustaEstoqueForm: AjustaEstoqueForm) : VerticalLa
   }
 
   private fun clickExecuta(clickEvent: Button.ClickEvent) {
-    MessageBox.createQuestion().withCaption("Alerta").withMessage("Tem Certeza?")
+    MessageBox
+      .createQuestion()
+      .withCaption("Alerta")
+      .withMessage("Tem Certeza?")
       .withYesButton(::confirmaExecuta)
-      .withNoButton({ println("No button was pressed.") }).open()
+      .withNoButton({ println("No button was pressed.") })
+      .open()
   }
 
   private fun confirmaExecuta() {
@@ -168,11 +169,11 @@ class HeaderPanel(private val ajustaEstoqueForm: AjustaEstoqueForm) : VerticalLa
   }
 
   fun baseDados() = Base(
-          lojaDestino = loja.value?.numero ?: 0,
-          operacao = tipoMov.value.operacao(),
-          codprd = codigo.value ?: "",
-          fornecedores = edtFornecedores.value ?: "",
-          tipos = edtTipos.value ?: "",
+    lojaDestino = loja.value?.numero ?: 0,
+    operacao = tipoMov.value.operacao(),
+    codprd = codigo.value ?: "",
+    fornecedores = edtFornecedores.value ?: "",
+    tipos = edtTipos.value ?: "",
                         )
 }
 
