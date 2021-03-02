@@ -170,7 +170,7 @@ class PedidosMovForm : VerticalLayout() {
     if (pedido?.tipo == DEVOLUCAO) {
       val nfno = pedido.numeroPedido ?: ""
       val nfse = pedido.serie ?: ""
-      saci.processaDevolucaoSTKMOV(loja, nfno, nfse, tipoNota)
+      saci.processaDevolucaoSTKMOV(loja, nfno, nfse, 7)
     }
     else saci.processaPedidoSTKMOV(loja, numPedido, tipo, tipoNota)
   }
@@ -179,7 +179,7 @@ class PedidosMovForm : VerticalLayout() {
     if (pedido?.tipo == DEVOLUCAO) {
       val nfno = pedido.numeroPedido ?: ""
       val nfse = pedido.serie ?: ""
-      saci.desfazDevolucaoSTKMOV(loja, nfno, nfse, tipoNota)
+      saci.desfazDevolucaoSTKMOV(loja, nfno, nfse, 7)
     }
     else saci.desfazPedidoSTKMOV(loja, numPedido, tipo, tipoNota)
   }
