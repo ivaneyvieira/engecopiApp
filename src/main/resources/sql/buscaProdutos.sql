@@ -51,15 +51,15 @@ SELECT P.prdno,
        IF(@OP = 'entrada', IFNULL(N.qtty * (1000), 0), IFNULL(N.qtty * (-1000), 0)) AS qttynfs,
        P.qttyatacado,
        P.ultimocusto
-FROM T_PRD            AS P
+FROM T_PRD           AS P
   LEFT JOIN T_PRD_NF AS N
-	       USING (prdno, grade);
+	      USING (prdno, grade);
 
 SELECT TRIM(prdno)                                                AS prdno,
        grade                                                      AS grade,
        IFNULL(descricao, '')                                      AS descricao,
        IFNULL(fornecedor, 0)                                      AS fornecedor,
-       IFNULL(centrodelucro, '')                                  AS centrodelucro,
+       CAST(IFNULL(centrodelucro, '') AS CHAR)                    AS centrodelucro,
        IFNULL(tipo, 0)                                            AS tipo,
        qttynfs / 1000                                             AS qtdNfForn,
        qttyatacado / 1000                                         AS qtdAtacado,
