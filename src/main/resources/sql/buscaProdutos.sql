@@ -58,7 +58,7 @@ FROM T_PRD            AS P
 SELECT TRIM(prdno)                                                AS prdno,
        grade                                                      AS grade,
        IFNULL(descricao, '')                                      AS descricao,
-       IFNULL(fornecedor, '')                                     AS fornecedor,
+       IFNULL(fornecedor, 0)                                      AS fornecedor,
        IFNULL(centrodelucro, '')                                  AS centrodelucro,
        IFNULL(tipo, 0)                                            AS tipo,
        qttynfs / 1000                                             AS qtdNfForn,
