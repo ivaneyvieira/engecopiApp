@@ -6,7 +6,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import javax.swing.JOptionPane
 
-class GestorDADOS(val connection: Connection) {
+private class GestorDADOS(val connection: Connection) {
   @Throws(Exception::class)
   fun pegaTransacao(): Int? {
     val cx = connection

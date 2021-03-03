@@ -1,7 +1,6 @@
 package br.com.engecopi.saci
 
 import br.com.engecopi.app.model.Base
-import br.com.engecopi.app.model.GestorDADOS
 import br.com.engecopi.app.model.Produtos
 import br.com.engecopi.saci.beans.*
 import br.com.engecopi.utils.DB
@@ -60,7 +59,7 @@ class QuerySaci : QueryDB(driver, url, username, password) {
   }
 
   fun desfazDevolucaoSTKMOV(storeno: Int, nfno: String, nfse: String, tipo_nota: Int) {
-    val sql = if(tipo_nota == 9) "/sql/desfazDevolucao.sql" else "/sql/desfazDevolucaoNF.sql"
+    val sql = if (tipo_nota == 9) "/sql/desfazDevolucao.sql" else "/sql/desfazDevolucaoNF.sql"
     execute(sql, Pair("storeno", "$storeno"), Pair("nfno", nfno), Pair("nfse", "'$nfse'"))
   }
 
@@ -174,13 +173,6 @@ class QuerySaci : QueryDB(driver, url, username, password) {
     }
   }
 
-  private fun <T> gestorDados(exec: (GestorDADOS) -> T): T {
-    return withConnection { con, _ ->
-      val dados = GestorDADOS(con.jdbcConnection)
-      exec(dados)
-    }
-  }
-
   fun buscaProdutos(base: Base): List<Produtos> {
     val sql = "/sql/buscaProdutos.sql"
     return query(sql, Produtos::class) {
@@ -192,24 +184,24 @@ class QuerySaci : QueryDB(driver, url, username, password) {
     }
   }
 
-  fun executar(base: Base): Int? = gestorDados { gestor ->
-    gestor.executar(base)
+  fun executar(base: Base): Int? {
+    return 0
   }
 
-  fun validarNfSaida(loja: Int, nota: Int) = gestorDados { gestor ->
-    gestor.validarNfSaida(loja, nota)
+  fun validarNfSaida(loja: Int, nota: Int): Boolean {
+    return false
   }
 
-  fun validarNfEntrada(loja: Int, nota: Int) = gestorDados { gestor ->
-    gestor.validarNfEntrada(loja, nota)
+  fun validarNfEntrada(loja: Int, nota: Int): Boolean {
+    return false
   }
 
-  fun desfazerSaida(loja: Int, nota: Int) = gestorDados { gestor ->
-    gestor.desfazerSaida(loja, nota)
+  fun desfazerSaida(loja: Int, nota: Int) {
+    TODO()
   }
 
-  fun desfazerEntrada(loja: Int, nota: Int) = gestorDados { gestor ->
-    gestor.desfazerEntrada(loja, nota)
+  fun desfazerEntrada(loja: Int, nota: Int) {
+    TODO()
   }
 
   companion object {

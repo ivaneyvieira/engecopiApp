@@ -134,6 +134,7 @@ class HeaderPanel(private val ajustaEstoqueForm: AjustaEstoqueForm) : VerticalLa
       }
     } catch (e: Exception) {
       val msgErro = "Não foi possível Listar os produtos! Erro:$e"
+      e.printStackTrace()
       show(msgErro, ERROR_MESSAGE)
     }
   }
@@ -154,6 +155,7 @@ class HeaderPanel(private val ajustaEstoqueForm: AjustaEstoqueForm) : VerticalLa
       show("Nota de movimentação gerada: $nota", HUMANIZED_MESSAGE)
     } catch (e: Exception) {
       val msgErro = "Não foi possível Listar os produtos! Erro:$e"
+      e.printStackTrace()
       show(msgErro, ERROR_MESSAGE)
     }
   }
@@ -164,6 +166,7 @@ class HeaderPanel(private val ajustaEstoqueForm: AjustaEstoqueForm) : VerticalLa
       ajustaEstoqueForm.setProdutos(produtos)
     } catch (e: Exception) {
       val msgErro = "Não foi possível Listar os produtos! Erro:$e"
+      e.printStackTrace()
       show(msgErro, ERROR_MESSAGE)
     }
   }
