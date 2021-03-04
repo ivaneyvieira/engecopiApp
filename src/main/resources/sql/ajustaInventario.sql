@@ -1,3 +1,4 @@
+DO @TIPO := :tipo;
 DO @XANO := :xano;
 DO @QTTD := :qttd;
 DO @DATA := CURRENT_DATE * 1;
@@ -5,6 +6,9 @@ DO @CUSTO := :custo;
 DO @LOJA := :loja;
 DO @PRDNO := LPAD(:prdno, 16, ' ');
 DO @GRADE := :grade;
+DO @YM := :ym;
+DO @DI := CONCAT(@YM, '01') * 1;
+DO @DF := CONCAT(@YM, '31') * 1;
 
 
 INSERT INTO stkmovh (xano, qtty, date, nfno, cm_fiscal, cm_real, auxLong1, auxLong2, auxLong3,
@@ -46,19 +50,13 @@ SELECT @XANO  AS xano,
        0      AS auxStr4
 FROM DUAL;
 
-INSERT INTO sqldados.stkmov(xano, qtty, date, cm_fiscal, cm_real, storeno, bits, prdno, grade,
-			    remarks)
-SELECT @XANO                     AS xano,
-       -@QTTD                    AS qtty,
-       @DATA                     AS date,
-       @CUSTO                    AS cm_fiscal,
-       @CUSTO                    AS cm_real,
-       @LOJA                     AS storeno,
-       1                         AS bits,
-       @PRDNO                    AS prdno,
-       @GRADE                    AS grade,
-       CONCAT('66:PED A', @XANO) AS remarks
-FROM DUAL;
+DELETE
+FROM sqldados.stkmov
+WHERE (storeno = @LOJA)
+  AND remarks LIKE CONCAT('%:PED ', @TIPO, '%')
+  AND (prdno = LPAD(@PRDNO, 16, ' '))
+  AND (grade = @GRADE)
+  AND date BETWEEN @DI AND @DF;
 
 UPDATE stk
 SET stk.qtty_atacado = (stk.qtty_atacado - @QTTD)

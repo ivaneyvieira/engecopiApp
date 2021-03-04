@@ -195,18 +195,25 @@ class QuerySaci : QueryDB(driver, url, username, password) {
   fun executar(base: Base) {
     val produto = buscaProdutos(base)
     val xano = xanoInventario()
-    val sql = "/sql/ajustaInventario.sql"
+    val tipo = if(base.operacao == "entrada") "E" else "S"
     produto.forEach { prd ->
-      execute(
-        sql,
-        ("xano" to "$xano"),
-        ("qttd" to "${(prd.qtdNfForn * 1000).toInt()}"),
-        ("custo" to "${(prd.custo * 10000).toInt()}"),
-        ("loja" to "${base.lojaDestino}"),
-        ("prdno" to "'${prd.prdno}'"),
-        ("grade" to "'${prd.grade}'")
-             )
+      processaProduto(xano, tipo, prd, base)
     }
+  }
+
+  private fun processaProduto(xano: Int, tipo: String, prd: Produtos, base: Base) {
+    val sql = "/sql/ajustaInventario.sql"
+    execute(
+      sql,
+      ("tipo" to "'$tipo'"),
+      ("xano" to "$xano"),
+      ("qttd" to "${(prd.qtdNfForn * 1000).toInt()}"),
+      ("custo" to "${(prd.custo * 10000).toInt()}"),
+      ("loja" to "${base.lojaDestino}"),
+      ("prdno" to "'${prd.prdno}'"),
+      ("grade" to "'${prd.grade}'"),
+      ("ym" to "'${base.mesAno}'"),
+           )
   }
 
   fun validarNfSaida(loja: Int, nota: Int): Boolean {
