@@ -3,6 +3,10 @@ DO @PR := :prdno;
 DO @VEND := :vends;
 DO @TYPE := :types;
 DO @OP := :operacao;
+DO @YM := :ym;
+DO @DI := CONCAT(@YM, '01') * 1;
+DO @DF := CONCAT(@YM, '31') * 1;
+
 
 DROP TEMPORARY TABLE IF EXISTS T_PRD_NF;
 CREATE TEMPORARY TABLE T_PRD_NF (
@@ -13,8 +17,9 @@ SELECT prdno,
        SUM(qtty / 1000) AS qtty
 FROM sqldados.stkmov
 WHERE (storeno = @LJ)
-  AND remarks LIKE '%:PED S%'
+  AND remarks LIKE '%:PED _%'
   AND (prdno = LPAD(@PR, 16, ' ') OR @PR = '')
+  AND date BETWEEN @DI AND @DF
 GROUP BY prdno, grade;
 
 DROP TEMPORARY TABLE IF EXISTS T_PRD;
@@ -48,12 +53,13 @@ SELECT P.prdno,
        P.fornecedor,
        P.centrodelucro,
        P.tipo,
-       IF(@OP = 'entrada', IFNULL(N.qtty * (1000), 0), IFNULL(N.qtty * (-1000), 0)) AS qttynfs,
+       IFNULL(N.qtty * 1000, 0) AS qttynfs,
        P.qttyatacado,
        P.ultimocusto
 FROM T_PRD           AS P
   LEFT JOIN T_PRD_NF AS N
-	      USING (prdno, grade);
+	      USING (prdno, grade)
+HAVING qttynfs <> 0;
 
 SELECT TRIM(prdno)                                                AS prdno,
        grade                                                      AS grade,

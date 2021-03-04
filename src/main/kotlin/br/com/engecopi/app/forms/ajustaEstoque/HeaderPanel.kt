@@ -6,6 +6,8 @@ import br.com.engecopi.app.model.TipoMov
 import br.com.engecopi.app.model.TipoMov.ENTRADA
 import br.com.engecopi.app.model.TipoMov.SAIDA
 import br.com.engecopi.saci.saci
+import br.com.engecopi.utils.lpad
+import br.com.engecopi.utils.rpad
 import com.github.mvysny.karibudsl.v8.*
 import com.vaadin.ui.*
 import com.vaadin.ui.Notification.Type.ERROR_MESSAGE
@@ -13,6 +15,8 @@ import com.vaadin.ui.Notification.Type.HUMANIZED_MESSAGE
 import com.vaadin.ui.Notification.show
 import com.vaadin.ui.themes.ValoTheme
 import de.steinwedel.messagebox.MessageBox
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 class HeaderPanel(private val ajustaEstoqueForm: AjustaEstoqueForm) : VerticalLayout() {
   private lateinit var edtTipos: TextField
@@ -20,6 +24,7 @@ class HeaderPanel(private val ajustaEstoqueForm: AjustaEstoqueForm) : VerticalLa
   private lateinit var codigo: TextField
   private lateinit var tipoMov: RadioButtonGroup<TipoMov>
   private lateinit var loja: ComboBox<Loja>
+  private lateinit var mesAno: TextField
 
   init {
     this.w = 100.perc
@@ -42,6 +47,11 @@ class HeaderPanel(private val ajustaEstoqueForm: AjustaEstoqueForm) : VerticalLa
         setItems(TipoMov.values().toList())
         setItemIconGenerator { it.icon }
         value = SAIDA
+        isExpanded = false
+      }
+      mesAno = textField("Mes/Ano"){
+        val formatter = DateTimeFormatter.ofPattern("MM/yyyy")
+        value = LocalDate.now().format(formatter)
         isExpanded = true
       }
     }
@@ -173,13 +183,17 @@ class HeaderPanel(private val ajustaEstoqueForm: AjustaEstoqueForm) : VerticalLa
 
   fun baseDados() = Base(
     lojaDestino = loja.value?.numero ?: 0,
-    operacao = tipoMov.value.operacao(),
-    codprd = codigo.value ?: "",
+    operacao = tipoMov.value.operacao,
+    codprd = codigo.value?.trim() ?: "",
     fornecedores = edtFornecedores.value ?: "",
     tipos = edtTipos.value ?: "",
+    mesAno = mesAno.value?.numMesAno() ?: 0
                         )
 }
 
-private fun TipoMov.operacao(): String {
-  return if (this == ENTRADA) "entrada" else "saida"
+private fun String.numMesAno(): Int {
+  val num = this.rpad(10, "0")
+  val strNum = num.substring(3, 7) + num.substring(0, 2)
+  return strNum.toIntOrNull() ?: 0
 }
+

@@ -181,19 +181,42 @@ class QuerySaci : QueryDB(driver, url, username, password) {
       addOptionalParameter("prdno", base.codprd)
       addOptionalParameter("vends", base.fornecedores)
       addOptionalParameter("types", base.tipos)
+      addOptionalParameter("ym", base.mesAno)
     }
   }
 
-  fun executar(base: Base): Int? {
-    return 0
+  fun xanoInventario(): Int {
+    val sql = "/sql/xanoInventario.sql"
+    return query(sql) { q ->
+      q.executeScalar(Int::class.java)
+    }
+  }
+
+  fun executar(base: Base) {
+    val produto = buscaProdutos(base)
+    val xano = xanoInventario()
+    val sql = "/sql/ajustaInventario.sql"
+    produto.forEach { prd ->
+      execute(
+        sql,
+        ("xano" to "$xano"),
+        ("qttd" to "${(prd.qtdNfForn * 1000).toInt()}"),
+        ("custo" to "${(prd.custo * 10000).toInt()}"),
+        ("loja" to "${base.lojaDestino}"),
+        ("prdno" to "'${prd.prdno}'"),
+        ("grade" to "'${prd.grade}'")
+             )
+    }
   }
 
   fun validarNfSaida(loja: Int, nota: Int): Boolean {
-    return false
+    val mov = pesquisaNotaSTKMOV(loja, nota.toString(), "S")
+    return mov != null
   }
 
   fun validarNfEntrada(loja: Int, nota: Int): Boolean {
-    return false
+    val mov = pesquisaNotaSTKMOV(loja, nota.toString(), "E")
+    return mov != null
   }
 
   fun desfazerSaida(loja: Int, nota: Int) {
