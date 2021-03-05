@@ -8,8 +8,10 @@ data class FiltroPedido(var tipoMov: TipoMov? = TipoMov.SAIDA,
                         var loja: Loja? = Loja.JS,
                         var numPedido: String? = null)
 
-enum class TipoMov(val cod: String, val descricao: String, val operacao: String, val icon:
-Resource) {
+enum class TipoMov(val cod: String,
+                   val descricao: String,
+                   val operacao: String,
+                   val icon: Resource) {
   SAIDA("S", "Saída", "saida", VaadinIcons.OUTBOX),
   ENTRADA("E", "Entrada", "entrada", VaadinIcons.INBOX)
 }

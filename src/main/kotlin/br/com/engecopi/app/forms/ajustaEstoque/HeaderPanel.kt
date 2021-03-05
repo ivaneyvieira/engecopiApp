@@ -6,7 +6,6 @@ import br.com.engecopi.app.model.TipoMov
 import br.com.engecopi.app.model.TipoMov.ENTRADA
 import br.com.engecopi.app.model.TipoMov.SAIDA
 import br.com.engecopi.saci.saci
-import br.com.engecopi.utils.lpad
 import br.com.engecopi.utils.rpad
 import com.github.mvysny.karibudsl.v8.*
 import com.vaadin.ui.*
@@ -49,7 +48,7 @@ class HeaderPanel(private val ajustaEstoqueForm: AjustaEstoqueForm) : VerticalLa
         value = SAIDA
         isExpanded = false
       }
-      mesAno = textField("Mes/Ano"){
+      mesAno = textField("Mes/Ano") {
         val formatter = DateTimeFormatter.ofPattern("MM/yyyy")
         value = LocalDate.now().format(formatter)
         isExpanded = true
@@ -183,7 +182,7 @@ class HeaderPanel(private val ajustaEstoqueForm: AjustaEstoqueForm) : VerticalLa
 
   fun baseDados() = Base(
     lojaDestino = loja.value?.numero ?: 0,
-    operacao = tipoMov.value.operacao,
+    operacao = tipoMov.value,
     codprd = codigo.value?.trim() ?: "",
     fornecedores = edtFornecedores.value ?: "",
     tipos = edtTipos.value ?: "",

@@ -1,5 +1,7 @@
 package br.com.engecopi.app.model
 
+import br.com.engecopi.app.model.TipoMov.ENTRADA
+import br.com.engecopi.app.model.TipoMov.SAIDA
 import java.sql.Connection
 import java.sql.SQLException
 import java.text.SimpleDateFormat
@@ -93,11 +95,11 @@ private class GestorDADOS(val connection: Connection) {
     val colunaCusto = "     , ifnull(stk.cm_varejo,0) AS ultimocusto"
 
     val colunaQtdNotas = when (base.operacao) {
-      "entrada" -> {
+      ENTRADA -> {
         " ifnull(y.qtty*1000,0) "
       }
 
-      else      -> {
+      SAIDA   -> {
         " ifnull(y.qtty*(-1000),0) "
       }
     }
@@ -111,11 +113,14 @@ private class GestorDADOS(val connection: Connection) {
     sql1.append(" SELECT stk.prdno AS prdno      , stk.grade AS grade      , prd.name AS descricao      , prd.mfno AS fornecedor      , LPAD(prd.clno,6,'0') AS centrodelucro      , prd.typeno AS tipo     , stk.qtty_atacado AS qttyatacado ")
     sql1.append(colunaCusto)
     sql1.append(" FROM stk  INNER JOIN prd on (stk.prdno = prd.no)  LEFT JOIN prp on (stk.prdno = prp.prdno AND                    stk.storeno = prp.storeno) LEFT JOIN prdloc on (prdloc.prdno = stk.prdno and                                   prdloc.grade = stk.grade) WHERE stk.storeno = ?  AND dereg&POW(2,2) <> POW(2,2) ")
-    if (base.operacao == "entrada") {
-      sql1.append(" AND (qtty_atacado > 0 )")
-    }
-    else {
-      sql1.append(" AND (qtty_atacado < 0 )")
+    when (base.operacao) {
+      ENTRADA -> {
+        sql1.append(" AND (qtty_atacado > 0 )")
+      }
+
+      SAIDA   -> {
+        sql1.append(" AND (qtty_atacado < 0 )")
+      }
     }
     sql2.append(sql1.toString())
     sql2.append(" GROUP BY 1,2 ")
@@ -174,11 +179,14 @@ private class GestorDADOS(val connection: Connection) {
 
   @Throws(Exception::class)
   fun executar(base: Base): Int? {
-    return if (base.operacao == "entrada") {
-      gerarEntrada(base)
-    }
-    else {
-      gerarSaida(base)
+    return when (base.operacao) {
+      ENTRADA -> {
+        gerarEntrada(base)
+      }
+
+      SAIDA   -> {
+        gerarSaida(base)
+      }
     }
   }
 

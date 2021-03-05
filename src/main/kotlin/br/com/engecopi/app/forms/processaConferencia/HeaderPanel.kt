@@ -234,10 +234,10 @@ class HeaderPanel(val form: ProcessaConferenciaForm) : VerticalLayout() {
     nfSaida.value = ""
     numLoja.value = ""
     ajustes.firstOrNull()?.let { ajuste ->
-        nfEntrada.value = ajuste.nfEntrada + if (ajuste.nfEntrada.isNullOrBlank()) "" else "/66"
-        nfSaida.value = ajuste.nfSaida + if (ajuste.nfSaida.isNullOrBlank()) "" else "/66"
-        numLoja.value = "${ajuste.storeno}"
-      }
+      nfEntrada.value = ajuste.nfEntrada + if (ajuste.nfEntrada.isNullOrBlank()) "" else "/66"
+      nfSaida.value = ajuste.nfSaida + if (ajuste.nfSaida.isNullOrBlank()) "" else "/66"
+      numLoja.value = "${ajuste.storeno}"
+    }
     val list: List<AjusteInventario> = if (comboInventario.value.processado()) emptyList()
     else ajustes
     form.gridPanel.grid.dataProvider = ListDataProvider(list)

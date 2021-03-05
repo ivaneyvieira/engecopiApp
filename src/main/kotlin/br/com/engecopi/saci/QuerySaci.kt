@@ -177,7 +177,7 @@ class QuerySaci : QueryDB(driver, url, username, password) {
     val sql = "/sql/buscaProdutos.sql"
     return query(sql, Produtos::class) {
       addOptionalParameter("loja", base.lojaDestino)
-      addOptionalParameter("operacao", base.operacao)
+      addOptionalParameter("operacao", base.operacao.operacao)
       addOptionalParameter("prdno", base.codprd)
       addOptionalParameter("vends", base.fornecedores)
       addOptionalParameter("types", base.tipos)
@@ -195,7 +195,7 @@ class QuerySaci : QueryDB(driver, url, username, password) {
   fun executar(base: Base) {
     val produto = buscaProdutos(base)
     val xano = xanoInventario()
-    val tipo = if(base.operacao == "entrada") "E" else "S"
+    val tipo = base.operacao.cod
     produto.forEach { prd ->
       processaProduto(xano, tipo, prd, base)
     }
