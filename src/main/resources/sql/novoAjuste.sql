@@ -1,13 +1,19 @@
 DO @ULTIMO := (SELECT CONCAT(MAX(barcode * 1))
-               FROM sqldados.coletor
-               WHERE usuario = 'NOTA');
+	       FROM sqldados.coletor
+	       WHERE usuario = 'NOTA');
 
 DO @ID := (SELECT MAX(id)
-           FROM sqldados.coletor);
+	   FROM sqldados.coletor);
 
 
 INSERT INTO sqldados.coletor (barcode, qtty, seq, date, usuario)
-SELECT CAST(barcode + 1 AS CHAR), 1, 1, current_date() * 1, 'NOTA'
+SELECT CAST(barcode + 1 AS CHAR),
+       1,
+       1,
+       CURRENT_DATE() * 1,
+       'NOTA'
 FROM sqldados.coletor
-WHERE barcode = @ULTIMO AND usuario = 'NOTA' AND id <> @ID
+WHERE barcode = @ULTIMO
+  AND usuario = 'NOTA'
+  AND id <> @ID
 GROUP BY barcode

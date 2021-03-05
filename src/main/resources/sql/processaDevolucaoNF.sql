@@ -53,7 +53,7 @@ WHERE longReserva2 <> T.ordno;
 
 UPDATE sqldados.stk INNER JOIN T USING (storeno, prdno, grade)
 SET qtty_atacado = qtty_atacado + @FATOR * T.qtty,
-    last_date    = current_date * 1
+    last_date    = CURRENT_DATE * 1
 WHERE longReserva2 <> T.ordno;
 
 UPDATE sqldados.stk INNER JOIN T USING (storeno, prdno, grade)
@@ -92,9 +92,9 @@ SELECT @INVNO                                             AS                    
        vendno,
        ordno,
        0                                                  AS                        xfrno,
-       current_date * 1                                   AS                        issue_date,
-       current_date * 1                                   AS                        date,
-       current_date * 1                                   AS                        comp_date,
+       CURRENT_DATE * 1                                   AS                        issue_date,
+       CURRENT_DATE * 1                                   AS                        date,
+       CURRENT_DATE * 1                                   AS                        comp_date,
        0                                                  AS                        ipi,
        0                                                  AS                        icm,
        0                                                  AS                        freight,
@@ -125,7 +125,7 @@ SELECT @INVNO                                             AS                    
        0                                                  AS                        auxLong5,
        0                                                  AS                        auxLong6,
        0                                                  AS                        auxLong7,
-       current_date * 1                                   AS                        auxLong8,
+       CURRENT_DATE * 1                                   AS                        auxLong8,
        0                                                  AS                        auxLong9,
        0                                                  AS                        auxLong10,
        0                                                  AS                        auxLong11,
@@ -143,7 +143,7 @@ SELECT @INVNO                                             AS                    
        0                                                  AS                        l3,
        0                                                  AS                        l4,
        0                                                  AS                        l5,
-       current_date * 1                                   AS                        l6,
+       CURRENT_DATE * 1                                   AS                        l6,
        0                                                  AS                        l7,
        0                                                  AS                        l8,
        0                                                  AS                        m1,
@@ -227,7 +227,7 @@ SELECT @INVNO           AS invno,
        qtty,
        cost             AS fob,
        cost,
-       current_date * 1 AS date,
+       CURRENT_DATE * 1 AS date,
        0                AS ipi,
        0                AS auxLong1,
        0                AS auxLong2,

@@ -57,7 +57,7 @@ class GridPanel(val ajustaEstoqueForm: AjustaEstoqueForm) : CssLayout() {
     }
 
     val footer = prependFooterRow()
-    
+
     this.addSelectionListener {
       val total = dataProvider.getAll().sumByDouble { it.total }
       footer.getCell(Produtos::total).text = total.format()

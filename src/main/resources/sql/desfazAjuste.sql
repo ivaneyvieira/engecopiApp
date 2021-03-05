@@ -5,13 +5,25 @@ DO @DOC := CONCAT('Ajustes ', @numero);
 
 DROP TABLE IF EXISTS T;
 CREATE TEMPORARY TABLE T
-SELECT @LOJA := storeno AS storeno, ordno, prdno, grade, qtty, cost, vendno, custno, 1 AS empno
+SELECT @LOJA := storeno AS storeno,
+       ordno,
+       prdno,
+       grade,
+       qtty,
+       cost,
+       vendno,
+       custno,
+       1                AS empno
 FROM sqldados.ajusteInventario
-WHERE numero = @numero AND (nfEntrada <> '' OR nfSaida <> '');
+WHERE numero = @numero
+  AND (nfEntrada <> '' OR nfSaida <> '');
 
 DROP TEMPORARY TABLE IF EXISTS TNotas;
 CREATE TEMPORARY TABLE TNotas
-SELECT DISTINCT storeno, nfEntrada, nfSaida, @SERIE AS serie
+SELECT DISTINCT storeno,
+		nfEntrada,
+		nfSaida,
+		@SERIE AS serie
 FROM sqldados.ajusteInventario
 WHERE numero = @numero;
 
@@ -20,18 +32,18 @@ SET longReserva1 = qtty_atacado;
 
 UPDATE sqldados.stk INNER JOIN T USING (storeno, prdno, grade)
 SET qtty_atacado = qtty_atacado - T.qtty,
-    last_date    = current_date * 1,
+    last_date    = CURRENT_DATE * 1,
     longReserva2 = 0;
 
 UPDATE sqldados.inv AS I INNER JOIN TNotas AS N ON I.nfname = N.nfEntrada AND I.invse = N.serie AND
-                                                   I.storeno = N.storeno
+						   I.storeno = N.storeno
 SET bits = bits | POW(2, 4);
 
 UPDATE sqldados.nf INNER JOIN TNotas AS N ON nf.nfno = N.nfSaida AND nf.nfse = N.serie AND
-                                             nf.storeno = N.storeno
+					     nf.storeno = N.storeno
 SET status = 1;
 
 UPDATE sqldados.ajusteInventario
 SET nfEntrada = '',
-    nfSaida = ''
+    nfSaida   = ''
 WHERE numero = @numero

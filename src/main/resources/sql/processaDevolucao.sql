@@ -69,13 +69,13 @@ DO @XANO := (SELECT MAX(xano) + 1
 
 INSERT INTO sqldados.stkmov(xano, qtty, date, cm_fiscal, cm_real, storeno, bits, prdno, grade,
 			    remarks)
-SELECT @XANO                                                             AS xano,
+SELECT @XANO                                                              AS xano,
        qtty,
-       CURRENT_DATE * 1                                                  AS date,
-       cost * 100                                                        AS cm_fiscal,
-       cost * 100                                                        AS cm_real,
+       CURRENT_DATE * 1                                                   AS date,
+       cost * 100                                                         AS cm_fiscal,
+       cost * 100                                                         AS cm_real,
        storeno,
-       1                                                                 AS bits,
+       1                                                                  AS bits,
        prdno,
        grade,
        CONCAT(CAST(CONCAT(@OBS, ' ',
