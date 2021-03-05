@@ -1,10 +1,8 @@
 package br.com.engecopi.app.forms.ajustaEstoque
 
 import br.com.engecopi.app.model.Produtos
-import com.github.mvysny.karibudsl.v8.column
-import com.github.mvysny.karibudsl.v8.grid
-import com.github.mvysny.karibudsl.v8.panel
-import com.github.mvysny.karibudsl.v8.showColumns
+import br.com.engecopi.utils.format
+import com.github.mvysny.karibudsl.v8.*
 import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.ui.CssLayout
 import com.vaadin.ui.renderers.NumberRenderer
@@ -40,22 +38,10 @@ class GridPanel(val ajustaEstoqueForm: AjustaEstoqueForm) : CssLayout() {
       caption = "Tipo"
     }
 
-    column(Produtos::qtdNfForn) {
-      setRenderer(NumberRenderer(DecimalFormat("0")))
-      setStyleGenerator { "v-align-right" }
-      caption = "Qtde Nfs"
-    }
-
     column(Produtos::qtdAtacado) {
       setRenderer(NumberRenderer(DecimalFormat("0")))
       setStyleGenerator { "v-align-right" }
       caption = "Qtde Atacado"
-    }
-
-    column(Produtos::qtdConsiderada) {
-      setRenderer(NumberRenderer(DecimalFormat("0")))
-      setStyleGenerator { "v-align-right" }
-      caption = "Qtde Considerada"
     }
 
     column(Produtos::custo) {
@@ -68,6 +54,13 @@ class GridPanel(val ajustaEstoqueForm: AjustaEstoqueForm) : CssLayout() {
       setRenderer(NumberRenderer(DecimalFormat("0.00")))
       setStyleGenerator { "v-align-right" }
       caption = "Total"
+    }
+
+    val footer = prependFooterRow()
+    
+    this.addSelectionListener {
+      val total = dataProvider.getAll().sumByDouble { it.total }
+      footer.getCell(Produtos::total).text = total.format()
     }
 
     showColumns(

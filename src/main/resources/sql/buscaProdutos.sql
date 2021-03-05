@@ -61,15 +61,15 @@ FROM T_PRD           AS P
 	      USING (prdno, grade)
 HAVING qttynfs <> 0;
 
-SELECT TRIM(prdno)                                                AS prdno,
-       grade                                                      AS grade,
-       IFNULL(descricao, '')                                      AS descricao,
-       IFNULL(fornecedor, 0)                                      AS fornecedor,
-       CAST(IFNULL(centrodelucro, '') AS CHAR)                    AS centrodelucro,
-       IFNULL(tipo, 0)                                            AS tipo,
-       qttynfs / 1000                                             AS qtdNfForn,
-       qttyatacado / 1000                                         AS qtdAtacado,
-       (qttyatacado - qttynfs) / 1000                             AS qtdConsiderada,
-       ultimocusto / 10000                                        AS custo,
-       (((qttyatacado - qttynfs) / 1000) * (ultimocusto / 10000)) AS total
+SELECT TRIM(prdno)                                  AS prdno,
+       grade                                        AS grade,
+       IFNULL(descricao, '')                        AS descricao,
+       IFNULL(fornecedor, 0)                        AS fornecedor,
+       CAST(IFNULL(centrodelucro, '') AS CHAR)      AS centrodelucro,
+       IFNULL(tipo, 0)                              AS tipo,
+       qttynfs / 1000                               AS qtdNfForn,
+       qttyatacado / 1000                           AS qtdAtacado,
+       (qttyatacado - qttynfs) / 1000               AS qtdConsiderada,
+       ultimocusto / 10000                          AS custo,
+       (qttyatacado / 1000) * (ultimocusto / 10000) AS total
 FROM T

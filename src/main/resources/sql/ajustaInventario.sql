@@ -59,7 +59,8 @@ WHERE (storeno = @LOJA)
   AND date BETWEEN @DI AND @DF;
 
 UPDATE stk
-SET stk.qtty_atacado = (stk.qtty_atacado - @QTTD)
+SET stk.qtty_atacado = (stk.qtty_atacado - @QTTD),
+    stk.qtty_varejo  = (stk.qtty_varejo + @QTTD)
 WHERE (stk.storeno = @LOJA)
   AND (stk.prdno = @PRDNO)
   AND (stk.grade = @GRADE)
