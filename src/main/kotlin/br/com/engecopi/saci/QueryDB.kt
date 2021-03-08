@@ -22,11 +22,16 @@ open class QueryDB(private val driver: String,
 
   init {
     registerDriver(driver)
+    val maps = mapConverter()
+    this.sql2o = Sql2o(url, username, password, NoQuirks(maps))
+  }
+
+  open fun mapConverter(): Map<Class<*>, Converter<*>> {
     val maps = HashMap<Class<*>, Converter<*>>()
     maps[LocalDate::class.java] = LocalDateConverter()
     maps[LocalTime::class.java] = LocalSqlTimeConverter()
     maps[ByteArray::class.java] = ByteArrayConverter()
-    this.sql2o = Sql2o(url, username, password, NoQuirks(maps))
+    return maps
   }
 
   fun <V> withConnection(runnable: StatementRunnableWithResult): V = sql2o.withConnection(runnable)

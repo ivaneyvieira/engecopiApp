@@ -70,9 +70,7 @@ class GridPanel(val ajustaEstoqueForm: AjustaEstoqueForm) : CssLayout() {
       Produtos::fornecedor,
       Produtos::centrodelucro,
       Produtos::tipo,
-      Produtos::qtdNfForn,
       Produtos::qtdAtacado,
-      Produtos::qtdConsiderada,
       Produtos::custo,
       Produtos::total
                )

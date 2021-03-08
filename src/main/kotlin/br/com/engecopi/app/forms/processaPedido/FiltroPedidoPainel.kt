@@ -3,8 +3,11 @@ package br.com.engecopi.app.forms.processaPedido
 import br.com.engecopi.app.model.FiltroPedido
 import br.com.engecopi.app.model.Loja
 import br.com.engecopi.app.model.TipoMov
+import br.com.engecopi.app.model.TipoNota
+import br.com.engecopi.app.model.TipoNota.GARANTIA
+import br.com.engecopi.app.model.TipoNota.PERDA
 import com.github.mvysny.karibudsl.v8.*
-import com.vaadin.ui.Alignment
+import com.vaadin.ui.Alignment.BOTTOM_RIGHT
 import com.vaadin.ui.CssLayout
 import com.vaadin.ui.themes.ValoTheme
 
@@ -21,18 +24,18 @@ class FiltroPedidoPainel : CssLayout() {
     setItemIconGenerator { it.icon }
     bind(binderFiltroPedido).bind(FiltroPedido::tipoMov)
   }
-  val tipoNota = comboBox<Int>("Tipo Nota") {
-    setItems(9, 7)
+  val tipoNota = comboBox<TipoNota>("Tipo Nota") {
+    setItems(TipoNota.values().toList().sortedBy { it.numero })
     isEmptySelectionAllowed = false
     setItemCaptionGenerator {
       when (it) {
-        7    -> "Garantia"
-        9    -> "Perda"
-        else -> ""
+        GARANTIA -> "Garantia"
+        PERDA    -> "Perda"
+        else     -> ""
       }
     }
     setWidth("120px")
-    value = 9
+    value = PERDA
     bind(binderFiltroPedido).bind(FiltroPedido::tipoNota)
   }
   val loja = comboBox<Loja>("Loja") {
@@ -61,21 +64,19 @@ class FiltroPedidoPainel : CssLayout() {
   }
   private val btnProcessa = button("Processamento") {
     addClickListener {
-      if (binderFiltroPedido.writeBeanIfValid(filtroPedido)) {
-        filtroPedido?.let {
-          execProcessa(it)
-          binderFiltroPedido.readBean(it)
-        }
+      val filtro = filtroPedido ?: return@addClickListener
+      if (binderFiltroPedido.writeBeanIfValid(filtro)) {
+        execProcessa(filtro)
+        binderFiltroPedido.readBean(filtro)
       }
     }
   }
   private val btnDesfazProcessa = button("Desfaz") {
     addClickListener {
-      if (binderFiltroPedido.writeBeanIfValid(filtroPedido)) {
-        filtroPedido?.let {
-          desfazProcessa(it)
-          binderFiltroPedido.readBean(it)
-        }
+      val filtro = filtroPedido ?: return@addClickListener
+      if (binderFiltroPedido.writeBeanIfValid(filtro)) {
+        desfazProcessa(filtro)
+        binderFiltroPedido.readBean(filtro)
       }
     }
   }
@@ -92,9 +93,9 @@ class FiltroPedidoPainel : CssLayout() {
           tipoMov, tipoNota, loja, numPedido, btnPesquisa, btnProcessa, btnDesfazProcessa
                      )
         setExpandRatio(numPedido, 1f)
-        setComponentAlignment(btnProcessa, Alignment.BOTTOM_RIGHT)
-        setComponentAlignment(btnPesquisa, Alignment.BOTTOM_RIGHT)
-        setComponentAlignment(btnDesfazProcessa, Alignment.BOTTOM_RIGHT)
+        setComponentAlignment(btnProcessa, BOTTOM_RIGHT)
+        setComponentAlignment(btnPesquisa, BOTTOM_RIGHT)
+        setComponentAlignment(btnDesfazProcessa, BOTTOM_RIGHT)
       }
     }
     binderFiltroPedido.readBean(filtroPedido)

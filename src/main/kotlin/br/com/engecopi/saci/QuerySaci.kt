@@ -1,21 +1,38 @@
 package br.com.engecopi.saci
 
-import br.com.engecopi.app.model.Base
-import br.com.engecopi.app.model.Produtos
+import br.com.engecopi.app.model.*
+import br.com.engecopi.app.model.TipoMov.ENTRADA
+import br.com.engecopi.app.model.TipoMov.SAIDA
+import br.com.engecopi.app.model.TipoNota.GARANTIA
+import br.com.engecopi.app.model.TipoNota.PERDA
 import br.com.engecopi.saci.beans.*
 import br.com.engecopi.utils.DB
 import br.com.engecopi.utils.lpad
+import org.sql2o.converters.Converter
+import org.sql2o.converters.ConverterException
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 class QuerySaci : QueryDB(driver, url, username, password) {
-  fun pedidoNota(storeno: Int, numero: String): Pedido? {
+
+  override fun mapConverter(): Map<Class<*>, Converter<*>> {
+    val map = super.mapConverter()
+    val mapSaci = HashMap<Class<*>, Converter<*>>()
+    mapSaci.putAll(map)
+    mapSaci[StatusPedido::class.java] = StatusPedidoConverter()
+    mapSaci[TipoPedido::class.java] = TipoPedidoConverter()
+    return mapSaci
+  }
+
+  fun pedidoNota(loja: Loja?, numero: String?): Pedido? {
+    loja ?: return null
+    numero ?: return null
     val sql = "/sql/pedido.sql"
     val num = numero.split("/").getOrNull(0) ?: ""
     val serie = numero.split("/").getOrNull(1) ?: ""
     return query(sql) { q ->
       q
-        .addParameter("storeno", storeno)
+        .addParameter("storeno", loja.numero)
         .addParameter("numero", num)
         .addParameter("serie", serie)
         .executeAndFetchFirst(Pedido::class.java)
@@ -37,29 +54,36 @@ class QuerySaci : QueryDB(driver, url, username, password) {
     }
   }
 
-  fun processaPedidoSTKMOV(storeno: Int, numero: String, tipo: String, tipo_nota: Int) {
-    val sql = if (tipo_nota == 9) "/sql/processaPedido.sql" else "/sql/processaPedidoNF.sql"
+  fun processaPedidoSTKMOV(loja: Loja?, numero: String, tipoMov: TipoMov?, tipoNota: TipoNota?) {
+    val tipo = tipoMov?.cod ?: return
+    val storeno = loja?.numero ?: return
+    val sql = if (tipoNota == PERDA) "/sql/processaPedido.sql" else "/sql/processaPedidoNF.sql"
     execute(
       sql,
       Pair("storeno", "$storeno"),
       Pair("ordno", numero),
       Pair("tipo", "'$tipo'"),
-      Pair("t_nota", "$tipo_nota")
+      Pair("t_nota", "${tipoNota?.numero ?: 0}")
            )
   }
 
-  fun processaDevolucaoSTKMOV(storeno: Int, nfno: String, nfse: String, tipo_nota: Int) {
-    val sql = if (tipo_nota == 9) "/sql/processaDevolucao.sql" else "/sql/processaDevolucaoNF.sql"
+  fun processaDevolucaoSTKMOV(loja: Loja?, nfno: String, nfse: String, tipoNota: TipoNota) {
+    val storeno = loja?.numero ?: return
+    val sql =
+      if (tipoNota == PERDA) "/sql/processaDevolucao.sql" else "/sql/processaDevolucaoNF.sql"
     execute(sql, Pair("storeno", "$storeno"), Pair("nfno", nfno), Pair("nfse", "'$nfse'"))
   }
 
-  fun desfazPedidoSTKMOV(storeno: Int, numero: String, tipo: String, tipo_nota: Int) {
-    val sql = if (tipo_nota == 9) "/sql/desfazPedido.sql" else "/sql/desfazPedidoNF.sql"
+  fun desfazPedidoSTKMOV(loja: Loja?, numero: String, tipoMov: TipoMov?, tipoNota: TipoNota?) {
+    val tipo = tipoMov?.cod ?: return
+    val storeno = loja?.numero ?: return
+    val sql = if (tipoNota == PERDA) "/sql/desfazPedido.sql" else "/sql/desfazPedidoNF.sql"
     execute(sql, Pair("storeno", "$storeno"), Pair("ordno", numero), Pair("tipo", "'$tipo'"))
   }
 
-  fun desfazDevolucaoSTKMOV(storeno: Int, nfno: String, nfse: String, tipo_nota: Int) {
-    val sql = if (tipo_nota == 9) "/sql/desfazDevolucao.sql" else "/sql/desfazDevolucaoNF.sql"
+  fun desfazDevolucaoSTKMOV(loja: Loja?, nfno: String, nfse: String, tipoNota: TipoNota?) {
+    val storeno = loja?.numero ?: return
+    val sql = if (tipoNota == PERDA) "/sql/desfazDevolucao.sql" else "/sql/desfazDevolucaoNF.sql"
     execute(sql, Pair("storeno", "$storeno"), Pair("nfno", nfno), Pair("nfse", "'$nfse'"))
   }
 
@@ -73,15 +97,21 @@ class QuerySaci : QueryDB(driver, url, username, password) {
     execute(sql, Pair("dataInicial", di), Pair("dataFinal", df), monitor = monitor)
   }
 
-  fun pesquisaNotaSTKMOV(storeno: Int?, numero: String?, tipo: String): NotaFiscal? {
-    storeno ?: return null
+  fun pesquisaNotaSTKMOV(loja: Loja?,
+                         numero: String?,
+                         tipo: TipoMov?,
+                         status: TipoNota?): NotaFiscal? {
+    val storeno = loja?.numero ?: return null
     numero ?: return null
+    status ?: return null
+    tipo ?: return null
     val sql = "/sql/pesquisaNota.sql"
     return query(sql) { q ->
       q
         .addParameter("storeno", storeno)
         .addParameter("ordno", numero)
-        .addParameter("tipo", tipo)
+        .addParameter("tipo", tipo.cod)
+        .addParameter("status", status.numero)
         .executeAndFetchFirst(NotaFiscal::class.java)
     }
   }
@@ -110,7 +140,7 @@ class QuerySaci : QueryDB(driver, url, username, password) {
   fun processaAjuste(numero: String) {
     val sql1 = "/sql/processaAjuste.sql"
     execute(sql1, Pair("numero", numero))
-    val sql2 = "novoAjuste.sql"
+    val sql2 = "/sql/novoAjuste.sql"
     execute(sql2)
   }
 
@@ -185,7 +215,7 @@ class QuerySaci : QueryDB(driver, url, username, password) {
     }
   }
 
-  fun xanoInventario(): Int {
+  private fun xanoInventario(): Int {
     val sql = "/sql/xanoInventario.sql"
     return query(sql) { q ->
       q.executeScalar(Int::class.java)
@@ -216,21 +246,21 @@ class QuerySaci : QueryDB(driver, url, username, password) {
            )
   }
 
-  fun validarNfSaida(loja: Int, nota: Int): Boolean {
-    val mov = pesquisaNotaSTKMOV(loja, nota.toString(), "S")
+  fun validarNfSaida(loja: Loja, nota: Int): Boolean {
+    val mov = pesquisaNotaSTKMOV(loja, nota.toString(), SAIDA, GARANTIA)
     return mov != null
   }
 
-  fun validarNfEntrada(loja: Int, nota: Int): Boolean {
-    val mov = pesquisaNotaSTKMOV(loja, nota.toString(), "E")
+  fun validarNfEntrada(loja: Loja, nota: Int): Boolean {
+    val mov = pesquisaNotaSTKMOV(loja, nota.toString(), ENTRADA, GARANTIA)
     return mov != null
   }
 
-  fun desfazerSaida(loja: Int, nota: Int) {
+  fun desfazerSaida(loja: Loja?, nota: Int) {
     TODO()
   }
 
-  fun desfazerEntrada(loja: Int, nota: Int) {
+  fun desfazerEntrada(loja: Loja?, nota: Int) {
     TODO()
   }
 
@@ -247,3 +277,33 @@ class QuerySaci : QueryDB(driver, url, username, password) {
 }
 
 val saci = QuerySaci()
+
+class StatusPedidoConverter : Converter<StatusPedido?> {
+  @Throws(ConverterException::class)
+  override fun convert(value: Any?): StatusPedido? {
+    return when (value) {
+      is Int -> StatusPedido.values().firstOrNull { it.num == value }
+      else   -> null
+    }
+  }
+
+  override fun toDatabaseParam(value: StatusPedido?): Any? {
+    value ?: return null
+    return value.num
+  }
+}
+
+class TipoPedidoConverter : Converter<TipoPedido?> {
+  @Throws(ConverterException::class)
+  override fun convert(value: Any?): TipoPedido? {
+    return when (value) {
+      value is String -> TipoPedido.values().firstOrNull { it.text == value }
+      else            -> null
+    }
+  }
+
+  override fun toDatabaseParam(value: TipoPedido?): Any? {
+    value ?: return null
+    return value.text
+  }
+}

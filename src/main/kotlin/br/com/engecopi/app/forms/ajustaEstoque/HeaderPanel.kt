@@ -111,30 +111,28 @@ class HeaderPanel(private val ajustaEstoqueForm: AjustaEstoqueForm) : VerticalLa
       }
     }
     MessageBox.create().withCaption("Desfazer").withMessage(form).withYesButton({
-      confirmaDesfazer(
-        edtLoja.value?.numero, edtNota.value, edtTipoMov.value
-                      )
+      confirmaDesfazer(edtLoja.value, edtNota.value, edtTipoMov.value)
     }).withNoButton({ println("No button was pressed.") }).open()
   }
 
-  private fun confirmaDesfazer(numLoja: Int?, nota: String?, tipo: TipoMov?) {
-    numLoja ?: return
+  private fun confirmaDesfazer(loja: Loja?, nota: String?, tipo: TipoMov?) {
+    loja ?: return
     val numNota = nota?.toIntOrNull() ?: return
     tipo ?: return
 
     try {
       val valido = when (tipo) {
-        SAIDA   -> saci.validarNfSaida(numLoja, numNota)
-        ENTRADA -> saci.validarNfEntrada(numLoja, numNota)
+        SAIDA   -> saci.validarNfSaida(loja, numNota)
+        ENTRADA -> saci.validarNfEntrada(loja, numNota)
       }
 
       if (valido) {
         when (tipo) {
-          SAIDA   -> saci.desfazerSaida(numLoja, numNota)
-          ENTRADA -> saci.desfazerEntrada(numLoja, numNota)
+          SAIDA   -> saci.desfazerSaida(loja, numNota)
+          ENTRADA -> saci.desfazerEntrada(loja, numNota)
         }
         show(
-          "Movimentacao referente a nota: $numNota da loja: $numLoja foi desfeita com sucesso!",
+          "Movimentacao referente a nota: $numNota da loja: ${loja.numero} foi desfeita com sucesso!",
           HUMANIZED_MESSAGE
             )
       }

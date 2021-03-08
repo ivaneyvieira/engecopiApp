@@ -8,7 +8,7 @@ import com.github.mvysny.karibudsl.v8.showColumns
 import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.ui.CssLayout
 import com.vaadin.ui.renderers.NumberRenderer
-import com.vaadin.ui.themes.ValoTheme
+import com.vaadin.ui.themes.ValoTheme.LAYOUT_WELL
 import java.text.DecimalFormat
 
 class GridPainel : CssLayout() {
@@ -59,7 +59,7 @@ class GridPainel : CssLayout() {
   init {
     caption = "Produtos"
     setSizeFull()
-    styleName = ValoTheme.LAYOUT_WELL
+    styleName = LAYOUT_WELL
     panel {
       setSizeFull()
       content = grid

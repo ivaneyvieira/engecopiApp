@@ -1,6 +1,8 @@
 package br.com.engecopi.saci.beans
 
 import br.com.engecopi.app.model.Loja
+import br.com.engecopi.app.model.TipoMov
+import br.com.engecopi.app.model.TipoNota
 import br.com.engecopi.saci.saci
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -12,18 +14,19 @@ class Pedido(val storeno: Int?,
              val username: String?,
              val cpf_cgc: String?,
              val cliente: String?,
-             val status: Int?,
-             val tipo: String?,
+             val status: StatusPedido?,
+             val tipo: TipoPedido?,
              val storeno_custno: Int) {
   val loja
-    get() = Loja.values().firstOrNull { it.numero == storeno }
+    get() = Loja.findLoja(storeno)
   val numeroPedido
     get() = numero?.split("/")?.getOrNull(0)
   val serie
     get() = numero?.split("/")?.getOrNull(1)
 
-  fun notaFiscal(tipo: String): NotaFiscal? {
-    return saci.pesquisaNotaSTKMOV(storeno, numeroPedido, tipo)
+  fun notaFiscal(tipo: TipoMov?, tipoNota: TipoNota?): NotaFiscal? {
+    val loja = Loja.findLoja(storeno)
+    return saci.pesquisaNotaSTKMOV(loja, numeroPedido, tipo, tipoNota)
   }
 
   fun isEngecopi() = cliente?.contains("ENGECOPI", ignoreCase = true) ?: false
@@ -43,4 +46,14 @@ class Pedido(val storeno: Int?,
   fun isLojaValida(): Boolean { //    return storeno == storeno_custno
     return storeno == storeno
   }
+}
+
+enum class TipoPedido(val text : String) {
+  PEDIDO("PEDIDO"),
+  DEVOLUCAO("DEVOLUCAO")
+}
+
+enum class StatusPedido(val num : Int) {
+  NAO_PROCESSADO(1),
+  JA_PROCESSADO(4)
 }
