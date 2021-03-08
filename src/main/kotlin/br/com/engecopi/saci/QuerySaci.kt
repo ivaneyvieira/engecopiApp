@@ -281,10 +281,10 @@ val saci = QuerySaci()
 class StatusPedidoConverter : Converter<StatusPedido?> {
   @Throws(ConverterException::class)
   override fun convert(value: Any?): StatusPedido? {
-    return when (value) {
-      is Int -> StatusPedido.values().firstOrNull { it.num == value }
-      else   -> null
-    }
+    val num = value?.toString()?.toIntOrNull()
+    val status =  StatusPedido.values().firstOrNull { it.num == num }
+
+    return status
   }
 
   override fun toDatabaseParam(value: StatusPedido?): Any? {
@@ -296,10 +296,8 @@ class StatusPedidoConverter : Converter<StatusPedido?> {
 class TipoPedidoConverter : Converter<TipoPedido?> {
   @Throws(ConverterException::class)
   override fun convert(value: Any?): TipoPedido? {
-    return when (value) {
-      value is String -> TipoPedido.values().firstOrNull { it.text == value }
-      else            -> null
-    }
+    val tipo = TipoPedido.values().firstOrNull { it.text == value }
+    return tipo
   }
 
   override fun toDatabaseParam(value: TipoPedido?): Any? {
