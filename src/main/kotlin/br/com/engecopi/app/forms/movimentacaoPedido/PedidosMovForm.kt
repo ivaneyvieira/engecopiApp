@@ -1,4 +1,4 @@
-package br.com.engecopi.app.forms.processaPedido
+package br.com.engecopi.app.forms.movimentacaoPedido
 
 import br.com.engecopi.app.model.Loja
 import br.com.engecopi.app.model.TipoMov
