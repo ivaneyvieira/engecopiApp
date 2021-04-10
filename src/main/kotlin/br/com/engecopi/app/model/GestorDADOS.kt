@@ -13,8 +13,8 @@ private class GestorDADOS(val connection: Connection) {
   fun pegaTransacao(): Int? {
     val cx = connection
     cx.autoCommit = false
-    val sql1 = "SELECT (MAX(xano) + 1) AS xano FROM xa "
-    val sql2 = "INSERT INTO xa VALUES (?)"
+    val sql1 = "SELECT (MAX(xano) + 1) AS xano FROM sqldados.xa "
+    val sql2 = "INSERT INTO sqldados.xa VALUES (?)"
     val stmt = cx.prepareStatement(sql1)
     val rs = stmt.executeQuery()
     if (rs.next()) {
@@ -37,8 +37,8 @@ private class GestorDADOS(val connection: Connection) {
     val numNf: Int
     val cx = connection
     cx.autoCommit = false
-    val sql1 = "SELECT (MAX(no) + 1) AS numero FROM lastno WHERE storeno = ? AND se = 66"
-    val sql2 = "INSERT INTO lastno (no,storeno,dupse,se,padbyte) VALUES (?,?,0,'66','')"
+    val sql1 = "SELECT (MAX(no) + 1) AS numero FROM sqldados.lastno WHERE storeno = ? AND se = 66"
+    val sql2 = "INSERT INTO sqldados.lastno (no,storeno,dupse,se,padbyte) VALUES (?,?,0,'66','')"
     val stmt = cx.prepareStatement(sql1)
     stmt.setInt(1, loja!!)
     val rs = stmt.executeQuery()

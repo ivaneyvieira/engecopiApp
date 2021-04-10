@@ -1,3 +1,5 @@
+
+
 SELECT 'S'                AS tipo,
        CAST(xano AS char) AS numero,
        '66'               AS serie,

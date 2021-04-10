@@ -1,9 +1,9 @@
-package br.com.engecopi.app.forms.ajustaEstoque
+package br.com.engecopi.app.forms.ajustaEstoqueGarantia
 
 import br.com.engecopi.app.model.Produtos
 import com.vaadin.ui.VerticalLayout
 
-class AjustaEstoqueForm : VerticalLayout() {
+class AjustaEstoqueFormGarantia : VerticalLayout() {
 
   private val gridPanel = GridPanel(this)
   val headerPanel = HeaderPanel(this)
@@ -17,5 +17,4 @@ class AjustaEstoqueForm : VerticalLayout() {
   fun setProdutos(produtos: List<Produtos>) {
     gridPanel.setProdutos(produtos)
   }
-
 }

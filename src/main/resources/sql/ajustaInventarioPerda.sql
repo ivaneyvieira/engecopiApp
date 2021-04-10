@@ -10,8 +10,8 @@ DO @YM := :ym;
 DO @DI := CONCAT(@YM, '01') * 1;
 DO @DF := CONCAT(@YM, '31') * 1;
 
-
-INSERT INTO stkmov (xano, qtty, date, cm_fiscal, cm_real, storeno, bits, prdno, grade, remarks)
+INSERT INTO sqldados.stkmov (xano, qtty, date, cm_fiscal, cm_real, storeno, bits, prdno, grade,
+			     remarks)
 SELECT @XANO                    AS xano,
        @QTTD                    AS qtty,
        @DATA                    AS date,
@@ -24,10 +24,11 @@ SELECT @XANO                    AS xano,
        CONCAT('%:PED A', @XANO) AS remarks
 FROM DUAL;
 
-INSERT INTO stkmovh (xano, qtty, date, nfno, cm_fiscal, cm_real, auxLong1, auxLong2, auxLong3,
-		     auxLong4, auxLong5, auxMy1, auxMy2, auxMy3, auxMy4, auxMy5, storeno, userno,
-		     tipo, bits, auxShort1, auxShort2, auxShort3, auxShort4, auxShort5, prdno,
-		     grade, nfse, auxStr1, auxStr2, auxStr3, auxStr4)
+INSERT INTO sqldados.stkmovh (xano, qtty, date, nfno, cm_fiscal, cm_real, auxLong1, auxLong2,
+			      auxLong3, auxLong4, auxLong5, auxMy1, auxMy2, auxMy3, auxMy4, auxMy5,
+			      storeno, userno, tipo, bits, auxShort1, auxShort2, auxShort3,
+			      auxShort4, auxShort5, prdno, grade, nfse, auxStr1, auxStr2, auxStr3,
+			      auxStr4)
 
 SELECT @XANO  AS xano,
        @QTTD  AS qtty,
@@ -71,7 +72,7 @@ WHERE (storeno = @LOJA)
   AND (grade = @GRADE)
   AND date BETWEEN @DI AND @DF;
 
-UPDATE stk
+UPDATE sqldados.stk
 SET stk.qtty_atacado = (stk.qtty_atacado - @QTTD),
     stk.qtty_varejo  = (stk.qtty_varejo + @QTTD)
 WHERE (stk.storeno = @LOJA)
