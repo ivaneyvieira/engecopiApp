@@ -30,8 +30,7 @@ fun LocalTime?.toDate(): Date? {
   val year = date.year
   val month = date.month
   val dayOfMonth = date.dayOfMonth
-  val instant =
-    this.atDate(LocalDate.of(year, month, dayOfMonth))?.atZone(ZoneId.systemDefault())?.toInstant()
+  val instant = this.atDate(LocalDate.of(year, month, dayOfMonth))?.atZone(ZoneId.systemDefault())?.toInstant()
   return Date.from(instant)
 }
 

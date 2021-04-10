@@ -17,9 +17,7 @@ import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.themes.ValoTheme
 
 //@Theme("mytheme")
-@Theme("valo")
-@Title("Engecopi App")
-class EngecopiUI : UI() {
+@Theme("valo") @Title("Engecopi App") class EngecopiUI : UI() {
   private val content = Content()
 
   override fun init(request: VaadinRequest?) {

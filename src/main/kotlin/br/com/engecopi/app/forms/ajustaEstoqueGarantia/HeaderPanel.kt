@@ -126,18 +126,17 @@ class HeaderPanel(private val ajustaEstoqueFormGarantia: AjustaEstoqueFormGarant
 
     try {
       val valido = when (tipo) {
-        SAIDA   -> saci.validarNfSaida(loja, numNota, tipoNota)
+        SAIDA -> saci.validarNfSaida(loja, numNota, tipoNota)
         ENTRADA -> saci.validarNfEntrada(loja, numNota, tipoNota)
       }
 
       if (valido) {
         when (tipo) {
-          SAIDA   -> saci.desfazerSaida(loja, numNota)
+          SAIDA -> saci.desfazerSaida(loja, numNota)
           ENTRADA -> saci.desfazerEntrada(loja, numNota)
         }
         show(
-          "Movimentacao referente a nota: $numNota da loja: ${loja.numero} foi desfeita com sucesso!",
-          HUMANIZED_MESSAGE
+          "Movimentacao referente a nota: $numNota da loja: ${loja.numero} foi desfeita com sucesso!", HUMANIZED_MESSAGE
             )
       }
       else {
@@ -151,13 +150,12 @@ class HeaderPanel(private val ajustaEstoqueFormGarantia: AjustaEstoqueFormGarant
   }
 
   private fun clickExecuta(clickEvent: ClickEvent) {
-    MessageBox
-      .createQuestion()
-      .withCaption("Alerta")
-      .withMessage("Tem Certeza?")
-      .withYesButton(::confirmaExecuta)
-      .withNoButton({ println("No button was pressed.") })
-      .open()
+    MessageBox.createQuestion()
+            .withCaption("Alerta")
+            .withMessage("Tem Certeza?")
+            .withYesButton(::confirmaExecuta)
+            .withNoButton({ println("No button was pressed.") })
+            .open()
   }
 
   private fun confirmaExecuta() {

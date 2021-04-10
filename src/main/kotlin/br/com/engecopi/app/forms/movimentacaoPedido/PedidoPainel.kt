@@ -2,7 +2,8 @@ package br.com.engecopi.app.forms.movimentacaoPedido
 
 import br.com.engecopi.app.model.FiltroPedido
 import br.com.engecopi.saci.beans.Pedido
-import br.com.engecopi.saci.beans.StatusPedido.*
+import br.com.engecopi.saci.beans.StatusPedido.JA_PROCESSADO
+import br.com.engecopi.saci.beans.StatusPedido.NAO_PROCESSADO
 import br.com.engecopi.utils.format
 import com.github.mvysny.karibudsl.v8.horizontalLayout
 import com.github.mvysny.karibudsl.v8.isMargin
@@ -28,7 +29,7 @@ class PedidoPainel : CssLayout() {
   private val notaPedido = textReadOnly("NF")
   private val statusPedido = textReadOnly("Status")
 
-  fun setPedido(pedido: Pedido?, filtroPedido : FiltroPedido) {
+  fun setPedido(pedido: Pedido?, filtroPedido: FiltroPedido) {
 
     lojaPedido.value = pedido?.loja?.toString() ?: ""
     numeroPedido.value = pedido?.numero ?: ""
@@ -37,14 +38,14 @@ class PedidoPainel : CssLayout() {
     clientePedido.value = pedido?.cliente ?: ""
     val nota = pedido?.notaFiscal(filtroPedido.tipoMov, filtroPedido.tipoNota)
     notaPedido.value = when {
-      nota == null           -> ""
+      nota == null -> ""
       nota.cancelado == true -> ""
-      else                   -> nota.numero
+      else -> nota.numero
     }
-    statusPedido.value = when(pedido?.status) {
+    statusPedido.value = when (pedido?.status) {
       NAO_PROCESSADO -> "Não Processado"
-      JA_PROCESSADO  -> "Já Processado"
-      else                       -> ""
+      JA_PROCESSADO -> "Já Processado"
+      else -> ""
     }
   }
 
@@ -59,13 +60,7 @@ class PedidoPainel : CssLayout() {
         isMargin = true
         numeroPedido.addStyleName("align-right")
         addComponents(
-          lojaPedido,
-          numeroPedido,
-          dataPedido,
-          notaPedido,
-          usuarioPedido,
-          clientePedido,
-          statusPedido
+          lojaPedido, numeroPedido, dataPedido, notaPedido, usuarioPedido, clientePedido, statusPedido
                      )
 
         setExpandRatio(lojaPedido, 1f)

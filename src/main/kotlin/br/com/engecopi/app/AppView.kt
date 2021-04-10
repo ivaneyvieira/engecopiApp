@@ -2,8 +2,8 @@ package br.com.engecopi.app
 
 import br.com.engecopi.app.forms.ajustaEstoqueGarantia.AjustaEstoqueFormGarantia
 import br.com.engecopi.app.forms.ajustaEstoquePerda.AjustaEstoqueFormPerda
-import br.com.engecopi.app.forms.processaConferencia.ProcessaConferenciaForm
 import br.com.engecopi.app.forms.movimentacaoPedido.PedidosMovForm
+import br.com.engecopi.app.forms.processaConferencia.ProcessaConferenciaForm
 import br.com.engecopi.app.forms.saldoKardec.SaldoKardecForm
 import com.github.mvysny.karibudsl.v8.*
 import com.vaadin.navigator.View
@@ -11,8 +11,7 @@ import com.vaadin.navigator.ViewChangeListener
 import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.themes.ValoTheme
 
-@AutoView("")
-class AppView : VerticalLayout(), View {
+@AutoView("") class AppView : VerticalLayout(), View {
 
   init {
     setSizeFull()

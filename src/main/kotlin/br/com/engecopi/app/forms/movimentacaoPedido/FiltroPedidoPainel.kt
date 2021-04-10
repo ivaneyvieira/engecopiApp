@@ -11,12 +11,13 @@ import com.vaadin.ui.Alignment.BOTTOM_RIGHT
 import com.vaadin.ui.CssLayout
 import com.vaadin.ui.themes.ValoTheme
 
-class FiltroPedidoPainel : CssLayout() {
+class FiltroPedidoPainel(
+  val execFiltro: (FiltroPedido) -> Unit,
+  val execProcessa: (FiltroPedido) -> Unit,
+  val desfazProcessa: (FiltroPedido) -> Unit
+                        ) : CssLayout() {
   private val binderFiltroPedido = beanValidationBinder<FiltroPedido>()
   private var filtroPedido: FiltroPedido? = FiltroPedido()
-  lateinit var execFiltro: (FiltroPedido) -> Unit
-  lateinit var execProcessa: (FiltroPedido) -> Unit
-  lateinit var desfazProcessa: (FiltroPedido) -> Unit
   private val tipoMov = radioButtonGroup<TipoMov>("Tipo") {
     styleName = ValoTheme.OPTIONGROUP_HORIZONTAL
 
@@ -30,8 +31,8 @@ class FiltroPedidoPainel : CssLayout() {
     setItemCaptionGenerator {
       when (it) {
         GARANTIA -> "Garantia"
-        PERDA    -> "Perda"
-        else     -> ""
+        PERDA -> "Perda"
+        else -> ""
       }
     }
     setWidth("120px")
@@ -48,9 +49,7 @@ class FiltroPedidoPainel : CssLayout() {
   }
   private val numPedido = textField("Pedido/Nota") {
     addStyleName("align-right")
-    bind(binderFiltroPedido)
-      .withValidator({ it != null }, "Pedido com valor nulo")
-      .bind(FiltroPedido::numPedido)
+    bind(binderFiltroPedido).withValidator({ it != null }, "Pedido com valor nulo").bind(FiltroPedido::numPedido)
   }
   private val btnPesquisa = button("Pesquisa") {
     addClickListener {

@@ -7,16 +7,18 @@ import br.com.engecopi.saci.saci
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-class Pedido(val storeno: Int?,
-             val numero: String?,
-             val date: Date?,
-             val userno: Int?,
-             val username: String?,
-             val cpf_cgc: String?,
-             val cliente: String?,
-             val status: StatusPedido?,
-             val tipo: TipoPedido?,
-             val storeno_custno: Int) {
+class Pedido(
+  val storeno: Int?,
+  val numero: String?,
+  val date: Date?,
+  val userno: Int?,
+  val username: String?,
+  val cpf_cgc: String?,
+  val cliente: String?,
+  val status: StatusPedido?,
+  val tipo: TipoPedido?,
+  val storeno_custno: Int
+            ) {
   val loja
     get() = Loja.findLoja(storeno)
   val numeroPedido
@@ -48,12 +50,10 @@ class Pedido(val storeno: Int?,
   }
 }
 
-enum class TipoPedido(val text : String) {
-  PEDIDO("PEDIDO"),
-  DEVOLUCAO("DEVOLUCAO")
+enum class TipoPedido(val text: String) {
+  PEDIDO("PEDIDO"), DEVOLUCAO("DEVOLUCAO")
 }
 
-enum class StatusPedido(val num : Int) {
-  NAO_PROCESSADO(1),
-  JA_PROCESSADO(4)
+enum class StatusPedido(val num: Int) {
+  NAO_PROCESSADO(1), JA_PROCESSADO(4)
 }

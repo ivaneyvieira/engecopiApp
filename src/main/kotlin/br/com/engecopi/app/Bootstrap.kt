@@ -8,8 +8,7 @@ import javax.servlet.ServletContextListener
 import javax.servlet.annotation.WebListener
 import javax.servlet.annotation.WebServlet
 
-@WebListener
-class Bootstrap : ServletContextListener {
+@WebListener class Bootstrap : ServletContextListener {
   override fun contextInitialized(sce: ServletContextEvent?) {
     Locale.setDefault(Locale("pt", "BR"))
   }
@@ -23,5 +22,4 @@ class Bootstrap : ServletContextListener {
 
 @WebServlet(urlPatterns = ["/*"], name = "MyUIServlet", asyncSupported = true)
 @VaadinServletConfiguration(ui = EngecopiUI::class, productionMode = false)
-class MyUIServlet :
-  VaadinServlet() //@ApplicationPath("/rest") //class ApplicationConfig : Application()
+class MyUIServlet : VaadinServlet() //@ApplicationPath("/rest") //class ApplicationConfig : Application()

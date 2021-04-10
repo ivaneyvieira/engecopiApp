@@ -35,15 +35,13 @@ object SystemUtils {
     }
   }
 
-  @Throws(IOException::class)
-  private fun toBufferedImage(imagem: ByteArray?): BufferedImage? {
+  @Throws(IOException::class) private fun toBufferedImage(imagem: ByteArray?): BufferedImage? {
     if (imagem == null) return null
     val `in` = ByteArrayInputStream(imagem)
     return ImageIO.read(`in`)
   }
 
-  @Throws(IOException::class)
-  private fun toByteArray(image: BufferedImage): ByteArray? {
+  @Throws(IOException::class) private fun toByteArray(image: BufferedImage): ByteArray? {
     val baos = ByteArrayOutputStream()
     ImageIO.write(image, "jpg", baos)
     baos.flush()
@@ -59,8 +57,7 @@ object SystemUtils {
   fun getResourceAsStream(name: String?): InputStream? {
     var nameRet = name
     nameRet = resolveName(nameRet)
-    val cl =
-      SystemUtils::class.java.classLoader ?: return ClassLoader.getSystemResourceAsStream(nameRet)
+    val cl = SystemUtils::class.java.classLoader ?: return ClassLoader.getSystemResourceAsStream(nameRet)
     return cl.getResourceAsStream(nameRet)
   }
 

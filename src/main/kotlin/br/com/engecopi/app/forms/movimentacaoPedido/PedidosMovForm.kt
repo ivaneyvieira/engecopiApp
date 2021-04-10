@@ -1,5 +1,6 @@
 package br.com.engecopi.app.forms.movimentacaoPedido
 
+import br.com.engecopi.app.model.FiltroPedido
 import br.com.engecopi.app.model.Loja
 import br.com.engecopi.app.model.TipoMov
 import br.com.engecopi.app.model.TipoMov.ENTRADA
@@ -16,139 +17,141 @@ import com.vaadin.ui.Notification.show
 import com.vaadin.ui.VerticalLayout
 
 class PedidosMovForm : VerticalLayout() {
-  private val filtroPedidoPainel = FiltroPedidoPainel()
+  private val filtroPedidoPainel = FiltroPedidoPainel(
+    ::execFiltro, ::execProcessa, ::desfazProcessa
+                                                     )
   private val pedidoPainel = PedidoPainel()
   private val gridPainel = GridPainel()
 
   init {
-    filtroPedidoPainel.execFiltro = { filtro ->
-      val loja = filtro.loja
-      val numPedido = filtro.numPedido ?: ""
-      val pedido = saci.pedidoNota(loja, numPedido)
-
-      pedido?.let { ped ->
-        if (ped.tipo == DEVOLUCAO) {
-          filtro.tipoMov = ENTRADA
-          filtro.tipoNota = GARANTIA
-        }
-      }
-      val tipoNota = filtro.tipoNota //val tipo = filtro.tipoMov?.cod ?: ""
-      val pedidoValido = validaPedido(pedido)
-      pedidoPainel.setPedido(pedidoValido, filtro)
-      when {
-        pedidoValido == null                              -> {
-          show("Esse pedido não foi encontrado", WARNING_MESSAGE)
-        }
-
-        tipoNota == GARANTIA && pedidoValido.isEngecopi() -> {
-          show("O cliente não pode ser loja", WARNING_MESSAGE)
-        }
-
-        tipoNota == PERDA && !pedidoValido.isEngecopi()   -> {
-          show("O cliente deve ser uma loja", WARNING_MESSAGE)
-        }
-
-        !pedidoValido.produtoValido()                     -> {
-          show("O pedido possui um produto com código maior que 980000", WARNING_MESSAGE)
-        }
-      }
-      setProdutosGrid(pedidoValido)
-    }
-
-    filtroPedidoPainel.execProcessa = { filtro ->
-      val loja = filtro.loja
-      val numPedido = filtro.numPedido ?: ""
-      val pedido = saci.pedidoNota(loja, numPedido)
-
-      pedido?.let { ped ->
-        if (ped.tipo == DEVOLUCAO) {
-          filtro.tipoMov = ENTRADA
-          filtro.tipoNota = GARANTIA
-        }
-      }
-      val tipo = filtro.tipoMov
-      val tipoNota = filtro.tipoNota
-      val nota = saci.pesquisaNotaSTKMOV(loja, numPedido, tipo, tipoNota)
-      val pedidoValido = validaPedido(pedido)
-
-      when {
-        pedidoValido == null                              -> {
-          show("Esse pedido não foi encontrado", WARNING_MESSAGE)
-        }
-
-        tipoNota == GARANTIA && pedidoValido.isEngecopi() -> {
-          show("O cliente não pode ser loja", WARNING_MESSAGE)
-        }
-
-        tipoNota == PERDA && !pedidoValido.isEngecopi()   -> {
-          show("O cliente deve ser uma loja", WARNING_MESSAGE)
-        }
-
-        pedidoValido.status == NAO_PROCESSADO             -> {
-          processa(pedido, loja, numPedido, tipo, tipoNota)
-          filtroPedidoPainel.execFiltro(filtro)
-        }
-
-        else                                              -> {
-          when {
-            nota == null           -> {
-              processa(pedido, loja, numPedido, tipo, tipoNota)
-              filtroPedidoPainel.execFiltro(filtro)
-            }
-
-            nota.cancelado == true -> {
-              processa(pedido, loja, numPedido, tipo, tipoNota)
-              filtroPedidoPainel.execFiltro(filtro)
-            }
-
-            else                   -> {
-              show("Nota já processada", WARNING_MESSAGE)
-            }
-          }
-        }
-      }
-    }
-
-    filtroPedidoPainel.desfazProcessa = { filtro ->
-      val loja = filtro.loja
-      val numPedido = filtro.numPedido ?: ""
-      val tipo = filtro.tipoMov
-      val tipoNota = filtro.tipoNota
-      val pedido = saci.pedidoNota(loja, numPedido)
-      val nota = saci.pesquisaNotaSTKMOV(loja, numPedido, tipo, tipoNota)
-      when (pedido) {
-        null -> {
-          show("Esse pedido não foi encontrado", WARNING_MESSAGE)
-        }
-
-        else -> {
-          when {
-            nota == null           -> {
-              show("Esse pedido não foi processado", WARNING_MESSAGE)
-            }
-
-            nota.cancelado == true -> {
-              show("Esse pedido não foi processado", WARNING_MESSAGE)
-            }
-
-            else                   -> {
-              desfaz(pedido, loja, numPedido, tipo, tipoNota)
-            }
-          }
-          filtroPedidoPainel.execFiltro(filtro)
-        }
-      }
-    }
-
     setSizeFull()
     addComponents(filtroPedidoPainel, pedidoPainel)
     addComponentsAndExpand(gridPainel)
   }
 
+  private fun execFiltro(filtro: FiltroPedido) {
+    val loja = filtro.loja
+    val numPedido = filtro.numPedido ?: ""
+    val pedido = saci.pedidoNota(loja, numPedido)
+
+    pedido?.let { ped ->
+      if (ped.tipo == DEVOLUCAO) {
+        filtro.tipoMov = ENTRADA
+        filtro.tipoNota = GARANTIA
+      }
+    }
+    val tipoNota = filtro.tipoNota //val tipo = filtro.tipoMov?.cod ?: ""
+    val pedidoValido = validaPedido(pedido)
+    pedidoPainel.setPedido(pedidoValido, filtro)
+    when {
+      pedidoValido == null -> {
+        show("Esse pedido não foi encontrado", WARNING_MESSAGE)
+      }
+
+      tipoNota == GARANTIA && pedidoValido.isEngecopi() -> {
+        show("O cliente não pode ser loja", WARNING_MESSAGE)
+      }
+
+      tipoNota == PERDA && !pedidoValido.isEngecopi() -> {
+        show("O cliente deve ser uma loja", WARNING_MESSAGE)
+      }
+
+      !pedidoValido.produtoValido() -> {
+        show("O pedido possui um produto com código maior que 980000", WARNING_MESSAGE)
+      }
+    }
+    setProdutosGrid(pedidoValido)
+  }
+
+  private fun execProcessa(filtro: FiltroPedido) {
+    val loja = filtro.loja
+    val numPedido = filtro.numPedido ?: ""
+    val pedido = saci.pedidoNota(loja, numPedido)
+
+    pedido?.let { ped ->
+      if (ped.tipo == DEVOLUCAO) {
+        filtro.tipoMov = ENTRADA
+        filtro.tipoNota = GARANTIA
+      }
+    }
+    val tipo = filtro.tipoMov
+    val tipoNota = filtro.tipoNota
+    val nota = saci.pesquisaNotaSTKMOV(loja, numPedido, tipo, tipoNota)
+    val pedidoValido = validaPedido(pedido)
+
+    when {
+      pedidoValido == null -> {
+        show("Esse pedido não foi encontrado", WARNING_MESSAGE)
+      }
+
+      tipoNota == GARANTIA && pedidoValido.isEngecopi() -> {
+        show("O cliente não pode ser loja", WARNING_MESSAGE)
+      }
+
+      tipoNota == PERDA && !pedidoValido.isEngecopi() -> {
+        show("O cliente deve ser uma loja", WARNING_MESSAGE)
+      }
+
+      pedidoValido.status == NAO_PROCESSADO -> {
+        processa(pedido, loja, numPedido, tipo, tipoNota)
+        filtroPedidoPainel.execFiltro(filtro)
+      }
+
+      else -> {
+        when {
+          nota == null -> {
+            processa(pedido, loja, numPedido, tipo, tipoNota)
+            filtroPedidoPainel.execFiltro(filtro)
+          }
+
+          nota.cancelado == true -> {
+            processa(pedido, loja, numPedido, tipo, tipoNota)
+            filtroPedidoPainel.execFiltro(filtro)
+          }
+
+          else -> {
+            show("Nota já processada", WARNING_MESSAGE)
+          }
+        }
+      }
+    }
+  }
+
+  private fun desfazProcessa(filtro: FiltroPedido) {
+    val loja = filtro.loja
+    val numPedido = filtro.numPedido ?: ""
+    val tipo = filtro.tipoMov
+    val tipoNota = filtro.tipoNota
+    val pedido = saci.pedidoNota(loja, numPedido)
+    val nota = saci.pesquisaNotaSTKMOV(loja, numPedido, tipo, tipoNota)
+    when (pedido) {
+      null -> {
+        show("Esse pedido não foi encontrado", WARNING_MESSAGE)
+      }
+
+      else -> {
+        when {
+          nota == null -> {
+            show("Esse pedido não foi processado", WARNING_MESSAGE)
+          }
+
+          nota.cancelado == true -> {
+            show("Esse pedido não foi processado", WARNING_MESSAGE)
+          }
+
+          else -> {
+            desfaz(pedido, loja, numPedido, tipo, tipoNota)
+          }
+        }
+        filtroPedidoPainel.execFiltro(filtro)
+      }
+    }
+  }
+
   private fun validaPedido(pedido: Pedido?): Pedido? {
     val lojaNome = pedido?.loja?.descricao
     return when {
-      pedido == null         -> {
+      pedido == null -> {
         show("Pedido não encontrado", WARNING_MESSAGE)
         null
       }
@@ -163,7 +166,7 @@ class PedidosMovForm : VerticalLayout() {
         null
       }
 
-      else                   -> pedido
+      else -> pedido
     }
   }
 
@@ -172,11 +175,9 @@ class PedidosMovForm : VerticalLayout() {
     gridPainel.grid.dataProvider = ListDataProvider(produtos)
   }
 
-  private fun processa(pedido: Pedido?,
-                       loja: Loja?,
-                       numPedido: String,
-                       tipo: TipoMov?,
-                       tipoNota: TipoNota?) {
+  private fun processa(
+    pedido: Pedido?, loja: Loja?, numPedido: String, tipo: TipoMov?, tipoNota: TipoNota?
+                      ) {
     if (pedido?.tipo == DEVOLUCAO) {
       val nfno = pedido.numeroPedido ?: ""
       val nfse = pedido.serie ?: ""
@@ -185,11 +186,9 @@ class PedidosMovForm : VerticalLayout() {
     else saci.processaPedidoSTKMOV(loja, numPedido, tipo, tipoNota)
   }
 
-  private fun desfaz(pedido: Pedido?,
-                     loja: Loja?,
-                     numPedido: String,
-                     tipoMov: TipoMov?,
-                     tipoNota: TipoNota?) {
+  private fun desfaz(
+    pedido: Pedido?, loja: Loja?, numPedido: String, tipoMov: TipoMov?, tipoNota: TipoNota?
+                    ) {
     if (pedido?.tipo == DEVOLUCAO) {
       val nfno = pedido.numeroPedido ?: ""
       val nfse = pedido.serie ?: ""
