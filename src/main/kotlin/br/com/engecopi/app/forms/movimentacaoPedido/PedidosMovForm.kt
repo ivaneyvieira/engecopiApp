@@ -17,9 +17,7 @@ import com.vaadin.ui.Notification.show
 import com.vaadin.ui.VerticalLayout
 
 class PedidosMovForm : VerticalLayout() {
-  private val filtroPedidoPainel = FiltroPedidoPainel(
-    ::execFiltro, ::execProcessa, ::desfazProcessa
-                                                     )
+  private val filtroPedidoPainel = FiltroPedidoPainel(::execFiltro, ::execProcessa, ::desfazProcessa)
   private val pedidoPainel = PedidoPainel()
   private val gridPainel = GridPainel()
 
@@ -29,18 +27,23 @@ class PedidosMovForm : VerticalLayout() {
     addComponentsAndExpand(gridPainel)
   }
 
-  private fun execFiltro(filtro: FiltroPedido) {
-    val loja = filtro.loja
-    val numPedido = filtro.numPedido ?: ""
-    val pedido = saci.pedidoNota(loja, numPedido)
+  fun fail(msg : String): Nothing{
+    show(msg)
+    throw Exception(msg)
+  }
 
-    pedido?.let { ped ->
+  private fun execFiltro(filtro: FiltroPedido) {
+    val loja = filtro.loja ?: fail("Loja não informada")
+    val numPedido = filtro.numPedido ?:  fail("Numero do pedido/nota não informado")
+    val pedido = saci.pedidoNota(loja, numPedido) ?:  fail("Numero do pedido/nota não encontrado")
+
+    pedido.let { ped ->
       if (ped.tipo == DEVOLUCAO) {
         filtro.tipoMov = ENTRADA
         filtro.tipoNota = GARANTIA
       }
     }
-    val tipoNota = filtro.tipoNota //val tipo = filtro.tipoMov?.cod ?: ""
+    val tipoNota = filtro.tipoNota
     val pedidoValido = validaPedido(pedido)
     pedidoPainel.setPedido(pedidoValido, filtro)
     when {

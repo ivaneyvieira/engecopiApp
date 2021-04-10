@@ -9,7 +9,7 @@ import com.vaadin.ui.renderers.NumberRenderer
 import com.vaadin.ui.themes.ValoTheme
 import java.text.DecimalFormat
 
-class GridPanel(val ajustaEstoqueFormPerda: AjustaEstoqueFormGarantia) : CssLayout() {
+class GridPanel(val ajustaEstoquePerdaForm: AjustaEstoqueGarantiaForm) : CssLayout() {
 
   val grid = grid(Produtos::class, null, ListDataProvider(emptyList())) {
     setSizeFull()

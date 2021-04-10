@@ -20,7 +20,7 @@ import de.steinwedel.messagebox.MessageBox
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-class HeaderPanel(private val ajustaEstoqueFormGarantia: AjustaEstoqueFormGarantia) : VerticalLayout() {
+class HeaderPanel(private val ajustaEstoqueGarantiaForm: AjustaEstoqueGarantiaForm) : VerticalLayout() {
   private lateinit var edtTipos: TextField
   private lateinit var edtFornecedores: TextField
   private lateinit var codigo: TextField
@@ -172,7 +172,7 @@ class HeaderPanel(private val ajustaEstoqueFormGarantia: AjustaEstoqueFormGarant
   private fun clickBusca(clickEvent: ClickEvent) {
     try {
       val produtos = saci.buscaProdutos(baseDados())
-      ajustaEstoqueFormGarantia.setProdutos(produtos)
+      ajustaEstoqueGarantiaForm.setProdutos(produtos)
     } catch (e: Exception) {
       val msgErro = "Não foi possível Listar os produtos! Erro:$e"
       e.printStackTrace()
