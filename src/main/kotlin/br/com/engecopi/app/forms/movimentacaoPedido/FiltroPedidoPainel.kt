@@ -28,6 +28,7 @@ class FiltroPedidoPainel(
   val tipoNota = comboBox<TipoNota>("Tipo Nota") {
     setItems(TipoNota.values().toList().sortedBy { it.numero })
     isEmptySelectionAllowed = false
+    isTextInputAllowed = false
     setItemCaptionGenerator {
       when (it) {
         GARANTIA -> "Garantia"

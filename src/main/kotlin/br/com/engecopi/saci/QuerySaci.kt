@@ -23,7 +23,7 @@ class QuerySaci : QueryDB(driver, url, username, password) {
     return mapSaci
   }
 
-  fun pedidoNota(loja: Loja?, numero: String?): Pedido? {
+  fun pedidoNota(loja: Loja?, numero: String?): PedidoNota? {
     loja ?: return null
     numero ?: return null
     val sql = "/sql/pedido.sql"
@@ -33,7 +33,7 @@ class QuerySaci : QueryDB(driver, url, username, password) {
       q.addParameter("storeno", loja.numero)
               .addParameter("numero", num)
               .addParameter("serie", serie)
-              .executeAndFetchFirst(Pedido::class.java)
+              .executeAndFetchFirst(PedidoNota::class.java)
     }
   }
 
@@ -93,9 +93,7 @@ class QuerySaci : QueryDB(driver, url, username, password) {
     execute(sql, Pair("dataInicial", di), Pair("dataFinal", df), monitor = monitor)
   }
 
-  fun pesquisaNotaSTKMOV(
-    loja: Loja?, numero: String?, tipo: TipoMov?, status: TipoNota?
-                        ): NotaFiscal? {
+  fun pesquisaNotaSTKMOV(loja: Loja?, numero: String?, tipo: TipoMov?, status: TipoNota?): NotaFiscal? {
     val storeno = loja?.numero ?: return null
     numero ?: return null
     status ?: return null

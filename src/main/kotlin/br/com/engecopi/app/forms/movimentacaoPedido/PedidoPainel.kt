@@ -1,7 +1,7 @@
 package br.com.engecopi.app.forms.movimentacaoPedido
 
 import br.com.engecopi.app.model.FiltroPedido
-import br.com.engecopi.saci.beans.Pedido
+import br.com.engecopi.saci.beans.PedidoNota
 import br.com.engecopi.saci.beans.StatusPedido.JA_PROCESSADO
 import br.com.engecopi.saci.beans.StatusPedido.NAO_PROCESSADO
 import br.com.engecopi.utils.format
@@ -29,20 +29,20 @@ class PedidoPainel : CssLayout() {
   private val notaPedido = textReadOnly("NF")
   private val statusPedido = textReadOnly("Status")
 
-  fun setPedido(pedido: Pedido?, filtroPedido: FiltroPedido) {
+  fun setPedido(pedidoNota: PedidoNota?, filtroPedido: FiltroPedido) {
 
-    lojaPedido.value = pedido?.loja?.toString() ?: ""
-    numeroPedido.value = pedido?.numero ?: ""
-    dataPedido.value = pedido?.date?.format() ?: ""
-    usuarioPedido.value = pedido?.username ?: ""
-    clientePedido.value = pedido?.cliente ?: ""
-    val nota = pedido?.notaFiscal(filtroPedido.tipoMov, filtroPedido.tipoNota)
+    lojaPedido.value = pedidoNota?.loja?.toString() ?: ""
+    numeroPedido.value = pedidoNota?.numero ?: ""
+    dataPedido.value = pedidoNota?.date?.format() ?: ""
+    usuarioPedido.value = pedidoNota?.username ?: ""
+    clientePedido.value = pedidoNota?.cliente ?: ""
+    val nota = pedidoNota?.notaFiscal(filtroPedido.tipoMov, filtroPedido.tipoNota)
     notaPedido.value = when {
       nota == null -> ""
       nota.cancelado == true -> ""
       else -> nota.numero
     }
-    statusPedido.value = when (pedido?.status) {
+    statusPedido.value = when (pedidoNota?.status) {
       NAO_PROCESSADO -> "Não Processado"
       JA_PROCESSADO -> "Já Processado"
       else -> ""

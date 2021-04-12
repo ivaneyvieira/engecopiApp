@@ -7,7 +7,7 @@ import br.com.engecopi.saci.saci
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-class Pedido(
+class PedidoNota(
   val storeno: Int?,
   val numero: String?,
   val date: Date?,
@@ -18,7 +18,7 @@ class Pedido(
   val status: StatusPedido?,
   val tipo: TipoPedido?,
   val storeno_custno: Int
-            ) {
+                ) {
   val loja
     get() = Loja.findLoja(storeno)
   val numeroPedido
@@ -45,13 +45,13 @@ class Pedido(
     return days < 30
   }
 
-  fun isLojaValida(): Boolean { //    return storeno == storeno_custno
+  fun isLojaValida(): Boolean {
     return storeno == storeno
   }
 }
 
 enum class TipoPedido(val text: String) {
-  PEDIDO("PEDIDO"), DEVOLUCAO("DEVOLUCAO")
+  PEDIDO("PEDIDO"), DEVOLUCAO("DEVOLUCAO"), COMPRA("COMPRA")
 }
 
 enum class StatusPedido(val num: Int) {
