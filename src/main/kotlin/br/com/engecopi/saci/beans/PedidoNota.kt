@@ -3,6 +3,7 @@ package br.com.engecopi.saci.beans
 import br.com.engecopi.app.model.Loja
 import br.com.engecopi.app.model.TipoMov
 import br.com.engecopi.app.model.TipoNota
+import br.com.engecopi.saci.beans.TipoPedido.PEDIDO
 import br.com.engecopi.saci.saci
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -38,11 +39,14 @@ class PedidoNota(
   fun produtoValido() = produtos().any { (it.prdno ?: "000000") < "980001" }
 
   fun isDataValida(): Boolean {
-    val datePedido = date ?: return false
-    val dateNow = Date()
-    val diff = dateNow.time - datePedido.time
-    val days = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS)
-    return days < 30
+    if(tipo != PEDIDO) return true
+    else {
+      val datePedido = date ?: return false
+      val dateNow = Date()
+      val diff = dateNow.time - datePedido.time
+      val days = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS)
+      return days < 30
+    }
   }
 
   fun isLojaValida(): Boolean {
