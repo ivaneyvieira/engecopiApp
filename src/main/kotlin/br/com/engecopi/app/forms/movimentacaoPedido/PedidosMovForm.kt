@@ -41,8 +41,8 @@ class PedidosMovForm : VerticalLayout() {
     val tipoNota = filtro.tipoNota ?: fail("Tipo da Nota não informado")
 
     if (tipoNota == GARANTIA && pedidoNota.tipo != PEDIDO) when {
-      filtro.tipoMov != ENTRADA || pedidoNota.tipo != DEVOLUCAO -> fail("A nota não é de saida")
-      filtro.tipoMov != SAIDA || pedidoNota.tipo != COMPRA -> fail("A nota não é de entrada")
+      filtro.tipoMov == ENTRADA && pedidoNota.tipo == COMPRA -> fail("A nota não é de saída")
+      filtro.tipoMov == SAIDA && pedidoNota.tipo == DEVOLUCAO -> fail("A nota não é de entrada")
     }
 
     pedidoPainel.setPedido(null, filtro)
