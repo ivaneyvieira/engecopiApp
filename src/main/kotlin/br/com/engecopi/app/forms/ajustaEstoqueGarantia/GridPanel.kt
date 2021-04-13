@@ -1,4 +1,4 @@
-package br.com.engecopi.app.forms.ajustaEstoque
+package br.com.engecopi.app.forms.ajustaEstoqueGarantia
 
 import br.com.engecopi.app.model.Produtos
 import br.com.engecopi.utils.format
@@ -9,7 +9,7 @@ import com.vaadin.ui.renderers.NumberRenderer
 import com.vaadin.ui.themes.ValoTheme
 import java.text.DecimalFormat
 
-class GridPanel(val ajustaEstoqueForm: AjustaEstoqueForm) : CssLayout() {
+class GridPanel(val ajustaEstoquePerdaForm: AjustaEstoqueGarantiaForm) : CssLayout() {
 
   val grid = grid(Produtos::class, null, ListDataProvider(emptyList())) {
     setSizeFull()

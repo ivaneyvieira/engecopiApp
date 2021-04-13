@@ -60,33 +60,30 @@ class SaldoKardecForm : VerticalLayout() {
   private fun customizeExportExcelUtility(exportType: ExportType): ExportToExcel<SaldoKardec> {
 
     val grid = gridPanel.grid
-    val componentConfig =
-      ExportExcelComponentConfigurationBuilder<SaldoKardec>().withGrid(grid).withVisibleProperties(
-        listOf(
-          "codigo", "grade", "loja", "mes_ano", "saldoEstoque", "saldoKardec", "diferecenca"
-              ).toTypedArray()
-                                                                                                  )/*  .withHeaderConfigs(Arrays.asList(ComponentHeaderConfigurationBuilder().withAutoFilter(true)
+    val componentConfig = ExportExcelComponentConfigurationBuilder<SaldoKardec>().withGrid(grid).withVisibleProperties(
+      listOf(
+        "codigo", "grade", "loja", "mes_ano", "saldoEstoque", "saldoKardec", "diferecenca"
+            ).toTypedArray()
+                                                                                                                      )/*  .withHeaderConfigs(Arrays.asList(ComponentHeaderConfigurationBuilder().withAutoFilter(true)
                                                 .withColumnKeys(Arrays.asList("Código", "Grade", "Loja",
                                                                               "Mes/Ano", "Estoque", "Kardec",
                                                                               "Diferença").toTypedArray())
                                                 .build()))*/
 
-        .build()
+            .build()
 
     /* Configuring Sheets */
-    val sheetConfig = ExportExcelSheetConfigurationBuilder<SaldoKardec>()
-      .withReportTitle("Saldo Kardec")
-      .withSheetName("Saldo Kardec")
-      .withComponentConfigs(listOf(componentConfig))
-      .withIsHeaderSectionRequired(TRUE)
-      .withDateFormat("dd/MM/yyyy")
-      .build()
+    val sheetConfig = ExportExcelSheetConfigurationBuilder<SaldoKardec>().withReportTitle("Saldo Kardec")
+            .withSheetName("Saldo Kardec")
+            .withComponentConfigs(listOf(componentConfig))
+            .withIsHeaderSectionRequired(TRUE)
+            .withDateFormat("dd/MM/yyyy")
+            .build()
 
     /* Configuring Excel */
-    val config = ExportExcelConfigurationBuilder<SaldoKardec>()
-      .withGeneratedBy("Engecopi")
-      .withSheetConfigs(listOf(sheetConfig))
-      .build()
+    val config = ExportExcelConfigurationBuilder<SaldoKardec>().withGeneratedBy("Engecopi")
+            .withSheetConfigs(listOf(sheetConfig))
+            .build()
 
     return ExportToExcel(exportType, config)
   }

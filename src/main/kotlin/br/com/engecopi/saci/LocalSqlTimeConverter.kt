@@ -6,8 +6,7 @@ import java.sql.Time
 import java.time.LocalTime
 
 class LocalSqlTimeConverter : Converter<LocalTime?> {
-  @Throws(ConverterException::class)
-  override fun convert(value: Any?): LocalTime? {
+  @Throws(ConverterException::class) override fun convert(value: Any?): LocalTime? {
     if (value !is Time) return null
     return value.toLocalTime()
   }

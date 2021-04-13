@@ -8,8 +8,7 @@ import java.sql.Blob
 import java.sql.SQLException
 
 class ByteArrayConverter : ConverterBase<ByteArray>() {
-  @Throws(ConverterException::class)
-  override fun convert(value: Any): ByteArray? {
+  @Throws(ConverterException::class) override fun convert(value: Any): ByteArray? {
     if (value is Blob) {
       var stream: InputStream? = null
       return try {

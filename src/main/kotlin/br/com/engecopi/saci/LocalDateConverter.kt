@@ -7,8 +7,7 @@ import java.time.LocalDate
 import java.time.ZoneOffset
 
 class LocalDateConverter : Converter<LocalDate?> {
-  @Throws(ConverterException::class)
-  override fun convert(value: Any?): LocalDate? {
+  @Throws(ConverterException::class) override fun convert(value: Any?): LocalDate? {
     if (value !is Date) return null
     return value.toLocalDate()
   }

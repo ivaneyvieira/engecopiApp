@@ -9,8 +9,7 @@ import com.vaadin.ui.Alignment
 import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.themes.ValoTheme
 
-@AutoView("teste")
-class WelcomeView : VerticalLayout(), View {
+@AutoView("teste") class WelcomeView : VerticalLayout(), View {
   init {
     setSizeFull()
     isMargin = false

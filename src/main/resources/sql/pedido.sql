@@ -42,3 +42,26 @@ WHERE N.tipo = 2
   AND N.nfno = :numero
   AND N.nfse = :serie
 GROUP BY N.storeno, N.nfno, N.nfse
+UNION
+DISTINCT
+SELECT N.storeno                                    AS storeno,
+       CAST(CONCAT(N.nfname, '/', N.invse) AS CHAR) AS numero,
+       CAST(N.issue_date AS DATE)                   AS date,
+       E.no                                         AS userno,
+       IFNULL(E.name, 'N/D')                        AS username,
+       IFNULL(C.name, 'N/D')                        AS cliente,
+       IF(N.s16 = 0, 1, N.s16)                      AS status,
+       'COMPRA'                                     AS tipo,
+       IFNULL(S.no, 0)                              AS storeno_custno
+FROM sqldados.inv          AS N
+  LEFT JOIN sqldados.users AS E
+	      ON E.no = N.usernoFirst
+  LEFT JOIN sqldados.vend  AS C
+	      ON C.no = N.vendno
+  LEFT JOIN sqldados.store AS S
+	      ON S.cgc = C.cgc
+WHERE N.type = 0
+  AND N.storeno = :storeno
+  AND N.nfname = :numero
+  AND N.invse = :serie
+GROUP BY N.storeno, N.nfname, N.invse
