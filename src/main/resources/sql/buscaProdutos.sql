@@ -6,6 +6,7 @@ DO @OP := :operacao;
 DO @YM := :ym;
 DO @DI := CONCAT(@YM, '01') * 1;
 DO @DF := CONCAT(@YM, '31') * 1;
+DO @PEDIDO := :numPedido;
 
 
 DROP TEMPORARY TABLE IF EXISTS T_PRD_NF;
@@ -20,6 +21,7 @@ WHERE (storeno = @LJ)
   AND remarks LIKE '%:PED _%'
   AND (prdno = LPAD(@PR, 16, ' ') OR @PR = '')
   AND date BETWEEN @DI AND @DF
+  AND (remarks LIKE CONCAT('%', @PEDIDO) OR @PEDIDO = '')
 GROUP BY prdno, grade;
 
 DROP TEMPORARY TABLE IF EXISTS T_PRD;
@@ -34,8 +36,8 @@ SELECT stk.prdno                  AS prdno,
        prd.typeno                 AS tipo,
        stk.qtty_atacado           AS qttyatacado,
        IFNULL(stk.cm_varejo, 0)   AS ultimocusto
-FROM stk
-  INNER JOIN prd
+FROM sqldados.stk
+  INNER JOIN sqldados.prd
 	       ON (stk.prdno = prd.no)
 WHERE stk.storeno = @LJ
   AND dereg & POW(2, 2) <> POW(2, 2)
