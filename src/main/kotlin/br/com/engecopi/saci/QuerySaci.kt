@@ -201,6 +201,7 @@ class QuerySaci : QueryDB(driver, url, username, password) {
       addOptionalParameter("loja", base.lojaDestino)
       addOptionalParameter("operacao", base.operacao.operacao)
       addOptionalParameter("prdno", base.codprd)
+      addOptionalParameter("numPedido", base.numPedido)
       addOptionalParameter("vends", base.fornecedores)
       addOptionalParameter("types", base.tipos)
       addOptionalParameter("ym", base.mesAno)

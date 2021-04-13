@@ -183,6 +183,7 @@ class HeaderPanel(private val ajustaEstoqueGarantiaForm: AjustaEstoqueGarantiaFo
   fun baseDados() = Base(
     lojaDestino = loja.value?.numero ?: 0,
     operacao = tipoMov.value,
+    numPedido = "",
     codprd = codigo.value?.trim() ?: "",
     fornecedores = edtFornecedores.value ?: "",
     tipos = edtTipos.value ?: "",

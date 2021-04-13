@@ -22,6 +22,7 @@ import java.time.format.DateTimeFormatter
 
 class HeaderPanel(private val ajustaEstoquePerdaForm: AjustaEstoquePerdaForm) : VerticalLayout() {
   private lateinit var edtTipos: TextField
+  private lateinit var edtPedido: TextField
   private lateinit var edtFornecedores: TextField
   private lateinit var codigo: TextField
   private lateinit var tipoMov: RadioButtonGroup<TipoMov>
@@ -54,6 +55,9 @@ class HeaderPanel(private val ajustaEstoquePerdaForm: AjustaEstoquePerdaForm) : 
       mesAno = textField("Mes/Ano") {
         val formatter = DateTimeFormatter.ofPattern("MM/yyyy")
         value = LocalDate.now().format(formatter)
+        isExpanded = false
+      }
+      edtPedido = textField("Pedido") {
         isExpanded = true
       }
     }
@@ -183,6 +187,7 @@ class HeaderPanel(private val ajustaEstoquePerdaForm: AjustaEstoquePerdaForm) : 
   fun baseDados() = Base(
     lojaDestino = loja.value?.numero ?: 0,
     operacao = tipoMov.value,
+    numPedido = edtPedido.value ?: "",
     codprd = codigo.value?.trim() ?: "",
     fornecedores = edtFornecedores.value ?: "",
     tipos = edtTipos.value ?: "",
