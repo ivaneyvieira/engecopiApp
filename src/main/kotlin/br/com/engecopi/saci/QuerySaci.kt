@@ -3,7 +3,7 @@ package br.com.engecopi.saci
 import br.com.engecopi.app.model.*
 import br.com.engecopi.app.model.TipoMov.ENTRADA
 import br.com.engecopi.app.model.TipoMov.SAIDA
-import br.com.engecopi.app.model.TipoNota.PERDA
+import br.com.engecopi.saci.DestinoMov.STKMOV
 import br.com.engecopi.saci.beans.*
 import br.com.engecopi.utils.DB
 import br.com.engecopi.utils.lpad
@@ -51,35 +51,35 @@ class QuerySaci : QueryDB(driver, url, username, password) {
     }
   }
 
-  fun processaPedidoSTKMOV(loja: Loja?, numero: String, tipoMov: TipoMov?, tipoNota: TipoNota?) {
-    val tipo = tipoMov?.cod ?: return
-    val storeno = loja?.numero ?: return
-    val sql = if (tipoNota == PERDA) "/sql/processaPedido.sql" else "/sql/processaPedidoNF.sql"
+  fun processaPedido(loja: Loja, numero: String, tipoMov: TipoMov, tipoNota: TipoNota, destino : DestinoMov) {
+    val tipo = tipoMov.cod
+    val storeno = loja.numero
+    val sql = if (destino == STKMOV) "/sql/processaPedido.sql" else "/sql/processaPedidoNF.sql"
     execute(
       sql,
       Pair("storeno", "$storeno"),
       Pair("ordno", numero),
       Pair("tipo", "'$tipo'"),
-      Pair("t_nota", "${tipoNota?.numero ?: 0}")
+      Pair("t_nota", "${tipoNota.numero}")
            )
   }
 
-  fun processaDevolucaoSTKMOV(loja: Loja?, nfno: String, nfse: String, tipoNota: TipoNota) {
-    val storeno = loja?.numero ?: return
-    val sql = if (tipoNota == PERDA) "/sql/processaDevolucao.sql" else "/sql/processaDevolucaoNF.sql"
+  fun processaNota(loja: Loja, nfno: String, nfse: String, destino : DestinoMov) {
+    val storeno = loja.numero
+    val sql = if (destino == STKMOV) "/sql/processaDevolucao.sql" else "/sql/processaDevolucaoNF.sql"
     execute(sql, Pair("storeno", "$storeno"), Pair("nfno", nfno), Pair("nfse", "'$nfse'"))
   }
 
-  fun desfazPedidoSTKMOV(loja: Loja?, numero: String, tipoMov: TipoMov?, tipoNota: TipoNota?) {
-    val tipo = tipoMov?.cod ?: return
-    val storeno = loja?.numero ?: return
-    val sql = if (tipoNota == PERDA) "/sql/desfazPedido.sql" else "/sql/desfazPedidoNF.sql"
+  fun desfazPedido(loja: Loja, numero: String, tipoMov: TipoMov, destino : DestinoMov) {
+    val tipo = tipoMov.cod
+    val storeno = loja.numero
+    val sql = if (destino == STKMOV) "/sql/desfazPedido.sql" else "/sql/desfazPedidoNF.sql"
     execute(sql, Pair("storeno", "$storeno"), Pair("ordno", numero), Pair("tipo", "'$tipo'"))
   }
 
-  fun desfazDevolucaoSTKMOV(loja: Loja?, nfno: String, nfse: String, tipoNota: TipoNota?) {
-    val storeno = loja?.numero ?: return
-    val sql = if (tipoNota == PERDA) "/sql/desfazDevolucao.sql" else "/sql/desfazDevolucaoNF.sql"
+  fun desfazNota(loja: Loja, nfno: String, nfse: String, destino : DestinoMov) {
+    val storeno = loja.numero
+    val sql = if (destino == STKMOV) "/sql/desfazDevolucao.sql" else "/sql/desfazDevolucaoNF.sql"
     execute(sql, Pair("storeno", "$storeno"), Pair("nfno", nfno), Pair("nfse", "'$nfse'"))
   }
 
@@ -299,9 +299,8 @@ val saci = QuerySaci()
 class StatusPedidoConverter : Converter<StatusPedido?> {
   @Throws(ConverterException::class) override fun convert(value: Any?): StatusPedido? {
     val num = value?.toString()?.toIntOrNull()
-    val status = StatusPedido.values().firstOrNull { it.num == num }
 
-    return status
+    return StatusPedido.values().firstOrNull { it.num == num }
   }
 
   override fun toDatabaseParam(value: StatusPedido?): Any? {
@@ -312,12 +311,15 @@ class StatusPedidoConverter : Converter<StatusPedido?> {
 
 class TipoPedidoConverter : Converter<TipoPedido?> {
   @Throws(ConverterException::class) override fun convert(value: Any?): TipoPedido? {
-    val tipo = TipoPedido.values().firstOrNull { it.text == value }
-    return tipo
+    return TipoPedido.values().firstOrNull { it.text == value }
   }
 
   override fun toDatabaseParam(value: TipoPedido?): Any? {
     value ?: return null
     return value.text
   }
+}
+
+enum class DestinoMov {
+  STKMOV, NF
 }

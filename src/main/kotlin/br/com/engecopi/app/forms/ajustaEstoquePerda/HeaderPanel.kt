@@ -46,7 +46,6 @@ class HeaderPanel(private val ajustaEstoquePerdaForm: AjustaEstoquePerdaForm) : 
       }
       tipoMov = radioButtonGroup("Tipo") {
         styleName = ValoTheme.OPTIONGROUP_HORIZONTAL
-
         setItems(TipoMov.values().toList())
         setItemIconGenerator { it.icon }
         value = SAIDA

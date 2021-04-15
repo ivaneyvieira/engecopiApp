@@ -8,6 +8,8 @@ import br.com.engecopi.app.model.TipoMov.SAIDA
 import br.com.engecopi.app.model.TipoNota
 import br.com.engecopi.app.model.TipoNota.GARANTIA
 import br.com.engecopi.app.model.TipoNota.PERDA
+import br.com.engecopi.saci.DestinoMov.NF
+import br.com.engecopi.saci.DestinoMov.STKMOV
 import br.com.engecopi.saci.beans.PedidoNota
 import br.com.engecopi.saci.beans.StatusPedido.NAO_PROCESSADO
 import br.com.engecopi.saci.beans.TipoPedido.*
@@ -40,7 +42,7 @@ class PedidosMovForm : VerticalLayout() {
 
     val tipoNota = filtro.tipoNota ?: fail("Tipo da Nota não informado")
 
-    if (tipoNota == GARANTIA && pedidoNota.tipo != PEDIDO) when {
+    if (pedidoNota.tipo != PEDIDO) when {
       filtro.tipoMov == ENTRADA && pedidoNota.tipo == COMPRA -> fail("A nota não é de saída")
       filtro.tipoMov == SAIDA && pedidoNota.tipo == DEVOLUCAO -> fail("A nota não é de entrada")
     }
@@ -73,13 +75,14 @@ class PedidosMovForm : VerticalLayout() {
     val loja = filtro.loja ?: fail("Loja não informada")
     val numPedido = filtro.numPedido ?: fail("Numero do pedido/nota não informado")
     val pedidoNota = saci.pedidoNota(loja, numPedido) ?: fail("Numero do pedido/nota não encontrado")
-    val tipoNota = filtro.tipoNota
+    val tipoNota = filtro.tipoNota ?: fail("O Tipo da nota não foi informada")
+    val pedidoNotaTipo = pedidoNota.tipo
 
-    if (tipoNota == GARANTIA && pedidoNota.tipo != PEDIDO) when {
-      filtro.tipoMov != ENTRADA || pedidoNota.tipo != DEVOLUCAO -> fail("A nota não é de saida")
-      filtro.tipoMov != SAIDA || pedidoNota.tipo != COMPRA -> fail("A nota não é de entrada")
+    if (pedidoNotaTipo != PEDIDO) when {
+      filtro.tipoMov != ENTRADA || pedidoNotaTipo != DEVOLUCAO -> fail("A nota não é de saida")
+      filtro.tipoMov != SAIDA || pedidoNotaTipo != COMPRA -> fail("A nota não é de entrada")
     }
-    val tipo = filtro.tipoMov
+    val tipo = filtro.tipoMov ?: fail("Tipo do Movimento não foi informado")
     when {
       !pedidoNota.isDataValida() -> {
         fail("Pedido tem mais de 30 dias")
@@ -121,21 +124,46 @@ class PedidosMovForm : VerticalLayout() {
     gridPainel.grid.dataProvider = ListDataProvider(produtos)
   }
 
-  private fun processa(pedidoNota: PedidoNota?, loja: Loja?, numPedido: String, tipo: TipoMov?, tipoNota: TipoNota?) {
-    if (pedidoNota?.tipo == DEVOLUCAO || pedidoNota?.tipo == COMPRA) {
-      val nfno = pedidoNota.numeroPedido ?: ""
-      val nfse = pedidoNota.serie ?: ""
-      saci.processaDevolucaoSTKMOV(loja, nfno, nfse, GARANTIA)
+  private fun processa(pedidoNota: PedidoNota, loja: Loja, numPedido: String, tipo: TipoMov, tipoNota: TipoNota) {
+    when (tipoNota) {
+      GARANTIA -> {
+        if (pedidoNota.tipo == DEVOLUCAO || pedidoNota.tipo == COMPRA) {
+          val nfno = pedidoNota.numeroPedido ?: ""
+          val nfse = pedidoNota.serie ?: ""
+          saci.processaNota(loja, nfno, nfse, NF)
+        }
+        else saci.processaPedido(loja, numPedido, tipo, tipoNota, NF)
+      }
+      PERDA -> {
+        if (pedidoNota.tipo == DEVOLUCAO || pedidoNota.tipo == COMPRA) {
+          val nfno = pedidoNota.numeroPedido ?: ""
+          val nfse = pedidoNota.serie ?: ""
+          saci.processaNota(loja, nfno, nfse, STKMOV)
+        }
+        else saci.processaPedido(loja, numPedido, tipo, tipoNota, STKMOV)
+      }
     }
-    else saci.processaPedidoSTKMOV(loja, numPedido, tipo, tipoNota)
   }
 
-  private fun desfaz(pedidoNota: PedidoNota?, loja: Loja?, numPedido: String, tipoMov: TipoMov?, tipoNota: TipoNota?) {
-    if (pedidoNota?.tipo == DEVOLUCAO || pedidoNota?.tipo == COMPRA) {
-      val nfno = pedidoNota.numeroPedido ?: ""
-      val nfse = pedidoNota.serie ?: ""
-      saci.desfazDevolucaoSTKMOV(loja, nfno, nfse, GARANTIA)
+  private fun desfaz(pedidoNota: PedidoNota, loja: Loja, numPedido: String, tipoMov: TipoMov, tipoNota: TipoNota) {
+    when (tipoNota) {
+      GARANTIA -> {
+        if (pedidoNota.tipo == DEVOLUCAO || pedidoNota.tipo == COMPRA) {
+          val nfno = pedidoNota.numeroPedido ?: ""
+          val nfse = pedidoNota.serie ?: ""
+          saci.desfazNota(loja, nfno, nfse, NF)
+        }
+        else saci.desfazPedido(loja, numPedido, tipoMov, NF)
+      }
+      PERDA -> {
+        if (pedidoNota.tipo == DEVOLUCAO || pedidoNota.tipo == COMPRA) {
+          val nfno = pedidoNota.numeroPedido ?: ""
+          val nfse = pedidoNota.serie ?: ""
+          saci.desfazNota(loja, nfno, nfse, STKMOV)
+        }
+        else saci.desfazPedido(loja, numPedido, tipoMov, STKMOV)
+      }
     }
-    else saci.desfazPedidoSTKMOV(loja, numPedido, tipoMov, tipoNota)
+
   }
 }
