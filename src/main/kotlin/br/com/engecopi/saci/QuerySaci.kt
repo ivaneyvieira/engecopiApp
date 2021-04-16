@@ -51,41 +51,37 @@ class QuerySaci : QueryDB(driver, url, username, password) {
     }
   }
 
-  fun processaPedido(loja: Loja, numero: String, tipoMov: TipoMov, tipoNota: TipoNota, destino : DestinoMov) {
+  fun processaPedido(loja: Loja, numero: String, tipoMov: TipoMov, tipoNota: TipoNota, destino: DestinoMov) {
     val tipo = tipoMov.cod
     val storeno = loja.numero
     val sql = if (destino == STKMOV) "/sql/processaPedido.sql" else "/sql/processaPedidoNF.sql"
-    execute(
-      sql,
-      Pair("storeno", "$storeno"),
-      Pair("ordno", numero),
-      Pair("tipo", "'$tipo'"),
-      Pair("t_nota", "${tipoNota.numero}")
-           )
+    execute(sql,
+            Pair("storeno", "$storeno"),
+            Pair("ordno", numero),
+            Pair("tipo", "'$tipo'"),
+            Pair("t_nota", "${tipoNota.numero}"))
   }
 
-  fun processaNota(loja: Loja, nfno: String, nfse: String, destino : DestinoMov) {
+  fun processaNota(loja: Loja, nfno: String, nfse: String, destino: DestinoMov) {
     val storeno = loja.numero
     val sql = if (destino == STKMOV) "/sql/processaDevolucao.sql" else "/sql/processaDevolucaoNF.sql"
     execute(sql, Pair("storeno", "$storeno"), Pair("nfno", nfno), Pair("nfse", "'$nfse'"))
   }
 
-  fun desfazPedido(loja: Loja, numero: String, tipoMov: TipoMov, destino : DestinoMov) {
+  fun desfazPedido(loja: Loja, numero: String, tipoMov: TipoMov, destino: DestinoMov) {
     val tipo = tipoMov.cod
     val storeno = loja.numero
     val sql = if (destino == STKMOV) "/sql/desfazPedido.sql" else "/sql/desfazPedidoNF.sql"
     execute(sql, Pair("storeno", "$storeno"), Pair("ordno", numero), Pair("tipo", "'$tipo'"))
   }
 
-  fun desfazNota(loja: Loja, nfno: String, nfse: String, destino : DestinoMov) {
+  fun desfazNota(loja: Loja, nfno: String, nfse: String, destino: DestinoMov) {
     val storeno = loja.numero
     val sql = if (destino == STKMOV) "/sql/desfazDevolucao.sql" else "/sql/desfazDevolucaoNF.sql"
     execute(sql, Pair("storeno", "$storeno"), Pair("nfno", nfno), Pair("nfse", "'$nfse'"))
   }
 
-  fun saldoKardec(
-    dataInicial: LocalDate, dataFinal: LocalDate, monitor: (String, Int, Int) -> Unit
-                 ) {
+  fun saldoKardec(dataInicial: LocalDate, dataFinal: LocalDate, monitor: (String, Int, Int) -> Unit) {
     val sql = "/sql/saldoKardec.sql"
     val sdf = DateTimeFormatter.ofPattern("yyyyMMdd")
     val di = dataInicial.format(sdf)
@@ -148,12 +144,10 @@ class QuerySaci : QueryDB(driver, url, username, password) {
 
   fun apagaAjuste(ajuste: AjusteInventario) {
     val sql = "/sql/apaga Ajuste.sql"
-    execute(
-      sql,
-      ("numero" to "'${ajuste.numero}'"),
-      ("prdno" to "'${ajuste.prdno.lpad(16, " ")}'"),
-      ("grade" to "'${ajuste.grade}'")
-           )
+    execute(sql,
+            ("numero" to "'${ajuste.numero}'"),
+            ("prdno" to "'${ajuste.prdno.lpad(16, " ")}'"),
+            ("grade" to "'${ajuste.grade}'"))
   }
 
   fun findGrades(codigo: String?): List<String> {
@@ -166,26 +160,22 @@ class QuerySaci : QueryDB(driver, url, username, password) {
 
   fun addProdutoAjuste(loja: Int, codigo: String, grade: String, nota: Int, qtty: Int, data: Int) {
     val sql = "/sql/addProdutoAjuste.sql"
-    execute(
-      sql,
-      ("loja" to "$loja"),
-      ("codigo" to "'$codigo'"),
-      ("grade" to "'$grade'"),
-      ("nota" to "$nota"),
-      ("qtty" to "$qtty"),
-      ("data" to "$data")
-           )
+    execute(sql,
+            ("loja" to "$loja"),
+            ("codigo" to "'$codigo'"),
+            ("grade" to "'$grade'"),
+            ("nota" to "$nota"),
+            ("qtty" to "$qtty"),
+            ("data" to "$data"))
   }
 
   fun salvaAjuste(ajuste: AjusteInventario) {
     val sql = "/sql/salvaAjuste.sql"
-    execute(
-      sql,
-      ("numero" to "'${ajuste.numero}'"),
-      ("prdno" to "'${ajuste.prdno.lpad(16, " ")}'"),
-      ("grade" to "'${ajuste.grade}'"),
-      ("quant" to "${ajuste.inventario}")
-           )
+    execute(sql,
+            ("numero" to "'${ajuste.numero}'"),
+            ("prdno" to "'${ajuste.prdno.lpad(16, " ")}'"),
+            ("grade" to "'${ajuste.grade}'"),
+            ("quant" to "${ajuste.inventario}"))
   }
 
   fun datasProcessamento(): DatasProcessamento? {
@@ -321,5 +311,6 @@ class TipoPedidoConverter : Converter<TipoPedido?> {
 }
 
 enum class DestinoMov {
-  STKMOV, NF
+  STKMOV,
+  NF
 }

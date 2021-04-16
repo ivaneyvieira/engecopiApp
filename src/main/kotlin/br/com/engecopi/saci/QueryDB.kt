@@ -14,9 +14,7 @@ import kotlin.reflect.KClass
 
 typealias QueryHandle = Query.() -> Unit
 
-open class QueryDB(
-  private val driver: String, val url: String, val username: String, val password: String
-                  ) {
+open class QueryDB(private val driver: String, val url: String, val username: String, val password: String) {
   private val sql2o: Sql2o
 
   init {
@@ -57,9 +55,9 @@ open class QueryDB(
     }
   }
 
-  protected fun execute(
-    file: String, vararg params: Pair<String, String>, monitor: (String, Int, Int) -> Unit = { _, _, _ -> }
-                       ) {
+  protected fun execute(file: String,
+                        vararg params: Pair<String, String>,
+                        monitor: (String, Int, Int) -> Unit = { _, _, _ -> }) {
     var sqlScript = SystemUtils.readFile(file)
     sql2o.beginTransaction().trywr { con ->
       params.forEach { sqlScript = sqlScript.replace(":${it.first}", it.second) }
@@ -108,9 +106,7 @@ open class QueryDB(
     return this
   }
 
-  protected fun <T : Any> query(
-    file: String, classes: KClass<T>, lambda: QueryHandle = {}
-                               ): List<T> {
+  protected fun <T : Any> query(file: String, classes: KClass<T>, lambda: QueryHandle = {}): List<T> {
     val statements = toStratments(file)
     if (statements.isEmpty()) return emptyList()
     val lastIndex = statements.lastIndex
@@ -123,9 +119,7 @@ open class QueryDB(
     }
   }
 
-  private fun <T : Any> querySQL(
-    con: Connection, sql: String?, classes: KClass<T>, lambda: QueryHandle = {}
-                                ): List<T> {
+  private fun <T : Any> querySQL(con: Connection, sql: String?, classes: KClass<T>, lambda: QueryHandle = {}): List<T> {
     val query = con.createQuery(sql)
     query.lambda()
     println(sql)

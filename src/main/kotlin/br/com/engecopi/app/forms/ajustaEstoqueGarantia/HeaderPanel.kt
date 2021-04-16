@@ -113,9 +113,17 @@ class HeaderPanel(private val ajustaEstoqueGarantiaForm: AjustaEstoqueGarantiaFo
         isExpanded = true
       }
     }
-    MessageBox.create().withCaption("Desfazer").withMessage(form).withYesButton({
-      confirmaDesfazer(edtLoja.value, edtNota.value, edtTipoMov.value, GARANTIA)
-    }).withNoButton({ println("No button was pressed.") }).open()
+    MessageBox.create()
+            .withCaption("Desfazer")
+            .withMessage(form)
+            .withYesButton({
+                             confirmaDesfazer(edtLoja.value,
+                                              edtNota.value,
+                                              edtTipoMov.value,
+                                              GARANTIA)
+                           })
+            .withNoButton({ println("No button was pressed.") })
+            .open()
   }
 
   private fun confirmaDesfazer(loja: Loja?, nota: String?, tipo: TipoMov?, tipoNota: TipoNota?) {
@@ -135,9 +143,8 @@ class HeaderPanel(private val ajustaEstoqueGarantiaForm: AjustaEstoqueGarantiaFo
           SAIDA -> saci.desfazerSaida(loja, numNota)
           ENTRADA -> saci.desfazerEntrada(loja, numNota)
         }
-        show(
-          "Movimentacao referente a nota: $numNota da loja: ${loja.numero} foi desfeita com sucesso!", HUMANIZED_MESSAGE
-            )
+        show("Movimentacao referente a nota: $numNota da loja: ${loja.numero} foi desfeita com sucesso!",
+             HUMANIZED_MESSAGE)
       }
       else {
         show("Informe uma nota válida!", ERROR_MESSAGE)
@@ -180,15 +187,13 @@ class HeaderPanel(private val ajustaEstoqueGarantiaForm: AjustaEstoqueGarantiaFo
     }
   }
 
-  fun baseDados() = Base(
-    lojaDestino = loja.value?.numero ?: 0,
-    operacao = tipoMov.value,
-    numPedido = "",
-    codprd = codigo.value?.trim() ?: "",
-    fornecedores = edtFornecedores.value ?: "",
-    tipos = edtTipos.value ?: "",
-    mesAno = mesAno.value?.numMesAno() ?: 0
-                        )
+  fun baseDados() = Base(lojaDestino = loja.value?.numero ?: 0,
+                         operacao = tipoMov.value,
+                         numPedido = "",
+                         codprd = codigo.value?.trim() ?: "",
+                         fornecedores = edtFornecedores.value ?: "",
+                         tipos = edtTipos.value ?: "",
+                         mesAno = mesAno.value?.numMesAno() ?: 0)
 }
 
 private fun String.numMesAno(): Int {

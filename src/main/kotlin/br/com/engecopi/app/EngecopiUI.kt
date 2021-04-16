@@ -7,14 +7,10 @@ import com.vaadin.annotations.Title
 import com.vaadin.navigator.Navigator
 import com.vaadin.navigator.View
 import com.vaadin.navigator.ViewDisplay
-import com.vaadin.server.Page
 import com.vaadin.server.VaadinRequest
-import com.vaadin.shared.Position
 import com.vaadin.ui.Component
-import com.vaadin.ui.Notification
 import com.vaadin.ui.UI
 import com.vaadin.ui.VerticalLayout
-import com.vaadin.ui.themes.ValoTheme
 
 //@Theme("mytheme")
 @Theme("valo") @Title("Engecopi App") class EngecopiUI : UI() {

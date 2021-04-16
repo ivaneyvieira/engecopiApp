@@ -1,6 +1,5 @@
 package br.com.engecopi.app
 
-import br.com.engecopi.app.forms.ajustaEstoqueGarantia.AjustaEstoqueGarantiaForm
 import br.com.engecopi.app.forms.ajustaEstoquePerda.AjustaEstoquePerdaForm
 import br.com.engecopi.app.forms.movimentacaoPedido.PedidosMovForm
 import br.com.engecopi.app.forms.processaConferencia.ProcessaConferenciaForm
@@ -21,8 +20,8 @@ import com.vaadin.ui.themes.ValoTheme
       setSizeFull()
       styleName = ValoTheme.TABSHEET_FRAMED
       addTab(PedidosMovForm(), "Movimentação de Pedidos")
-      addTab(AjustaEstoquePerdaForm(), "Ajusta Estoque Perda")
-     // addTab(AjustaEstoqueGarantiaForm(), "Ajusta Estoque Garantia")
+      addTab(AjustaEstoquePerdaForm(),
+             "Ajusta Estoque Perda") // addTab(AjustaEstoqueGarantiaForm(), "Ajusta Estoque Garantia")
       addTab(SaldoKardecForm(), "Compara Saldo vs Kardec")
       addTab(ProcessaConferenciaForm(), "Conferência")
       expandRatio = 1f

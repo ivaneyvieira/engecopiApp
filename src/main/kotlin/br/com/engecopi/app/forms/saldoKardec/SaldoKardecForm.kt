@@ -60,11 +60,14 @@ class SaldoKardecForm : VerticalLayout() {
   private fun customizeExportExcelUtility(exportType: ExportType): ExportToExcel<SaldoKardec> {
 
     val grid = gridPanel.grid
-    val componentConfig = ExportExcelComponentConfigurationBuilder<SaldoKardec>().withGrid(grid).withVisibleProperties(
-      listOf(
-        "codigo", "grade", "loja", "mes_ano", "saldoEstoque", "saldoKardec", "diferecenca"
-            ).toTypedArray()
-                                                                                                                      )/*  .withHeaderConfigs(Arrays.asList(ComponentHeaderConfigurationBuilder().withAutoFilter(true)
+    val componentConfig = ExportExcelComponentConfigurationBuilder<SaldoKardec>().withGrid(grid)
+            .withVisibleProperties(listOf("codigo",
+                                          "grade",
+                                          "loja",
+                                          "mes_ano",
+                                          "saldoEstoque",
+                                          "saldoKardec",
+                                          "diferecenca").toTypedArray())/*  .withHeaderConfigs(Arrays.asList(ComponentHeaderConfigurationBuilder().withAutoFilter(true)
                                                 .withColumnKeys(Arrays.asList("Código", "Grade", "Loja",
                                                                               "Mes/Ano", "Estoque", "Kardec",
                                                                               "Diferença").toTypedArray())

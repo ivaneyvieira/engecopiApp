@@ -8,18 +8,16 @@ import br.com.engecopi.saci.saci
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-class PedidoNota(
-  val storeno: Int?,
-  val numero: String?,
-  val date: Date?,
-  val userno: Int?,
-  val username: String?,
-  val cpf_cgc: String?,
-  val cliente: String?,
-  val status: StatusPedido?,
-  val tipo: TipoPedido?,
-  val storeno_custno: Int
-                ) {
+class PedidoNota(val storeno: Int?,
+                 val numero: String?,
+                 val date: Date?,
+                 val userno: Int?,
+                 val username: String?,
+                 val cpf_cgc: String?,
+                 val cliente: String?,
+                 val status: StatusPedido?,
+                 val tipo: TipoPedido?,
+                 val storeno_custno: Int) {
   val loja
     get() = Loja.findLoja(storeno)
   val numeroPedido
@@ -39,7 +37,7 @@ class PedidoNota(
   fun produtoValido() = produtos().any { (it.prdno ?: "000000") < "980001" }
 
   fun isDataValida(): Boolean {
-    if(tipo != PEDIDO) return true
+    if (tipo != PEDIDO) return true
     else {
       val datePedido = date ?: return false
       val dateNow = Date()
@@ -55,9 +53,12 @@ class PedidoNota(
 }
 
 enum class TipoPedido(val text: String) {
-  PEDIDO("PEDIDO"), DEVOLUCAO("DEVOLUCAO"), COMPRA("COMPRA")
+  PEDIDO("PEDIDO"),
+  DEVOLUCAO("DEVOLUCAO"),
+  COMPRA("COMPRA")
 }
 
 enum class StatusPedido(val num: Int) {
-  NAO_PROCESSADO(1), JA_PROCESSADO(4)
+  NAO_PROCESSADO(1),
+  JA_PROCESSADO(4)
 }
