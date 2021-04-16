@@ -11,11 +11,9 @@ import com.vaadin.ui.Alignment.BOTTOM_RIGHT
 import com.vaadin.ui.CssLayout
 import com.vaadin.ui.themes.ValoTheme
 
-class FiltroPedidoPainel(
-  val execFiltro: (FiltroPedido) -> Unit,
-  val execProcessa: (FiltroPedido) -> Unit,
-  val desfazProcessa: (FiltroPedido) -> Unit
-                        ) : CssLayout() {
+class FiltroPedidoPainel(val execFiltro: (FiltroPedido) -> Unit,
+                         val execProcessa: (FiltroPedido) -> Unit,
+                         val desfazProcessa: (FiltroPedido) -> Unit) : CssLayout() {
   private val binderFiltroPedido = beanValidationBinder<FiltroPedido>()
   private var filtroPedido: FiltroPedido? = FiltroPedido()
   private val tipoMov = radioButtonGroup<TipoMov>("Tipo") {
@@ -89,9 +87,7 @@ class FiltroPedidoPainel(
       horizontalLayout {
         setWidth("100%")
         isMargin = true
-        addComponents(
-          tipoMov, tipoNota, loja, numPedido, btnPesquisa, btnProcessa, btnDesfazProcessa
-                     )
+        addComponents(tipoMov, tipoNota, loja, numPedido, btnPesquisa, btnProcessa, btnDesfazProcessa)
         setExpandRatio(numPedido, 1f)
         setComponentAlignment(btnProcessa, BOTTOM_RIGHT)
         setComponentAlignment(btnPesquisa, BOTTOM_RIGHT)

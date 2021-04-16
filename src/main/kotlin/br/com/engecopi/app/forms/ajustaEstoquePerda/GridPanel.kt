@@ -63,17 +63,15 @@ class GridPanel(val ajustaEstoquePerdaForm: AjustaEstoquePerdaForm) : CssLayout(
       footer.getCell(Produtos::total).text = total.format()
     }
 
-    showColumns(
-      Produtos::prdno,
-      Produtos::grade,
-      Produtos::descricao,
-      Produtos::fornecedor,
-      Produtos::centrodelucro,
-      Produtos::tipo,
-      Produtos::qtdAtacado,
-      Produtos::custo,
-      Produtos::total
-               )
+    showColumns(Produtos::prdno,
+                Produtos::grade,
+                Produtos::descricao,
+                Produtos::fornecedor,
+                Produtos::centrodelucro,
+                Produtos::tipo,
+                Produtos::qtdAtacado,
+                Produtos::custo,
+                Produtos::total)
   }
 
   fun setProdutos(produtos: List<Produtos>) {
