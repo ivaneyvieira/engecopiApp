@@ -140,8 +140,8 @@ class HeaderPanel(private val ajustaEstoqueGarantiaForm: AjustaEstoqueGarantiaFo
 
       if (valido) {
         when (tipo) {
-          SAIDA -> saci.desfazerSaida(loja, numNota)
-          ENTRADA -> saci.desfazerEntrada(loja, numNota)
+          //SAIDA -> saci.desfazerSaida(loja, numNota)
+         // ENTRADA -> saci.desfazerEntrada(loja, numNota)
         }
         show("Movimentacao referente a nota: $numNota da loja: ${loja.numero} foi desfeita com sucesso!",
              HUMANIZED_MESSAGE)

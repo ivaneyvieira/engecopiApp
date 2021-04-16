@@ -21,7 +21,7 @@ SELECT @XANO                    AS xano,
        1                        AS bits,
        @PRDNO                   AS prdno,
        @GRADE                   AS grade,
-       CONCAT('%:PED A', @XANO) AS remarks
+       CONCAT('66:PED A', @XANO) AS remarks
 FROM DUAL;
 
 INSERT INTO sqldados.stkmovh (xano, qtty, date, nfno, cm_fiscal, cm_real, auxLong1, auxLong2,
@@ -29,7 +29,6 @@ INSERT INTO sqldados.stkmovh (xano, qtty, date, nfno, cm_fiscal, cm_real, auxLon
 			      storeno, userno, tipo, bits, auxShort1, auxShort2, auxShort3,
 			      auxShort4, auxShort5, prdno, grade, nfse, auxStr1, auxStr2, auxStr3,
 			      auxStr4)
-
 SELECT @XANO  AS xano,
        @QTTD  AS qtty,
        @DATA  AS date,

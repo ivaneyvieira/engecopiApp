@@ -264,12 +264,16 @@ class QuerySaci : QueryDB(driver, url, username, password) {
     return mov != null
   }
 
-  fun desfazerSaida(loja: Loja?, nota: Int) {
-    TODO()
-  }
-
-  fun desfazerEntrada(loja: Loja?, nota: Int) {
-    TODO()
+  fun desfazerAjuste(loja : Loja, xano : Int, operacao: TipoMov, mesAno: Int) {
+    val sql = "/sql/removeInventarioPerda.sql"
+    val tipo = operacao.cod
+    execute(
+      sql,
+      ("tipo" to "'$tipo'"),
+      ("xano" to "$xano"),
+      ("loja" to "${loja.numero}"),
+      ("ym" to "'$mesAno'"),
+           )
   }
 
   companion object {

@@ -94,7 +94,7 @@ class HeaderPanel(private val ajustaEstoquePerdaForm: AjustaEstoquePerdaForm) : 
 
   private fun clickDesfazer(clickEvent: ClickEvent) {
     val edtLoja: ComboBox<Loja>
-    val edtNota: TextField
+    val edtXAno: TextField
     val edtTipoMov: RadioButtonGroup<TipoMov>
     val form = VerticalLayout().apply {
       edtLoja = comboBox("Loja") {
@@ -106,7 +106,7 @@ class HeaderPanel(private val ajustaEstoquePerdaForm: AjustaEstoquePerdaForm) : 
         setItemCaptionGenerator { it.numero.toString() + " - " + it.descricao }
         isExpanded = false
       }
-      edtNota = textField("Nota")
+      edtXAno = textField("Transação")
       edtTipoMov = radioButtonGroup("Tipo") {
         styleName = ValoTheme.OPTIONGROUP_HORIZONTAL
 
@@ -121,7 +121,7 @@ class HeaderPanel(private val ajustaEstoquePerdaForm: AjustaEstoquePerdaForm) : 
             .withMessage(form)
             .withYesButton({
                              confirmaDesfazer(edtLoja.value,
-                                              edtNota.value,
+                                              edtXAno.value?.toIntOrNull(),
                                               edtTipoMov.value,
                                               PERDA)
                            })
@@ -129,22 +129,23 @@ class HeaderPanel(private val ajustaEstoquePerdaForm: AjustaEstoquePerdaForm) : 
             .open()
   }
 
-  private fun confirmaDesfazer(loja: Loja?, nota: String?, tipo: TipoMov?, tipoNota: TipoNota?) {
+  private fun confirmaDesfazer(loja: Loja?, xano: Int?, operacao: TipoMov?, tipoNota: TipoNota?) {
     loja ?: return
-    val numNota = nota?.toIntOrNull() ?: return
+    val numNota = xano ?: return
     tipoNota ?: return
-    tipo ?: return
+    operacao ?: return
+    val mesAno = baseDados().mesAno
 
     try {
-      val valido = when (tipo) {
+      val valido = when (operacao) {
         SAIDA -> saci.validarNfSaida(loja, numNota, tipoNota)
         ENTRADA -> saci.validarNfEntrada(loja, numNota, tipoNota)
       }
 
       if (valido) {
-        when (tipo) {
-          SAIDA -> saci.desfazerSaida(loja, numNota)
-          ENTRADA -> saci.desfazerEntrada(loja, numNota)
+        when (operacao) {
+          SAIDA -> saci.desfazerAjuste(loja, numNota, operacao, mesAno)
+          ENTRADA -> saci.desfazerAjuste(loja, numNota, operacao, mesAno)
         }
         show("Movimentacao referente a nota: $numNota da loja: ${loja.numero} foi desfeita com sucesso!",
              HUMANIZED_MESSAGE)
