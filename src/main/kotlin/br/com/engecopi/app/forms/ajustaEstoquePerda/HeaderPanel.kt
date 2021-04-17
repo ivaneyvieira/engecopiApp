@@ -3,10 +3,7 @@ package br.com.engecopi.app.forms.ajustaEstoquePerda
 import br.com.engecopi.app.model.Base
 import br.com.engecopi.app.model.Loja
 import br.com.engecopi.app.model.TipoMov
-import br.com.engecopi.app.model.TipoMov.ENTRADA
 import br.com.engecopi.app.model.TipoMov.SAIDA
-import br.com.engecopi.app.model.TipoNota
-import br.com.engecopi.app.model.TipoNota.PERDA
 import br.com.engecopi.saci.saci
 import br.com.engecopi.utils.rpad
 import com.github.mvysny.karibudsl.v8.*
@@ -16,6 +13,7 @@ import com.vaadin.ui.Notification.Type.ERROR_MESSAGE
 import com.vaadin.ui.Notification.Type.HUMANIZED_MESSAGE
 import com.vaadin.ui.Notification.show
 import com.vaadin.ui.themes.ValoTheme
+import de.steinwedel.messagebox.ButtonOption.caption
 import de.steinwedel.messagebox.MessageBox
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -95,7 +93,6 @@ class HeaderPanel(private val ajustaEstoquePerdaForm: AjustaEstoquePerdaForm) : 
   private fun clickDesfazer(clickEvent: ClickEvent) {
     val edtLoja: ComboBox<Loja>
     val edtXAno: TextField
-    val edtTipoMov: RadioButtonGroup<TipoMov>
     val form = VerticalLayout().apply {
       edtLoja = comboBox("Loja") {
         isEmptySelectionAllowed = false
@@ -107,57 +104,29 @@ class HeaderPanel(private val ajustaEstoquePerdaForm: AjustaEstoquePerdaForm) : 
         isExpanded = false
       }
       edtXAno = textField("Transação")
-      edtTipoMov = radioButtonGroup("Tipo") {
-        styleName = ValoTheme.OPTIONGROUP_HORIZONTAL
-
-        setItems(TipoMov.values().toList())
-        setItemIconGenerator { it.icon }
-        value = tipoMov.value
-        isExpanded = true
-      }
     }
     MessageBox.create()
             .withCaption("Desfazer")
             .withMessage(form)
             .withYesButton({
                              confirmaDesfazer(edtLoja.value,
-                                              edtXAno.value?.toIntOrNull(),
-                                              edtTipoMov.value,
-                                              PERDA)
-                           })
-            .withNoButton({ println("No button was pressed.") })
+                                              edtXAno.value?.toIntOrNull())
+                           }, caption("Sim"))
+            .withNoButton({ println("No button was pressed.") }, caption("Não"))
             .open()
   }
 
-  private fun confirmaDesfazer(loja: Loja?, xano: Int?, operacao: TipoMov?, tipoNota: TipoNota?) {
+  private fun confirmaDesfazer(loja: Loja?, xano: Int?) {
     loja ?: return
     val numNota = xano ?: return
-    tipoNota ?: return
-    operacao ?: return
     val mesAno = baseDados().mesAno
 
-    try {
-      val valido = when (operacao) {
-        SAIDA -> saci.validarNfSaida(loja, numNota, tipoNota)
-        ENTRADA -> saci.validarNfEntrada(loja, numNota, tipoNota)
-      }
+    val notaInventario = saci.notaInventario(loja, xano) ?: fail("Nota de inventário não encontrado")
+    val operacao = notaInventario.operacao
+    if (notaInventario.jaProcessado == "S") fail("O Inventário já foi processado")
 
-      if (valido) {
-        when (operacao) {
-          SAIDA -> saci.desfazerAjuste(loja, numNota, operacao, mesAno)
-          ENTRADA -> saci.desfazerAjuste(loja, numNota, operacao, mesAno)
-        }
-        show("Movimentacao referente a nota: $numNota da loja: ${loja.numero} foi desfeita com sucesso!",
-             HUMANIZED_MESSAGE)
-      }
-      else {
-        show("Informe uma nota válida!", ERROR_MESSAGE)
-      }
-    } catch (e: Exception) {
-      val msgErro = "Não foi possível Listar os produtos! Erro:$e"
-      e.printStackTrace()
-      show(msgErro, ERROR_MESSAGE)
-    }
+    saci.desfazerAjuste(loja, numNota, operacao, mesAno)
+    show("Movimentacao referente a nota: $numNota da loja: ${loja.numero} foi desfeita com sucesso!", HUMANIZED_MESSAGE)
   }
 
   private fun clickExecuta(clickEvent: ClickEvent) {
@@ -170,25 +139,13 @@ class HeaderPanel(private val ajustaEstoquePerdaForm: AjustaEstoquePerdaForm) : 
   }
 
   private fun confirmaExecuta() {
-    try {
-      val transacao = saci.executarPerda(baseDados())
-      show("Transação de movimentação gerada: $transacao", HUMANIZED_MESSAGE)
-    } catch (e: Exception) {
-      val msgErro = "Não foi possível Listar os produtos! Erro:$e"
-      e.printStackTrace()
-      show(msgErro, ERROR_MESSAGE)
-    }
+    val transacao = saci.executarPerda(baseDados())
+    show("Transação de movimentação gerada: $transacao", HUMANIZED_MESSAGE)
   }
 
   private fun clickBusca(clickEvent: ClickEvent) {
-    try {
-      val produtos = saci.buscaProdutos(baseDados())
-      ajustaEstoquePerdaForm.setProdutos(produtos)
-    } catch (e: Exception) {
-      val msgErro = "Não foi possível Listar os produtos! Erro:$e"
-      e.printStackTrace()
-      show(msgErro, ERROR_MESSAGE)
-    }
+    val produtos = saci.buscaProdutos(baseDados())
+    ajustaEstoquePerdaForm.setProdutos(produtos)
   }
 
   fun baseDados() = Base(lojaDestino = loja.value?.numero ?: 0,
@@ -198,6 +155,11 @@ class HeaderPanel(private val ajustaEstoquePerdaForm: AjustaEstoquePerdaForm) : 
                          fornecedores = edtFornecedores.value ?: "",
                          tipos = edtTipos.value ?: "",
                          mesAno = mesAno.value?.numMesAno() ?: 0)
+
+  fun fail(msg: String): Nothing {
+    show(msg, ERROR_MESSAGE)
+    throw Exception(msg)
+  }
 }
 
 private fun String.numMesAno(): Int {

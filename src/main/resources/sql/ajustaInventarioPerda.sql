@@ -12,15 +12,15 @@ DO @DF := CONCAT(@YM, '31') * 1;
 
 INSERT INTO sqldados.stkmov (xano, qtty, date, cm_fiscal, cm_real, storeno, bits, prdno, grade,
 			     remarks)
-SELECT @XANO                    AS xano,
-       @QTTD                    AS qtty,
-       @DATA                    AS date,
-       @CUSTO                   AS cm_fiscal,
-       @CUSTO                   AS cm_real,
-       @LOJA                    AS storeno,
-       1                        AS bits,
-       @PRDNO                   AS prdno,
-       @GRADE                   AS grade,
+SELECT @XANO                     AS xano,
+       @QTTD                     AS qtty,
+       @DATA                     AS date,
+       @CUSTO                    AS cm_fiscal,
+       @CUSTO                    AS cm_real,
+       @LOJA                     AS storeno,
+       1                         AS bits,
+       @PRDNO                    AS prdno,
+       @GRADE                    AS grade,
        CONCAT('66:PED A', @XANO) AS remarks
 FROM DUAL;
 
