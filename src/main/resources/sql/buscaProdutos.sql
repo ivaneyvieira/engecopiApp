@@ -18,10 +18,10 @@ SELECT prdno,
        SUM(qtty / 1000) AS qtty
 FROM sqldados.stkmov
 WHERE (storeno = @LJ)
-  AND remarks LIKE '%:PED _%'
+  AND (remarks LIKE '%:PED _%' OR xano = @PEDIDO)
   AND (prdno = LPAD(@PR, 16, ' ') OR @PR = '')
   AND date BETWEEN @DI AND @DF
-  AND (remarks LIKE CONCAT('%', @PEDIDO) OR @PEDIDO = '')
+  AND (remarks LIKE CONCAT('%', @PEDIDO) OR xano = @PEDIDO OR @PEDIDO = '')
 GROUP BY prdno, grade;
 
 DROP TEMPORARY TABLE IF EXISTS T_PRD;
