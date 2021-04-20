@@ -37,7 +37,6 @@ DELETE
 FROM sqldados.stkmov
 WHERE storeno = @LOJA
   AND xano = @XANO
-  AND remarks LIKE CONCAT('66:PED A', @XANO)
   AND EXISTS(SELECT *
 	     FROM T);
 
