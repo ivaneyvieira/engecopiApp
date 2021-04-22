@@ -198,16 +198,14 @@ class QuerySaci : QueryDB(driver, url, username, password) {
     }
   }
 
-  private fun xanoInventario(): Int {
+  private fun xanoInventario(): Xano? {
     val sql = "/sql/xanoInventario.sql"
-    return query(sql) { q ->
-      q.executeScalar(Int::class.java)
-    }
+    return query(sql, Xano::class).firstOrNull()
   }
 
   fun executarPerda(base: Base): String {
     val produto = buscaProdutos(base)
-    val xano = xanoInventario()
+    val xano = xanoInventario()?.xano ?: return ""
     val tipo = base.operacao.cod
     produto.forEach { prd ->
       processaProdutoPerda(xano, tipo, prd, base)
@@ -215,13 +213,14 @@ class QuerySaci : QueryDB(driver, url, username, password) {
     return xano.toString()
   }
 
-  fun executarGarantia(base: Base) {
+  fun executarGarantia(base: Base) : String{
     val produto = buscaProdutos(base)
-    val xano = xanoInventario()
+    val xano = xanoInventario()?.xano ?: return ""
     val tipo = base.operacao.cod
     produto.forEach { prd ->
       processaProdutoGarantia(xano, tipo, prd, base)
     }
+    return xano.toString()
   }
 
   private fun processaProdutoGarantia(xano: Int, tipo: String, prd: Produtos, base: Base) {

@@ -8,4 +8,5 @@ SELECT storeno,
 FROM sqldados.stkmovh
 WHERE storeno = @LOJA
   AND xano = @XANO
+  AND IF(xano = 12553459, date = 20210420, TRUE)
 GROUP BY storeno, xano
