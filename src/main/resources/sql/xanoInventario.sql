@@ -4,5 +4,5 @@ DO @XANO := (SELECT (MAX(xano) + 1) AS xano
 INSERT INTO sqldados.xa
 VALUES (@XANO);
 
-SELECT @XANO
+SELECT @XANO AS xano
 
