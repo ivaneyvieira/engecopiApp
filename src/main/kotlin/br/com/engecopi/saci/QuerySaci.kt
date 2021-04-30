@@ -205,7 +205,8 @@ class QuerySaci : QueryDB(driver, url, username, password) {
 
   fun executarPerda(base: Base): String {
     val produto = buscaProdutos(base)
-    val xano = xanoInventario()?.xano ?: return ""
+    val xanoBean = xanoInventario()
+    val xano = xanoBean?.xano ?: return ""
     val tipo = base.operacao.cod
     produto.forEach { prd ->
       processaProdutoPerda(xano, tipo, prd, base)
