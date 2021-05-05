@@ -105,6 +105,7 @@ class HeaderPanel(private val ajustaEstoquePerdaForm: AjustaEstoquePerdaForm) : 
       }
       edtXAno = textField("Transação")
     }
+    atualizaProdutos()
     MessageBox.create()
             .withCaption("Desfazer")
             .withMessage(form)
@@ -130,6 +131,8 @@ class HeaderPanel(private val ajustaEstoquePerdaForm: AjustaEstoquePerdaForm) : 
   }
 
   private fun clickExecuta(clickEvent: ClickEvent) {
+    atualizaProdutos()
+
     MessageBox.createQuestion()
             .withCaption("Alerta")
             .withMessage("Tem Certeza?")
@@ -144,6 +147,10 @@ class HeaderPanel(private val ajustaEstoquePerdaForm: AjustaEstoquePerdaForm) : 
   }
 
   private fun clickBusca(clickEvent: ClickEvent) {
+    atualizaProdutos()
+  }
+
+  private fun atualizaProdutos() {
     val produtos = saci.buscaProdutos(baseDados())
     ajustaEstoquePerdaForm.setProdutos(produtos)
   }

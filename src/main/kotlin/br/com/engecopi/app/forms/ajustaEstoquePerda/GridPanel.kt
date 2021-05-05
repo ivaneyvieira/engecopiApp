@@ -38,6 +38,12 @@ class GridPanel(val ajustaEstoquePerdaForm: AjustaEstoquePerdaForm) : CssLayout(
       caption = "Tipo"
     }
 
+    column(Produtos::qtdNfForn) {
+      setRenderer(NumberRenderer(DecimalFormat("0")))
+      setStyleGenerator { "v-align-right" }
+      caption = "Qtde Mov"
+    }
+
     column(Produtos::qtdAtacado) {
       setRenderer(NumberRenderer(DecimalFormat("0")))
       setStyleGenerator { "v-align-right" }
@@ -69,6 +75,7 @@ class GridPanel(val ajustaEstoquePerdaForm: AjustaEstoquePerdaForm) : CssLayout(
                 Produtos::fornecedor,
                 Produtos::centrodelucro,
                 Produtos::tipo,
+                Produtos::qtdNfForn,
                 Produtos::qtdAtacado,
                 Produtos::custo,
                 Produtos::total)

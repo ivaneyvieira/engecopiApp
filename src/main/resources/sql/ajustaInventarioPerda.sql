@@ -66,8 +66,9 @@ FROM DUAL;
 DELETE
 FROM sqldados.stkmov
 WHERE (storeno = @LOJA)
-  AND remarks LIKE CONCAT('%:PED ', @TIPO, '%')
-  AND (prdno = LPAD(@PRDNO, 16, ' '))
+  AND (remarks LIKE CONCAT('%:PED _%') OR xano = @PEDIDO)
+  AND (remarks NOT LIKE '%:PED A%')
+  AND (prdno = @PRDNO)
   AND (grade = @GRADE)
   AND date BETWEEN @DI AND @DF;
 

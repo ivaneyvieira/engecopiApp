@@ -8,7 +8,6 @@ DO @DI := CONCAT(@YM, '01') * 1;
 DO @DF := CONCAT(@YM, '31') * 1;
 DO @PEDIDO := :numPedido;
 
-
 DROP TEMPORARY TABLE IF EXISTS T_PRD_NF;
 CREATE TEMPORARY TABLE T_PRD_NF (
   PRIMARY KEY (prdno, grade)
@@ -18,7 +17,8 @@ SELECT prdno,
        SUM(qtty / 1000) AS qtty
 FROM sqldados.stkmov
 WHERE (storeno = @LJ)
-  AND (remarks LIKE '%:PED _%' OR xano = @PEDIDO)
+  AND (remarks LIKE CONCAT('%:PED _%') OR xano = @PEDIDO)
+  AND (remarks NOT LIKE '%:PED A%')
   AND (prdno = LPAD(@PR, 16, ' ') OR @PR = '')
   AND date BETWEEN @DI AND @DF
   AND (remarks LIKE CONCAT('%', @PEDIDO) OR xano = @PEDIDO OR @PEDIDO = '')
