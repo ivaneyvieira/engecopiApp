@@ -43,7 +43,7 @@ class PedidoNota(val storeno: Int?,
       val dateNow = Date()
       val diff = dateNow.time - datePedido.time
       val days = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS)
-      return days < 30
+      return days < 30*6
     }
   }
 

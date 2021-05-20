@@ -136,8 +136,8 @@ class HeaderPanel(private val ajustaEstoquePerdaForm: AjustaEstoquePerdaForm) : 
     MessageBox.createQuestion()
             .withCaption("Alerta")
             .withMessage("Tem Certeza?")
-            .withYesButton(::confirmaExecuta)
-            .withNoButton({ println("No button was pressed.") })
+            .withYesButton(::confirmaExecuta, caption("Sim"))
+            .withNoButton({ println("No button was pressed.") }, caption("Não"))
             .open()
   }
 
