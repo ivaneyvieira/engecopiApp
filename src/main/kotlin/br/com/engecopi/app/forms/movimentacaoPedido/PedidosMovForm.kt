@@ -43,7 +43,7 @@ class PedidosMovForm : VerticalLayout() {
     val tipoNota = filtro.tipoNota ?: fail("Tipo da Nota não informado")
 
     if (pedidoNota.tipo != PEDIDO) when {
-      filtro.tipoMov == ENTRADA && pedidoNota.tipo == COMPRA -> fail("A nota não é de saída")
+      filtro.tipoMov == ENTRADA && pedidoNota.tipo == COMPRA  -> fail("A nota não é de saída")
       filtro.tipoMov == SAIDA && pedidoNota.tipo == DEVOLUCAO -> fail("A nota não é de entrada")
     }
 
@@ -51,18 +51,17 @@ class PedidosMovForm : VerticalLayout() {
     setProdutosGrid(null)
 
     when {
-      !pedidoNota.isDataValida() -> {
-        fail("Pedido tem mais de 30 dias")
+      !pedidoNota.isDataValida()  -> {
+        fail("Pedido tem mais de 180 dias")
       }
-      !pedidoNota.isLojaValida() -> {
+      !pedidoNota.isLojaValida()  -> {
         fail("O cliente da nota/pedidos não é ${loja?.numero}")
-      }
-      tipoNota == GARANTIA && pedidoNota.isEngecopi() -> {
-        fail("O cliente não pode ser loja")
-      }
-      tipoNota == PERDA && !pedidoNota.isEngecopi() -> {
-        fail("O cliente deve ser uma loja")
-      }
+      } // tipoNota == GARANTIA && pedidoNota.isEngecopi() -> {
+      //   fail("O cliente não pode ser loja")
+      // }
+      //  tipoNota == PERDA && !pedidoNota.isEngecopi() -> {
+      //    fail("O cliente deve ser uma loja")
+      //  }
       !pedidoNota.produtoValido() -> {
         fail("O pedido possui um produto com código maior que 980000")
       }
@@ -80,22 +79,20 @@ class PedidosMovForm : VerticalLayout() {
 
     if (pedidoNotaTipo != PEDIDO) when {
       filtro.tipoMov != ENTRADA || pedidoNotaTipo != DEVOLUCAO -> fail("A nota não é de saida")
-      filtro.tipoMov != SAIDA || pedidoNotaTipo != COMPRA -> fail("A nota não é de entrada")
+      filtro.tipoMov != SAIDA || pedidoNotaTipo != COMPRA      -> fail("A nota não é de entrada")
     }
     val tipo = filtro.tipoMov ?: fail("Tipo do Movimento não foi informado")
     when {
       !pedidoNota.isDataValida() -> {
-        fail("Pedido tem mais de 30 dias")
+        fail("Pedido tem mais de 180 dias")
       }
       !pedidoNota.isLojaValida() -> {
         fail("O cliente da nota/pedidos não é ${loja.numero}")
-      }
-      tipoNota == GARANTIA && pedidoNota.isEngecopi() -> {
-        fail("O cliente não pode ser loja")
-      }
-      tipoNota == PERDA && !pedidoNota.isEngecopi() -> {
-        fail("O cliente deve ser uma loja")
-      }
+      } //tipoNota == GARANTIA && pedidoNota.isEngecopi() -> {
+      //   fail("O cliente não pode ser loja")
+      //} //tipoNota == PERDA && !pedidoNota.isEngecopi()   -> {
+      //   fail("O cliente deve ser uma loja")
+      // }
     }
     val nota = saci.pesquisaNotaSTKMOV(loja, numPedido, tipo, tipoNota)
 
@@ -134,7 +131,7 @@ class PedidosMovForm : VerticalLayout() {
         }
         else saci.processaPedido(loja, numPedido, tipo, tipoNota, NF)
       }
-      PERDA -> {
+      PERDA    -> {
         if (pedidoNota.tipo == DEVOLUCAO || pedidoNota.tipo == COMPRA) {
           val nfno = pedidoNota.numeroPedido ?: ""
           val nfse = pedidoNota.serie ?: ""
@@ -155,7 +152,7 @@ class PedidosMovForm : VerticalLayout() {
         }
         else saci.desfazPedido(loja, numPedido, tipoMov, NF)
       }
-      PERDA -> {
+      PERDA    -> {
         if (pedidoNota.tipo == DEVOLUCAO || pedidoNota.tipo == COMPRA) {
           val nfno = pedidoNota.numeroPedido ?: ""
           val nfse = pedidoNota.serie ?: ""
@@ -164,6 +161,5 @@ class PedidosMovForm : VerticalLayout() {
         else saci.desfazPedido(loja, numPedido, tipoMov, STKMOV)
       }
     }
-
   }
 }
