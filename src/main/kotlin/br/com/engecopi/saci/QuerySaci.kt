@@ -206,6 +206,13 @@ class QuerySaci : QueryDB(driver, url, username, password) {
     return query(sql, Xano::class).firstOrNull()
   }
 
+  fun executarVoltaStatus(base: Base) {
+    val loja = base.lojaDestino
+    val numPedido = base.numPedido
+    val sql = "/sql/voltaStatus.sql"
+    execute(sql, ("loja" to "$loja"), ("numPedido" to "'$numPedido'"))
+  }
+
   fun executarPerda(base: Base): String {
     val produto = buscaProdutos(base)
     val xanoBean = xanoInventario()

@@ -87,6 +87,11 @@ class HeaderPanel(private val ajustaEstoquePerdaForm: AjustaEstoquePerdaForm) : 
         this.isExpanded = false
         onLeftClick(::clickDesfazer)
       }
+      button("Volta Status") {
+        this.alignment = Alignment.BOTTOM_RIGHT
+        this.isExpanded = false
+        onLeftClick(::clickVoltaStatus)
+      }
     }
   }
 
@@ -131,6 +136,18 @@ class HeaderPanel(private val ajustaEstoquePerdaForm: AjustaEstoquePerdaForm) : 
     show("Movimentacao referente a nota: $numNota da loja: ${loja.numero} foi desfeita com sucesso!", HUMANIZED_MESSAGE)
   }
 
+  private fun clickVoltaStatus(clickEvent: ClickEvent) {
+    atualizaProdutos()
+
+    MessageBox
+      .createQuestion()
+      .withCaption("Alerta")
+      .withMessage("Tem Certeza?")
+      .withYesButton(::confirmaVoltaStatus, caption("Sim"))
+      .withNoButton({ println("No button was pressed.") }, caption("Não"))
+      .open()
+  }
+
   private fun clickExecuta(clickEvent: ClickEvent) {
     atualizaProdutos()
 
@@ -141,6 +158,11 @@ class HeaderPanel(private val ajustaEstoquePerdaForm: AjustaEstoquePerdaForm) : 
       .withYesButton(::confirmaExecuta, caption("Sim"))
       .withNoButton({ println("No button was pressed.") }, caption("Não"))
       .open()
+  }
+
+  private fun confirmaVoltaStatus() {
+    saci.executarVoltaStatus(baseDados())
+    show("O status do pedido voi ajustado para Orçamento", HUMANIZED_MESSAGE)
   }
 
   private fun confirmaExecuta() {
