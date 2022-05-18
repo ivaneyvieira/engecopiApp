@@ -43,7 +43,7 @@ class PedidoNota(val storeno: Int?,
       val dateNow = Date()
       val diff = dateNow.time - datePedido.time
       val days = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS)
-      return days < 30*6
+      return days < 30 * 6
     }
   }
 
@@ -53,12 +53,9 @@ class PedidoNota(val storeno: Int?,
 }
 
 enum class TipoPedido(val text: String) {
-  PEDIDO("PEDIDO"),
-  DEVOLUCAO("DEVOLUCAO"),
-  COMPRA("COMPRA")
+  PEDIDO("PEDIDO"), DEVOLUCAO("DEVOLUCAO"), COMPRA("COMPRA")
 }
 
 enum class StatusPedido(val num: Int) {
-  NAO_PROCESSADO(1),
-  JA_PROCESSADO(4)
+  NAO_PROCESSADO(1), JA_PROCESSADO(4)
 }

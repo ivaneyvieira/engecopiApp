@@ -30,8 +30,8 @@ class FiltroPedidoPainel(val execFiltro: (FiltroPedido) -> Unit,
     setItemCaptionGenerator {
       when (it) {
         GARANTIA -> "Garantia"
-        PERDA -> "Perda"
-        else -> ""
+        PERDA    -> "Perda"
+        else     -> ""
       }
     }
     setWidth("120px")

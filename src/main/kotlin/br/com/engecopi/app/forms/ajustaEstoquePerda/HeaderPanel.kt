@@ -106,15 +106,16 @@ class HeaderPanel(private val ajustaEstoquePerdaForm: AjustaEstoquePerdaForm) : 
       edtXAno = textField("Transação")
     }
     atualizaProdutos()
-    MessageBox.create()
-            .withCaption("Desfazer")
-            .withMessage(form)
-            .withYesButton({
-                             confirmaDesfazer(edtLoja.value,
-                                              edtXAno.value?.toIntOrNull())
-                           }, caption("Sim"))
-            .withNoButton({ println("No button was pressed.") }, caption("Não"))
-            .open()
+    MessageBox
+      .create()
+      .withCaption("Desfazer")
+      .withMessage(form)
+      .withYesButton({
+                       confirmaDesfazer(edtLoja.value,
+                                        edtXAno.value?.toIntOrNull())
+                     }, caption("Sim"))
+      .withNoButton({ println("No button was pressed.") }, caption("Não"))
+      .open()
   }
 
   private fun confirmaDesfazer(loja: Loja?, xano: Int?) {
@@ -133,12 +134,13 @@ class HeaderPanel(private val ajustaEstoquePerdaForm: AjustaEstoquePerdaForm) : 
   private fun clickExecuta(clickEvent: ClickEvent) {
     atualizaProdutos()
 
-    MessageBox.createQuestion()
-            .withCaption("Alerta")
-            .withMessage("Tem Certeza?")
-            .withYesButton(::confirmaExecuta, caption("Sim"))
-            .withNoButton({ println("No button was pressed.") }, caption("Não"))
-            .open()
+    MessageBox
+      .createQuestion()
+      .withCaption("Alerta")
+      .withMessage("Tem Certeza?")
+      .withYesButton(::confirmaExecuta, caption("Sim"))
+      .withNoButton({ println("No button was pressed.") }, caption("Não"))
+      .open()
   }
 
   private fun confirmaExecuta() {

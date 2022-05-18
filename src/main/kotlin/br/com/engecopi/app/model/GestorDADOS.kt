@@ -9,7 +9,8 @@ import java.util.*
 import javax.swing.JOptionPane
 
 private class GestorDADOS(val connection: Connection) {
-  @Throws(Exception::class) fun pegaTransacao(): Int? {
+  @Throws(Exception::class)
+  fun pegaTransacao(): Int? {
     val cx = connection
     cx.autoCommit = false
     val sql1 = "SELECT (MAX(xano) + 1) AS xano FROM sqldados.xa "
@@ -31,7 +32,8 @@ private class GestorDADOS(val connection: Connection) {
     return null
   }
 
-  @Throws(Exception::class) fun pegaNumNf(loja: Int?): Int? {
+  @Throws(Exception::class)
+  fun pegaNumNf(loja: Int?): Int? {
     val numNf: Int
     val cx = connection
     cx.autoCommit = false
@@ -56,7 +58,8 @@ private class GestorDADOS(val connection: Connection) {
     return null
   }
 
-  @Throws(Exception::class) fun buscaFornecedor(lojaid: Int?): Int {
+  @Throws(Exception::class)
+  fun buscaFornecedor(lojaid: Int?): Int {
     val sql1 = StringBuilder()
     sql1.append(" SELECT vend.no AS no  FROM vend  inner join store on (vend.cgc = store.cgc)  where store.no = ? ")
     val stmt1 = connection.prepareStatement(sql1.toString())
@@ -69,7 +72,8 @@ private class GestorDADOS(val connection: Connection) {
     else 0
   }
 
-  @Throws(Exception::class) fun buscaCliente(lojaid: Int?): Int {
+  @Throws(Exception::class)
+  fun buscaCliente(lojaid: Int?): Int {
     val sql1 = StringBuilder()
     sql1.append(" SELECT custp.no AS no  FROM custp  inner join store on (custp.cpf_cgc = store.cgc)  where store.no = ? ")
     val stmt1 = connection.prepareStatement(sql1.toString())
@@ -82,7 +86,8 @@ private class GestorDADOS(val connection: Connection) {
     else 0
   }
 
-  @Throws(Exception::class) fun listar(base: Base): List<Produtos> {
+  @Throws(Exception::class)
+  fun listar(base: Base): List<Produtos> {
     val listagem: MutableList<Produtos> = ArrayList()
     val sql1 = StringBuilder()
     val sql2 = StringBuilder()
@@ -94,7 +99,7 @@ private class GestorDADOS(val connection: Connection) {
         " ifnull(y.qtty*1000,0) "
       }
 
-      SAIDA -> {
+      SAIDA   -> {
         " ifnull(y.qtty*(-1000),0) "
       }
     }
@@ -113,16 +118,18 @@ private class GestorDADOS(val connection: Connection) {
         sql1.append(" AND (qtty_atacado > 0 )")
       }
 
-      SAIDA -> {
+      SAIDA   -> {
         sql1.append(" AND (qtty_atacado < 0 )")
       }
     }
     sql2.append(sql1.toString())
     sql2.append(" GROUP BY 1,2 ")
     sql2.append(" ) AS x")
-    val sqlNotas0 = " LEFT JOIN ( SELECT  xaprd.prdno        , xaprd.grade        , SUM(xaprd.qtty) qtty  FROM  nf  INNER JOIN xaprd ON (nf.storeno = xaprd.storeno AND  nf.pdvno = xaprd.pdvno AND  nf.xano = xaprd.xano)  INNER JOIN custp ON (custp.no = nf.custno)  INNER JOIN vend ON (custp.cpf_cgc = vend.cgc) LEFT  JOIN store ON (store.cgc = custp.cpf_cgc)  WHERE (nf.storeno = ? )  AND   (nf.nfse = '66')  AND   (nf.tipo = 2)  AND   (store.name IS NULL)  AND   (nf.cfo in (6949,5949))  AND   (nf.c1 <> '1')"
+    val sqlNotas0 =
+      " LEFT JOIN ( SELECT  xaprd.prdno        , xaprd.grade        , SUM(xaprd.qtty) qtty  FROM  nf  INNER JOIN xaprd ON (nf.storeno = xaprd.storeno AND  nf.pdvno = xaprd.pdvno AND  nf.xano = xaprd.xano)  INNER JOIN custp ON (custp.no = nf.custno)  INNER JOIN vend ON (custp.cpf_cgc = vend.cgc) LEFT  JOIN store ON (store.cgc = custp.cpf_cgc)  WHERE (nf.storeno = ? )  AND   (nf.nfse = '66')  AND   (nf.tipo = 2)  AND   (store.name IS NULL)  AND   (nf.cfo in (6949,5949))  AND   (nf.c1 <> '1')"
 
-    val sqlNotas = "$sqlNotas0 GROUP BY xaprd.prdno, xaprd.grade  ) y ON (x.prdno = y.prdno " + "and " + "x.grade = y.grade) "
+    val sqlNotas =
+      "$sqlNotas0 GROUP BY xaprd.prdno, xaprd.grade  ) y ON (x.prdno = y.prdno " + "and " + "x.grade = y.grade) "
 
     sql2.append(sqlNotas)
 
@@ -150,17 +157,18 @@ private class GestorDADOS(val connection: Connection) {
     val rs = stmt.resultSet
     while (rs.next()) {
       if (rs.findColumn("prdno") > 0) {
-        val prd = Produtos(prdno = rs.getString("prdno"),
-                           grade = rs.getString("grade"),
-                           descricao = rs.getString("descricao"),
-                           fornecedor = rs.getLong("fornecedor"),
-                           centrodelucro = rs.getString("centrodelucro"),
-                           tipo = rs.getLong("tipo"),
-                           qtdNfForn = rs.getDouble("qttynfs"),
-                           qtdAtacado = rs.getDouble("qttyatacado"),
-                           qtdConsiderada = rs.getDouble("qttyconsiderada"),
-                           custo = rs.getDouble("ultimocusto"),
-                           total = rs.getDouble("total"))
+        val prd =
+          Produtos(prdno = rs.getString("prdno"),
+                   grade = rs.getString("grade"),
+                   descricao = rs.getString("descricao"),
+                   fornecedor = rs.getLong("fornecedor"),
+                   centrodelucro = rs.getString("centrodelucro"),
+                   tipo = rs.getLong("tipo"),
+                   qtdNfForn = rs.getDouble("qttynfs"),
+                   qtdAtacado = rs.getDouble("qttyatacado"),
+                   qtdConsiderada = rs.getDouble("qttyconsiderada"),
+                   custo = rs.getDouble("ultimocusto"),
+                   total = rs.getDouble("total"))
         listagem.add(prd)
       }
     }
@@ -168,19 +176,21 @@ private class GestorDADOS(val connection: Connection) {
     return listagem
   }
 
-  @Throws(Exception::class) fun executar(base: Base): Int? {
+  @Throws(Exception::class)
+  fun executar(base: Base): Int? {
     return when (base.operacao) {
       ENTRADA -> {
         gerarEntrada(base)
       }
 
-      SAIDA -> {
+      SAIDA   -> {
         gerarSaida(base)
       }
     }
   }
 
-  @Throws(Exception::class) fun validarNfEntrada(loja: Int?, nota: Int?): Boolean {
+  @Throws(Exception::class)
+  fun validarNfEntrada(loja: Int?, nota: Int?): Boolean {
     val sql = StringBuilder()
     sql.append(" SELECT count(*) qtd from nf  where storeno = ? and nfno = ? and print_remarks like ? and nfse = '66' ")
     val stmt = connection.prepareStatement(sql.toString())
@@ -194,7 +204,8 @@ private class GestorDADOS(val connection: Connection) {
     return ehValido
   }
 
-  @Throws(Exception::class) fun validarNfSaida(loja: Int?, nota: Int?): Boolean {
+  @Throws(Exception::class)
+  fun validarNfSaida(loja: Int?, nota: Int?): Boolean {
     val sql = StringBuilder()
     sql.append("SELECT invno FROM inv WHERE storeno = ? AND nfname = ? AND  vendno = ? AND auxStr1 = ? AND invse = '66'")
     val stmt = connection.prepareStatement(sql.toString())
@@ -209,7 +220,8 @@ private class GestorDADOS(val connection: Connection) {
     return ehValido
   }
 
-  @Throws(Exception::class) fun desfazerEntrada(loja: Int?, nota: Int?) {
+  @Throws(Exception::class)
+  fun desfazerEntrada(loja: Int?, nota: Int?) {
     val cx = connection
     try {
       cx.autoCommit = false
@@ -273,7 +285,8 @@ private class GestorDADOS(val connection: Connection) {
     }
   }
 
-  @Throws(SQLException::class) fun desfazerSaida(loja: Int?, nota: Int?) {
+  @Throws(SQLException::class)
+  fun desfazerSaida(loja: Int?, nota: Int?) {
     val cx: Connection = connection
     try {
       cx.autoCommit = false
@@ -335,7 +348,8 @@ private class GestorDADOS(val connection: Connection) {
     }
   }
 
-  @Throws(Exception::class) fun gerarEntrada(base: Base): Int? {
+  @Throws(Exception::class)
+  fun gerarEntrada(base: Base): Int? {
     val cx = connection
     val cliente = buscaCliente(base.lojaDestino)
     val transacaoNF = pegaTransacao() ?: return null
@@ -471,7 +485,8 @@ private class GestorDADOS(val connection: Connection) {
     }
   }
 
-  @Throws(Exception::class) fun gerarSaida(base: Base): Int? {
+  @Throws(Exception::class)
+  fun gerarSaida(base: Base): Int? {
     val cx: Connection = connection
     val fornecedor = buscaFornecedor(base.lojaDestino)
     val numeroNF = pegaNumNf(base.lojaDestino) ?: return null
