@@ -147,5 +147,4 @@ open class QueryDB(private val driver: String, val url: String, val username: St
       println(sql)
     }
   }
-
 }

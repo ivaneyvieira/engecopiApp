@@ -10,7 +10,8 @@ import com.vaadin.navigator.ViewChangeListener
 import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.themes.ValoTheme
 
-@AutoView("") class AppView : VerticalLayout(), View {
+@AutoView("")
+class AppView : VerticalLayout(), View {
 
   init {
     setSizeFull()

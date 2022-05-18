@@ -35,13 +35,15 @@ object SystemUtils {
     }
   }
 
-  @Throws(IOException::class) private fun toBufferedImage(imagem: ByteArray?): BufferedImage? {
+  @Throws(IOException::class)
+  private fun toBufferedImage(imagem: ByteArray?): BufferedImage? {
     if (imagem == null) return null
     val `in` = ByteArrayInputStream(imagem)
     return ImageIO.read(`in`)
   }
 
-  @Throws(IOException::class) private fun toByteArray(image: BufferedImage): ByteArray? {
+  @Throws(IOException::class)
+  private fun toByteArray(image: BufferedImage): ByteArray? {
     val baos = ByteArrayOutputStream()
     ImageIO.write(image, "jpg", baos)
     baos.flush()
@@ -85,9 +87,9 @@ object SystemUtils {
 
   fun readFile(filename: String): String {
     val exception = Exception("Recurso não encontrado: $filename")
-    val resource = SystemUtils::class.java.getResource(filename) ?: throw  exception
-    val path = Paths.get(resource.toURI()) ?: throw  exception
-    val encoded = Files.readAllBytes(path) ?: throw  exception
+    val resource = SystemUtils::class.java.getResource(filename) ?: throw exception
+    val path = Paths.get(resource.toURI()) ?: throw exception
+    val encoded = Files.readAllBytes(path) ?: throw exception
     return String(encoded, Charset.defaultCharset())
   }
 }

@@ -8,7 +8,8 @@ import javax.servlet.ServletContextListener
 import javax.servlet.annotation.WebListener
 import javax.servlet.annotation.WebServlet
 
-@WebListener class Bootstrap : ServletContextListener {
+@WebListener
+class Bootstrap : ServletContextListener {
   override fun contextInitialized(sce: ServletContextEvent?) {
     Locale.setDefault(Locale("pt", "BR"))
   }

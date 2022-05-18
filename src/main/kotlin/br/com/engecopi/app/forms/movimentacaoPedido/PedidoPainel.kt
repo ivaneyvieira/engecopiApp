@@ -38,14 +38,14 @@ class PedidoPainel : CssLayout() {
     clientePedido.value = pedidoNota?.cliente ?: ""
     val nota = pedidoNota?.notaFiscal(filtroPedido.tipoMov, filtroPedido.tipoNota)
     notaPedido.value = when {
-      nota == null -> ""
+      nota == null           -> ""
       nota.cancelado == true -> ""
-      else -> nota.numero
+      else                   -> nota.numero
     }
     statusPedido.value = when (pedidoNota?.status) {
       NAO_PROCESSADO -> "Não Processado"
-      JA_PROCESSADO -> "Já Processado"
-      else -> ""
+      JA_PROCESSADO  -> "Já Processado"
+      else           -> ""
     }
   }
 

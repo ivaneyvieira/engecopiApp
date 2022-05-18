@@ -30,10 +30,11 @@ class QuerySaci : QueryDB(driver, url, username, password) {
     val num = numero.split("/").getOrNull(0) ?: ""
     val serie = numero.split("/").getOrNull(1) ?: ""
     return query(sql) { q ->
-      q.addParameter("storeno", loja.numero)
-              .addParameter("numero", num)
-              .addParameter("serie", serie)
-              .executeAndFetchFirst(PedidoNota::class.java)
+      q
+        .addParameter("storeno", loja.numero)
+        .addParameter("numero", num)
+        .addParameter("serie", serie)
+        .executeAndFetchFirst(PedidoNota::class.java)
     }
   }
 
@@ -44,10 +45,11 @@ class QuerySaci : QueryDB(driver, url, username, password) {
     val num = numero.split("/").getOrNull(0) ?: ""
     val serie = numero.split("/").getOrNull(1) ?: ""
     return query(sql) { q ->
-      q.addParameter("storeno", storeno)
-              .addParameter("numero", num)
-              .addParameter("serie", serie)
-              .executeAndFetch(PedidoProduto::class.java)
+      q
+        .addParameter("storeno", storeno)
+        .addParameter("numero", num)
+        .addParameter("serie", serie)
+        .executeAndFetch(PedidoProduto::class.java)
     }
   }
 
@@ -96,11 +98,12 @@ class QuerySaci : QueryDB(driver, url, username, password) {
     tipo ?: return null
     val sql = "/sql/pesquisaNota.sql"
     return query(sql) { q ->
-      q.addParameter("storeno", storeno)
-              .addParameter("ordno", numero)
-              .addParameter("tipo", tipo.cod)
-              .addParameter("status", status.numero)
-              .executeAndFetchFirst(NotaFiscal::class.java)
+      q
+        .addParameter("storeno", storeno)
+        .addParameter("ordno", numero)
+        .addParameter("tipo", tipo.cod)
+        .addParameter("status", status.numero)
+        .executeAndFetchFirst(NotaFiscal::class.java)
     }
   }
 
@@ -214,7 +217,7 @@ class QuerySaci : QueryDB(driver, url, username, password) {
     return xano.toString()
   }
 
-  fun executarGarantia(base: Base) : String{
+  fun executarGarantia(base: Base): String {
     val produto = buscaProdutos(base)
     val xano = xanoInventario()?.xano ?: return ""
     val tipo = base.operacao.cod
@@ -264,7 +267,7 @@ class QuerySaci : QueryDB(driver, url, username, password) {
     return mov != null
   }
 
-  fun desfazerAjuste(loja : Loja, xano : Int, operacao: String, mesAno: Int) {
+  fun desfazerAjuste(loja: Loja, xano: Int, operacao: String, mesAno: Int) {
     val sql = "/sql/removeInventarioPerda.sql"
     execute(
       sql,
@@ -298,7 +301,8 @@ class QuerySaci : QueryDB(driver, url, username, password) {
 val saci = QuerySaci()
 
 class StatusPedidoConverter : Converter<StatusPedido?> {
-  @Throws(ConverterException::class) override fun convert(value: Any?): StatusPedido? {
+  @Throws(ConverterException::class)
+  override fun convert(value: Any?): StatusPedido? {
     val num = value?.toString()?.toIntOrNull()
 
     return StatusPedido.values().firstOrNull { it.num == num }
@@ -311,7 +315,8 @@ class StatusPedidoConverter : Converter<StatusPedido?> {
 }
 
 class TipoPedidoConverter : Converter<TipoPedido?> {
-  @Throws(ConverterException::class) override fun convert(value: Any?): TipoPedido? {
+  @Throws(ConverterException::class)
+  override fun convert(value: Any?): TipoPedido? {
     return TipoPedido.values().firstOrNull { it.text == value }
   }
 
@@ -322,6 +327,5 @@ class TipoPedidoConverter : Converter<TipoPedido?> {
 }
 
 enum class DestinoMov {
-  STKMOV,
-  NF
+  STKMOV, NF
 }
