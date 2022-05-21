@@ -52,7 +52,7 @@ class PedidosMovForm : VerticalLayout() {
 
     when {
       !pedidoNota.isDataValida()  -> {
-        fail("Pedido tem mais de 180 dias")
+        fail("Pedido tem mais de 366 dias")
       }
       !pedidoNota.isLojaValida()  -> {
         fail("O cliente da nota/pedidos não é ${loja?.numero}")
@@ -84,7 +84,7 @@ class PedidosMovForm : VerticalLayout() {
     val tipo = filtro.tipoMov ?: fail("Tipo do Movimento não foi informado")
     when {
       !pedidoNota.isDataValida() -> {
-        fail("Pedido tem mais de 180 dias")
+        fail("Pedido tem mais de 366 dias")
       }
       !pedidoNota.isLojaValida() -> {
         fail("O cliente da nota/pedidos não é ${loja.numero}")
