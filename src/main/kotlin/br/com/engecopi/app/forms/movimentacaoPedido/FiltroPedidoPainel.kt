@@ -23,6 +23,7 @@ class FiltroPedidoPainel(val execFiltro: (FiltroPedido) -> Unit,
     setItemIconGenerator { it.icon }
     bind(binderFiltroPedido).bind(FiltroPedido::tipoMov)
   }
+
   val tipoNota = comboBox<TipoNota>("Tipo Nota") {
     setItems(TipoNota.values().toList().sortedBy { it.numero })
     isEmptySelectionAllowed = false
@@ -38,6 +39,7 @@ class FiltroPedidoPainel(val execFiltro: (FiltroPedido) -> Unit,
     value = PERDA
     bind(binderFiltroPedido).bind(FiltroPedido::tipoNota)
   }
+
   val loja = comboBox<Loja>("Loja") {
     isEmptySelectionAllowed = false
     isTextInputAllowed = false
@@ -46,10 +48,12 @@ class FiltroPedidoPainel(val execFiltro: (FiltroPedido) -> Unit,
     setWidth("150px")
     bind(binderFiltroPedido).bind(FiltroPedido::loja)
   }
+
   private val numPedido = textField("Pedido/Nota") {
     addStyleName("align-right")
     bind(binderFiltroPedido).withValidator({ it != null }, "Pedido com valor nulo").bind(FiltroPedido::numPedido)
   }
+
   private val btnPesquisa = button("Pesquisa") {
     addClickListener {
       if (binderFiltroPedido.writeBeanIfValid(filtroPedido)) {
@@ -60,6 +64,7 @@ class FiltroPedidoPainel(val execFiltro: (FiltroPedido) -> Unit,
       }
     }
   }
+
   private val btnProcessa = button("Processamento") {
     addClickListener {
       val filtro = filtroPedido ?: return@addClickListener
@@ -69,6 +74,7 @@ class FiltroPedidoPainel(val execFiltro: (FiltroPedido) -> Unit,
       }
     }
   }
+
   private val btnDesfazProcessa = button("Desfaz") {
     addClickListener {
       val filtro = filtroPedido ?: return@addClickListener
