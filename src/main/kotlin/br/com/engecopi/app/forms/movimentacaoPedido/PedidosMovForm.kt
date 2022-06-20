@@ -18,6 +18,8 @@ import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.ui.Notification.Type.ERROR_MESSAGE
 import com.vaadin.ui.Notification.show
 import com.vaadin.ui.VerticalLayout
+import de.steinwedel.messagebox.ButtonOption
+import de.steinwedel.messagebox.MessageBox
 
 class PedidosMovForm : VerticalLayout() {
   private val filtroPedidoPainel = FiltroPedidoPainel(::execFiltro, ::execProcessa, ::desfazProcessa)
@@ -98,9 +100,26 @@ class PedidosMovForm : VerticalLayout() {
 
     if (pedidoNota.status != NAO_PROCESSADO && nota != null && nota.cancelado != true) fail("Nota já processada")
     else {
-      processa(pedidoNota, loja, numPedido, tipo, tipoNota)
-      filtroPedidoPainel.execFiltro(filtro)
+      if(pedidoNota.isData30Dias()){
+        processa(pedidoNota, loja, numPedido, tipo, tipoNota)
+        filtroPedidoPainel.execFiltro(filtro)
+      }else{
+        messageConfirma("O pedido tem mais de 30 dias. Confirma?"){
+          processa(pedidoNota, loja, numPedido, tipo, tipoNota)
+          filtroPedidoPainel.execFiltro(filtro)
+        }
+      }
     }
+  }
+
+  private fun messageConfirma(msgConfirmacao: String, executeProcesso: () -> Unit) {
+    MessageBox
+      .create()
+      .withCaption("Confirmação")
+      .withMessage(msgConfirmacao)
+      .withYesButton({ executeProcesso() }, ButtonOption.caption("Sim"))
+      .withNoButton({ println("No button was pressed.") }, ButtonOption.caption("Não"))
+      .open()
   }
 
   private fun desfazProcessa(filtro: FiltroPedido) {

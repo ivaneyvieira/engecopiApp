@@ -47,6 +47,17 @@ class PedidoNota(val storeno: Int?,
     }
   }
 
+  fun isData30Dias(): Boolean {
+    if (tipo != PEDIDO) return true
+    else {
+      val datePedido = date ?: return false
+      val dateNow = Date()
+      val diff = dateNow.time - datePedido.time
+      val days = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS)
+      return days < 30
+    }
+  }
+
   fun isLojaValida(): Boolean {
     return storeno == storeno
   }
