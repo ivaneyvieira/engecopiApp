@@ -24,13 +24,13 @@ class PedidoPainel : CssLayout() {
   private val lojaPedido = textReadOnly("Loja")
   private val numeroPedido = textReadOnly("Número")
   private val dataPedido = textReadOnly("Data")
+  private val tipoPedido = textReadOnly("Tipo")
   private val usuarioPedido = textReadOnly("Usuário")
   private val clientePedido = textReadOnly("Cliente")
   private val notaPedido = textReadOnly("NF")
   private val statusPedido = textReadOnly("Status")
 
   fun setPedido(pedidoNota: PedidoNota?, filtroPedido: FiltroPedido) {
-
     lojaPedido.value = pedidoNota?.loja?.toString() ?: ""
     numeroPedido.value = pedidoNota?.numero ?: ""
     dataPedido.value = pedidoNota?.date?.format() ?: ""
@@ -41,6 +41,11 @@ class PedidoPainel : CssLayout() {
       nota == null           -> ""
       nota.cancelado == true -> ""
       else                   -> nota.numero
+    }
+    tipoPedido.value = when {
+      nota == null           -> ""
+      nota.cancelado == true -> ""
+      else                   -> nota.tipoDescricao
     }
     statusPedido.value = when (pedidoNota?.status) {
       NAO_PROCESSADO -> "Não Processado"
@@ -59,11 +64,13 @@ class PedidoPainel : CssLayout() {
         setWidth("100%")
         isMargin = true
         numeroPedido.addStyleName("align-right")
-        addComponents(lojaPedido, numeroPedido, dataPedido, notaPedido, usuarioPedido, clientePedido, statusPedido)
+        addComponents(lojaPedido, numeroPedido, dataPedido, tipoPedido, notaPedido, usuarioPedido, clientePedido,
+                      statusPedido)
 
         setExpandRatio(lojaPedido, 1f)
         setExpandRatio(numeroPedido, 2f)
         setExpandRatio(dataPedido, 2f)
+        setExpandRatio(tipoPedido, 2f)
         setExpandRatio(notaPedido, 2f)
         setExpandRatio(usuarioPedido, 2f)
         setExpandRatio(clientePedido, 4f)
