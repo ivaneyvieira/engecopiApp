@@ -25,6 +25,9 @@ class PedidoNota(val storeno: Int?,
   val serie
     get() = numero?.split("/")?.getOrNull(1)
 
+  val tipoEntradaSaida
+    get() = tipo?.descricao ?: ""
+
   fun notaFiscal(tipo: TipoMov?, tipoNota: TipoNota?): NotaFiscal? {
     val loja = Loja.findLoja(storeno)
     return saci.pesquisaNotaSTKMOV(loja, numeroPedido, tipo, tipoNota)
@@ -63,8 +66,10 @@ class PedidoNota(val storeno: Int?,
   }
 }
 
-enum class TipoPedido(val text: String) {
-  PEDIDO("PEDIDO"), DEVOLUCAO("DEVOLUCAO"), COMPRA("COMPRA")
+enum class TipoPedido(val text: String, val descricao: String) {
+  PEDIDO("PEDIDO", "Pedido de venda"),
+  DEVOLUCAO("DEVOLUCAO", "Saída por Devolução"),
+  COMPRA("COMPRA", "Entrada por " + "Compra")
 }
 
 enum class StatusPedido(val num: Int) {
