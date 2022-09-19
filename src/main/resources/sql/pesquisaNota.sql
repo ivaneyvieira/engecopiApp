@@ -1,19 +1,17 @@
-
-
-SELECT 'S'                AS tipo,
-       CAST(xano AS char) AS numero,
-       '66'               AS serie,
-       0                  AS cancelado
+SELECT IF(stkmov.qtty > 0, 'E', 'S') AS tipo,
+       CAST(xano AS char)            AS numero,
+       '66'                          AS serie,
+       0                             AS cancelado
 FROM sqldados.stkmov
 WHERE remarks LIKE CONCAT('%:PED _', :ordno)
   AND storeno = :storeno
   AND :tipo = 'E'
   AND :status = 9
 UNION
-SELECT 'E'                AS tipo,
-       CAST(xano AS char) AS numero,
-       '66'               AS serie,
-       0                  AS cancelado
+SELECT IF(stkmov.qtty > 0, 'E', 'S') AS tipo,
+       CAST(xano AS char)            AS numero,
+       '66'                          AS serie,
+       0                             AS cancelado
 FROM sqldados.stkmov
 WHERE remarks LIKE CONCAT('%:PED _', :ordno)
   AND storeno = :storeno
