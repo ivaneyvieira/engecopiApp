@@ -8,7 +8,7 @@ SELECT E.storeno                                                 AS storeno,
        IFNULL(GROUP_CONCAT(DISTINCT localizacao ORDER BY localizacao SEPARATOR '/'),
               '')                                                AS localizacao,
        P.clno                                                    as cl,
-       S.qtty_varejo / 1000                                      as estoque,
+       (S.qtty_varejo + S.qtty_atacado) / 1000                   as estoque,
        P.mfno                                                    as fornecedor,
        P.typeno                                                  as tipo,
        CAST(TRIM(MID(O.rmkEntrega, 1, 10)) AS CHAR)              as obs
@@ -37,7 +37,7 @@ SELECT X.storeno                                                             AS 
        TRIM(MID(P.name, 1, 37))                                              AS descricao,
        GROUP_CONCAT(DISTINCT localizacao ORDER BY localizacao SEPARATOR '/') AS localizacao,
        P.clno                                                                as cl,
-       S.qtty_varejo / 1000                                                  as estoque,
+       (S.qtty_varejo + S.qtty_atacado) / 1000                               as estoque,
        P.mfno                                                                as fornecedor,
        P.typeno                                                              as tipo,
        CAST(TRIM(MID(N.remarks, 1, 10)) AS CHAR)                             as obs
