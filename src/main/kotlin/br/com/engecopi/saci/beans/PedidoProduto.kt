@@ -13,4 +13,5 @@ class PedidoProduto(
         val estoque: Double?,
         val fornecedor: Int?,
         val tipo: Int?,
+        val obs: String?,
 )

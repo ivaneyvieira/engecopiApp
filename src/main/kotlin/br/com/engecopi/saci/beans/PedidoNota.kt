@@ -35,7 +35,9 @@ class PedidoNota(val storeno: Int?,
 
   fun isEngecopi() = cliente?.contains("ENGECOPI", ignoreCase = true) ?: false
 
-  fun produtos() = saci.pedidoProduto(loja?.numero, numero)
+  fun produtos(): List<PedidoProduto> {
+    return saci.pedidoProduto(loja?.numero, numero)
+  }
 
   fun produtoValido() = produtos().any { (it.prdno ?: "000000") < "980001" }
 
