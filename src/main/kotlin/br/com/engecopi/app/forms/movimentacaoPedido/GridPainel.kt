@@ -61,6 +61,10 @@ class GridPainel : CssLayout() {
             caption = "Custo Contabil"
             expandRatio = 1
         }
+        column(PedidoProduto::obs) {
+            caption = "Obs"
+            expandRatio = 1
+        }
 
         showColumns(
                 PedidoProduto::prdno,
@@ -73,6 +77,7 @@ class GridPainel : CssLayout() {
                 PedidoProduto::estoque,
                 PedidoProduto::quant,
                 PedidoProduto::preco,
+                PedidoProduto::obs,
         )
     }
 
