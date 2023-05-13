@@ -22,7 +22,7 @@ class AppView : VerticalLayout(), View {
       styleName = ValoTheme.TABSHEET_FRAMED
       addTab(PedidosMovForm(), "Movimentação de Pedidos")
       addTab(AjustaEstoquePerdaForm(),
-             "Ajusta Estoque Perda") // addTab(AjustaEstoqueGarantiaForm(), "Ajusta Estoque Garantia")
+          "Ajusta Estoque Perda") // addTab(AjustaEstoqueGarantiaForm(), "Ajusta Estoque Garantia")
       addTab(SaldoKardecForm(), "Compara Saldo vs Kardec")
       addTab(ProcessaConferenciaForm(), "Conferência")
       expandRatio = 1f

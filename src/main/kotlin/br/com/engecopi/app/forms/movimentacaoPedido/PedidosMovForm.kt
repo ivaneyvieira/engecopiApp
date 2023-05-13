@@ -57,9 +57,11 @@ class PedidosMovForm : VerticalLayout() {
       !pedido.isDataValida() -> {
         fail("Pedido tem mais de 366 dias")
       }
+
       !pedido.isLojaValida() -> {
         fail("O cliente da nota/pedidos não é ${loja?.numero}")
       }
+
       !pedido.produtoValido() -> {
         fail("O pedido possui um produto com código maior que 980000")
       }

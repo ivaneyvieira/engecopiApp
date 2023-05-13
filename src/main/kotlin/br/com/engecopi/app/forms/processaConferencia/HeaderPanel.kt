@@ -44,10 +44,10 @@ class HeaderPanel(val form: ProcessaConferenciaForm) : VerticalLayout() {
     addClickListener {
       comboInventario.value?.let { inv ->
         if (inv.processado()) MessageBox
-          .createWarning()
-          .withCaption("Aviso")
-          .withMessage("O ajuste já está processado!")
-          .open()
+            .createWarning()
+            .withCaption("Aviso")
+            .withMessage("O ajuste já está processado!")
+            .open()
         else inv.numero?.let { numero ->
           saci.processaAjuste(numero)
           updateCombo(comboInventario)
@@ -61,10 +61,10 @@ class HeaderPanel(val form: ProcessaConferenciaForm) : VerticalLayout() {
     addClickListener {
       comboInventario.value?.let { inv ->
         if (!inv.processado()) MessageBox
-          .createWarning()
-          .withCaption("Aviso")
-          .withMessage("O ajuste não já está processado!")
-          .open()
+            .createWarning()
+            .withCaption("Aviso")
+            .withMessage("O ajuste não já está processado!")
+            .open()
         else inv.numero?.let { numero ->
           saci.defazAjuste(numero)
           updateView(inv)
@@ -105,8 +105,7 @@ class HeaderPanel(val form: ProcessaConferenciaForm) : VerticalLayout() {
               cmbGrade.setItems()
               cmbGrade.emptySelectionCaption = "Sem grades"
               cmbGrade.isEmptySelectionAllowed = true
-            }
-            else {
+            } else {
               cmbGrade.setItems(grades)
               cmbGrade.isEmptySelectionAllowed = false
               cmbGrade.value = grades.firstOrNull()
@@ -120,15 +119,15 @@ class HeaderPanel(val form: ProcessaConferenciaForm) : VerticalLayout() {
       }
       val form = FormLayout(codigo, cmbGrade, quant)
       MessageBox
-        .create()
-        .withCaption("Adicionar produto")
-        .withMessage(form)
-        .withNoButton(ButtonOption.caption("Cancelar"))
-        .withYesButton({
-                         salvarNovo(codigo = codigo.value, grade = cmbGrade.value ?: "", qtty = quant.value)
-                       }, ButtonOption.caption("Salvar"), ButtonOption.focus())
-        .withWidth("380px")
-        .open()
+          .create()
+          .withCaption("Adicionar produto")
+          .withMessage(form)
+          .withNoButton(ButtonOption.caption("Cancelar"))
+          .withYesButton({
+            salvarNovo(codigo = codigo.value, grade = cmbGrade.value ?: "", qtty = quant.value)
+          }, ButtonOption.caption("Salvar"), ButtonOption.focus())
+          .withWidth("380px")
+          .open()
     }
   }
 
@@ -163,9 +162,9 @@ class HeaderPanel(val form: ProcessaConferenciaForm) : VerticalLayout() {
     setItems(1, 2, 3)
     setItemCaptionGenerator { num ->
       when (num) {
-        1    -> "Todos"
-        2    -> "Processado"
-        3    -> "Não Processado"
+        1 -> "Todos"
+        2 -> "Processado"
+        3 -> "Não Processado"
         else -> ""
       }
     }
@@ -187,9 +186,9 @@ class HeaderPanel(val form: ProcessaConferenciaForm) : VerticalLayout() {
         if (dateInv > dataSaci(dataFinal.value)) false
         else {
           when (comboTipo.value) {
-            1    -> true
-            2    -> inv.processado()
-            3    -> !inv.processado()
+            1 -> true
+            2 -> inv.processado()
+            3 -> !inv.processado()
             else -> false
           }
         }

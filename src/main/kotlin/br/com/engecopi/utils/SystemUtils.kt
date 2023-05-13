@@ -20,8 +20,7 @@ object SystemUtils {
     val envResult = enviroment[`var`]
     return if (envResult == null || envResult.trim { it <= ' ' } == "") {
       def
-    }
-    else envResult
+    } else envResult
   }
 
   fun resize(imagem: ByteArray?, width: Int, height: Int): ByteArray? {
@@ -78,8 +77,7 @@ object SystemUtils {
       if (index != -1) {
         nameRet = baseName.substring(0, index).replace('.', '/') + "/" + nameRet
       }
-    }
-    else {
+    } else {
       nameRet = nameRet.substring(1)
     }
     return nameRet

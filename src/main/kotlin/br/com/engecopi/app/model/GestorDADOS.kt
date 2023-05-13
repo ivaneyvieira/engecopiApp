@@ -68,8 +68,7 @@ private class GestorDADOS(val connection: Connection) {
     val rs1 = stmt1.resultSet
     return if (rs1.next()) {
       rs1.getInt("no")
-    }
-    else 0
+    } else 0
   }
 
   @Throws(Exception::class)
@@ -82,8 +81,7 @@ private class GestorDADOS(val connection: Connection) {
     val rs1 = stmt1.resultSet
     return if (rs1.next()) {
       rs1.getInt("no")
-    }
-    else 0
+    } else 0
   }
 
   @Throws(Exception::class)
@@ -99,7 +97,7 @@ private class GestorDADOS(val connection: Connection) {
         " ifnull(y.qtty*1000,0) "
       }
 
-      SAIDA   -> {
+      SAIDA -> {
         " ifnull(y.qtty*(-1000),0) "
       }
     }
@@ -118,7 +116,7 @@ private class GestorDADOS(val connection: Connection) {
         sql1.append(" AND (qtty_atacado > 0 )")
       }
 
-      SAIDA   -> {
+      SAIDA -> {
         sql1.append(" AND (qtty_atacado < 0 )")
       }
     }
@@ -126,10 +124,10 @@ private class GestorDADOS(val connection: Connection) {
     sql2.append(" GROUP BY 1,2 ")
     sql2.append(" ) AS x")
     val sqlNotas0 =
-      " LEFT JOIN ( SELECT  xaprd.prdno        , xaprd.grade        , SUM(xaprd.qtty) qtty  FROM  nf  INNER JOIN xaprd ON (nf.storeno = xaprd.storeno AND  nf.pdvno = xaprd.pdvno AND  nf.xano = xaprd.xano)  INNER JOIN custp ON (custp.no = nf.custno)  INNER JOIN vend ON (custp.cpf_cgc = vend.cgc) LEFT  JOIN store ON (store.cgc = custp.cpf_cgc)  WHERE (nf.storeno = ? )  AND   (nf.nfse = '66')  AND   (nf.tipo = 2)  AND   (store.name IS NULL)  AND   (nf.cfo in (6949,5949))  AND   (nf.c1 <> '1')"
+        " LEFT JOIN ( SELECT  xaprd.prdno        , xaprd.grade        , SUM(xaprd.qtty) qtty  FROM  nf  INNER JOIN xaprd ON (nf.storeno = xaprd.storeno AND  nf.pdvno = xaprd.pdvno AND  nf.xano = xaprd.xano)  INNER JOIN custp ON (custp.no = nf.custno)  INNER JOIN vend ON (custp.cpf_cgc = vend.cgc) LEFT  JOIN store ON (store.cgc = custp.cpf_cgc)  WHERE (nf.storeno = ? )  AND   (nf.nfse = '66')  AND   (nf.tipo = 2)  AND   (store.name IS NULL)  AND   (nf.cfo in (6949,5949))  AND   (nf.c1 <> '1')"
 
     val sqlNotas =
-      "$sqlNotas0 GROUP BY xaprd.prdno, xaprd.grade  ) y ON (x.prdno = y.prdno " + "and " + "x.grade = y.grade) "
+        "$sqlNotas0 GROUP BY xaprd.prdno, xaprd.grade  ) y ON (x.prdno = y.prdno " + "and " + "x.grade = y.grade) "
 
     sql2.append(sqlNotas)
 
@@ -158,17 +156,17 @@ private class GestorDADOS(val connection: Connection) {
     while (rs.next()) {
       if (rs.findColumn("prdno") > 0) {
         val prd =
-          Produtos(prdno = rs.getString("prdno"),
-                   grade = rs.getString("grade"),
-                   descricao = rs.getString("descricao"),
-                   fornecedor = rs.getLong("fornecedor"),
-                   centrodelucro = rs.getString("centrodelucro"),
-                   tipo = rs.getLong("tipo"),
-                   qtdNfForn = rs.getDouble("qttynfs"),
-                   qtdAtacado = rs.getDouble("qttyatacado"),
-                   qtdConsiderada = rs.getDouble("qttyconsiderada"),
-                   custo = rs.getDouble("ultimocusto"),
-                   total = rs.getDouble("total"))
+            Produtos(prdno = rs.getString("prdno"),
+                grade = rs.getString("grade"),
+                descricao = rs.getString("descricao"),
+                fornecedor = rs.getLong("fornecedor"),
+                centrodelucro = rs.getString("centrodelucro"),
+                tipo = rs.getLong("tipo"),
+                qtdNfForn = rs.getDouble("qttynfs"),
+                qtdAtacado = rs.getDouble("qttyatacado"),
+                qtdConsiderada = rs.getDouble("qttyconsiderada"),
+                custo = rs.getDouble("ultimocusto"),
+                total = rs.getDouble("total"))
         listagem.add(prd)
       }
     }
@@ -183,7 +181,7 @@ private class GestorDADOS(val connection: Connection) {
         gerarEntrada(base)
       }
 
-      SAIDA   -> {
+      SAIDA -> {
         gerarSaida(base)
       }
     }

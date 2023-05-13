@@ -38,19 +38,19 @@ class PedidoPainel : CssLayout() {
     clientePedido.value = pedidoNota?.cliente ?: ""
     val nota = pedidoNota?.notaFiscal(filtroPedido.tipoMov, filtroPedido.tipoNota)
     notaPedido.value = when {
-      nota == null           -> ""
+      nota == null -> ""
       nota.cancelado == true -> ""
-      else                   -> nota.numero
+      else -> nota.numero
     }
     tipoPedido.value = when {
-      nota == null           -> ""
+      nota == null -> ""
       nota.cancelado == true -> ""
-      else                   -> nota.tipoDescricao
+      else -> nota.tipoDescricao
     }
     statusPedido.value = when (pedidoNota?.status) {
       NAO_PROCESSADO -> "Não Processado"
-      JA_PROCESSADO  -> "Já Processado"
-      else           -> ""
+      JA_PROCESSADO -> "Já Processado"
+      else -> ""
     }
   }
 
@@ -65,7 +65,7 @@ class PedidoPainel : CssLayout() {
         isMargin = true
         numeroPedido.addStyleName("align-right")
         addComponents(lojaPedido, numeroPedido, dataPedido, tipoPedido, notaPedido, usuarioPedido, clientePedido,
-                      statusPedido)
+            statusPedido)
 
         setExpandRatio(lojaPedido, 1f)
         setExpandRatio(numeroPedido, 2f)
