@@ -31,10 +31,10 @@ class QuerySaci : QueryDB(driver, url, username, password) {
     val serie = numero.split("/").getOrNull(1) ?: ""
     return query(sql) { q ->
       q
-        .addParameter("storeno", loja.numero)
-        .addParameter("numero", num)
-        .addParameter("serie", serie)
-        .executeAndFetchFirst(PedidoNota::class.java)
+          .addParameter("storeno", loja.numero)
+          .addParameter("numero", num)
+          .addParameter("serie", serie)
+          .executeAndFetchFirst(PedidoNota::class.java)
     }
   }
 
@@ -46,10 +46,10 @@ class QuerySaci : QueryDB(driver, url, username, password) {
     val serie = numero.split("/").getOrNull(1) ?: ""
     return query(sql) { q ->
       q
-        .addParameter("storeno", storeno)
-        .addParameter("numero", num)
-        .addParameter("serie", serie)
-        .executeAndFetch(PedidoProduto::class.java)
+          .addParameter("storeno", storeno)
+          .addParameter("numero", num)
+          .addParameter("serie", serie)
+          .executeAndFetch(PedidoProduto::class.java)
     }
   }
 
@@ -57,10 +57,10 @@ class QuerySaci : QueryDB(driver, url, username, password) {
     val tipo = tipoMov.cod
     val sql = if (destino == STKMOV) "/sql/processaPedido.sql" else "/sql/processaPedidoNF.sql"
     execute(sql,
-            Pair("storeno", "$storeno"),
-            Pair("ordno", numero),
-            Pair("tipo", "'$tipo'"),
-            Pair("t_nota", "${tipoNota.numero}"))
+        Pair("storeno", "$storeno"),
+        Pair("ordno", numero),
+        Pair("tipo", "'$tipo'"),
+        Pair("t_nota", "${tipoNota.numero}"))
   }
 
   fun processaNota(storeno: Int, nfno: String, nfse: String, destino: DestinoMov) {
@@ -95,11 +95,11 @@ class QuerySaci : QueryDB(driver, url, username, password) {
     val sql = "/sql/pesquisaNota.sql"
     return query(sql) { q ->
       q
-        .addParameter("storeno", storeno)
-        .addParameter("ordno", numero)
-        .addParameter("tipo", tipo.cod)
-        .addParameter("status", status.numero)
-        .executeAndFetchFirst(NotaFiscal::class.java)
+          .addParameter("storeno", storeno)
+          .addParameter("ordno", numero)
+          .addParameter("tipo", tipo.cod)
+          .addParameter("status", status.numero)
+          .executeAndFetchFirst(NotaFiscal::class.java)
     }
   }
 
@@ -144,9 +144,9 @@ class QuerySaci : QueryDB(driver, url, username, password) {
   fun apagaAjuste(ajuste: AjusteInventario) {
     val sql = "/sql/apaga Ajuste.sql"
     execute(sql,
-            ("numero" to "'${ajuste.numero}'"),
-            ("prdno" to "'${ajuste.prdno.lpad(16, " ")}'"),
-            ("grade" to "'${ajuste.grade}'"))
+        ("numero" to "'${ajuste.numero}'"),
+        ("prdno" to "'${ajuste.prdno.lpad(16, " ")}'"),
+        ("grade" to "'${ajuste.grade}'"))
   }
 
   fun findGrades(codigo: String?): List<String> {
@@ -160,21 +160,21 @@ class QuerySaci : QueryDB(driver, url, username, password) {
   fun addProdutoAjuste(loja: Int, codigo: String, grade: String, nota: Int, qtty: Int, data: Int) {
     val sql = "/sql/addProdutoAjuste.sql"
     execute(sql,
-            ("loja" to "$loja"),
-            ("codigo" to "'$codigo'"),
-            ("grade" to "'$grade'"),
-            ("nota" to "$nota"),
-            ("qtty" to "$qtty"),
-            ("data" to "$data"))
+        ("loja" to "$loja"),
+        ("codigo" to "'$codigo'"),
+        ("grade" to "'$grade'"),
+        ("nota" to "$nota"),
+        ("qtty" to "$qtty"),
+        ("data" to "$data"))
   }
 
   fun salvaAjuste(ajuste: AjusteInventario) {
     val sql = "/sql/salvaAjuste.sql"
     execute(sql,
-            ("numero" to "'${ajuste.numero}'"),
-            ("prdno" to "'${ajuste.prdno.lpad(16, " ")}'"),
-            ("grade" to "'${ajuste.grade}'"),
-            ("quant" to "${ajuste.inventario}"))
+        ("numero" to "'${ajuste.numero}'"),
+        ("prdno" to "'${ajuste.prdno.lpad(16, " ")}'"),
+        ("grade" to "'${ajuste.grade}'"),
+        ("quant" to "${ajuste.inventario}"))
   }
 
   fun datasProcessamento(): DatasProcessamento? {
@@ -233,31 +233,31 @@ class QuerySaci : QueryDB(driver, url, username, password) {
   private fun processaProdutoGarantia(xano: Int, tipo: String, prd: Produtos, base: Base) {
     val sql = "/sql/ajustaInventarioGarantia.sql"
     execute(
-      sql,
-      ("tipo" to "'$tipo'"),
-      ("xano" to "$xano"),
-      ("qttd" to "${(prd.qtdNfForn * 1000).toInt()}"),
-      ("custo" to "${(prd.custo * 10000).toInt()}"),
-      ("loja" to "${base.lojaDestino}"),
-      ("prdno" to "'${prd.prdno}'"),
-      ("grade" to "'${prd.grade}'"),
-      ("ym" to "'${base.mesAno}'"),
-           )
+        sql,
+        ("tipo" to "'$tipo'"),
+        ("xano" to "$xano"),
+        ("qttd" to "${(prd.qtdNfForn * 1000).toInt()}"),
+        ("custo" to "${(prd.custo * 10000).toInt()}"),
+        ("loja" to "${base.lojaDestino}"),
+        ("prdno" to "'${prd.prdno}'"),
+        ("grade" to "'${prd.grade}'"),
+        ("ym" to "'${base.mesAno}'"),
+    )
   }
 
   private fun processaProdutoPerda(xano: Int, tipo: String, prd: Produtos, base: Base) {
     val sql = "/sql/ajustaInventarioPerda.sql"
     execute(
-      sql,
-      ("tipo" to "'$tipo'"),
-      ("xano" to "$xano"),
-      ("qttd" to "${(prd.qtdNfForn * 1000).toInt()}"),
-      ("custo" to "${(prd.custo * 10000).toInt()}"),
-      ("loja" to "${base.lojaDestino}"),
-      ("prdno" to "'${prd.prdno}'"),
-      ("grade" to "'${prd.grade}'"),
-      ("ym" to "'${base.mesAno}'"),
-           )
+        sql,
+        ("tipo" to "'$tipo'"),
+        ("xano" to "$xano"),
+        ("qttd" to "${(prd.qtdNfForn * 1000).toInt()}"),
+        ("custo" to "${(prd.custo * 10000).toInt()}"),
+        ("loja" to "${base.lojaDestino}"),
+        ("prdno" to "'${prd.prdno}'"),
+        ("grade" to "'${prd.grade}'"),
+        ("ym" to "'${base.mesAno}'"),
+    )
   }
 
   fun validarNfSaida(loja: Loja, nota: Int, tipo: TipoNota): Boolean {
@@ -273,12 +273,12 @@ class QuerySaci : QueryDB(driver, url, username, password) {
   fun desfazerAjuste(loja: Loja, xano: Int, operacao: String, mesAno: Int) {
     val sql = "/sql/removeInventarioPerda.sql"
     execute(
-      sql,
-      ("tipo" to "'$operacao'"),
-      ("xano" to "$xano"),
-      ("loja" to "${loja.numero}"),
-      ("ym" to "'$mesAno'"),
-           )
+        sql,
+        ("tipo" to "'$operacao'"),
+        ("xano" to "$xano"),
+        ("loja" to "${loja.numero}"),
+        ("ym" to "'$mesAno'"),
+    )
   }
 
   fun notaInventario(loja: Loja, xano: Int): NotaInventario? {

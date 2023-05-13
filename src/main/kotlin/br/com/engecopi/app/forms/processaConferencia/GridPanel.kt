@@ -75,14 +75,14 @@ class GridPanel(private val form: ProcessaConferenciaForm) : CssLayout() {
 
 
     showColumns(AjusteInventario::barcode,
-                AjusteInventario::prdno,
-                AjusteInventario::descricao,
-                AjusteInventario::grade,
-                AjusteInventario::inventario,
-                AjusteInventario::saldo,
-                AjusteInventario::qtty,
-                AjusteInventario::cost,
-                AjusteInventario::operador)
+        AjusteInventario::prdno,
+        AjusteInventario::descricao,
+        AjusteInventario::grade,
+        AjusteInventario::inventario,
+        AjusteInventario::saldo,
+        AjusteInventario::qtty,
+        AjusteInventario::cost,
+        AjusteInventario::operador)
     val colBtn = addComponentColumn { ajuste ->
       val button = Button(VaadinIcons.TRASH)
       button.addStyleName(ValoTheme.BUTTON_SMALL)

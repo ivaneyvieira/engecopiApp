@@ -50,12 +50,12 @@ class GridPanel : CssLayout() {
     }
 
     showColumns(SaldoKardec::codigo,
-                SaldoKardec::grade,
-                SaldoKardec::loja,
-                SaldoKardec::mes_ano,
-                SaldoKardec::saldoEstoque,
-                SaldoKardec::saldoKardec,
-                SaldoKardec::diferecenca)
+        SaldoKardec::grade,
+        SaldoKardec::loja,
+        SaldoKardec::mes_ano,
+        SaldoKardec::saldoEstoque,
+        SaldoKardec::saldoKardec,
+        SaldoKardec::diferecenca)
   }
 
   init {

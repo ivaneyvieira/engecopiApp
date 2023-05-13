@@ -11,7 +11,7 @@ data class FiltroPedido(var tipoMov: TipoMov? = TipoMov.SAIDA,
                         var listPedido: String? = null) {
   fun findPedidos(): List<PedidoNota> {
     val list = listPedido?.split(",").orEmpty().map { it.trim() }
-    return list.mapNotNull {numPedido->
+    return list.mapNotNull { numPedido ->
       saci.pedidoNota(loja, numPedido)
     }
 
