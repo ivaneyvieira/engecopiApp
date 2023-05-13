@@ -1,5 +1,6 @@
 package br.com.engecopi.app.model
 
+import br.com.engecopi.saci.beans.PedidoNota
 import br.com.engecopi.saci.saci
 import com.vaadin.icons.VaadinIcons
 import com.vaadin.server.Resource
@@ -7,8 +8,14 @@ import com.vaadin.server.Resource
 data class FiltroPedido(var tipoMov: TipoMov? = TipoMov.SAIDA,
                         var tipoNota: TipoNota? = TipoNota.PERDA,
                         var loja: Loja? = Loja.JS,
-                        var numPedido: String? = null) {
-  fun findPedido() = saci.pedidoNota(loja, numPedido)
+                        var listPedido: String? = null) {
+  fun findPedidos(): List<PedidoNota> {
+    val list = listPedido?.split(",").orEmpty().map { it.trim() }
+    return list.mapNotNull {numPedido->
+      saci.pedidoNota(loja, numPedido)
+    }
+
+  }
 }
 
 enum class TipoMov(val cod: String, val descricao: String, val operacao: String, val icon: Resource) {

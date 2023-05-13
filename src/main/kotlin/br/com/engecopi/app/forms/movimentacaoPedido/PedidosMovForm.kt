@@ -1,7 +1,6 @@
 package br.com.engecopi.app.forms.movimentacaoPedido
 
 import br.com.engecopi.app.model.FiltroPedido
-import br.com.engecopi.app.model.Loja
 import br.com.engecopi.app.model.TipoMov
 import br.com.engecopi.app.model.TipoMov.ENTRADA
 import br.com.engecopi.app.model.TipoMov.SAIDA
@@ -39,73 +38,90 @@ class PedidosMovForm : VerticalLayout() {
 
   private fun execFiltro(filtro: FiltroPedido) {
     val loja = filtro.loja
-    val numPedido = filtro.numPedido ?: fail("Numero do pedido/nota não informado")
-    val pedidoNota = saci.pedidoNota(loja, numPedido) ?: fail("Numero do pedido/nota não encontrado")
+    filtro.listPedido ?: fail("Numero do pedido/nota não informado")
+    val listPedido = filtro.findPedidos()
 
-    val tipoNota = filtro.tipoNota ?: fail("Tipo da Nota não informado")
+    val pedido = listPedido.montaPedido() ?: fail("Numero do pedido/nota não encontrado")
 
-    if (pedidoNota.tipo != PEDIDO) when {
-      filtro.tipoMov == ENTRADA && pedidoNota.tipo == COMPRA  -> fail("A nota não é de saída")
-      filtro.tipoMov == SAIDA && pedidoNota.tipo == DEVOLUCAO -> fail("A nota não é de entrada")
+    filtro.tipoNota ?: fail("Tipo da Nota não informado")
+
+    if (pedido.tipo != PEDIDO) when {
+      filtro.tipoMov == ENTRADA && pedido.tipo == COMPRA -> fail("A nota não é de saída")
+      filtro.tipoMov == SAIDA && pedido.tipo == DEVOLUCAO -> fail("A nota não é de entrada")
     }
 
     pedidoPainel.setPedido(null, filtro)
-    setProdutosGrid(null)
+    setProdutosGrid(emptyList())
 
     when {
-      !pedidoNota.isDataValida()  -> {
+      !pedido.isDataValida() -> {
         fail("Pedido tem mais de 366 dias")
       }
-      !pedidoNota.isLojaValida()  -> {
+      !pedido.isLojaValida() -> {
         fail("O cliente da nota/pedidos não é ${loja?.numero}")
-      } // tipoNota == GARANTIA && pedidoNota.isEngecopi() -> {
-      //   fail("O cliente não pode ser loja")
-      // }
-      //  tipoNota == PERDA && !pedidoNota.isEngecopi() -> {
-      //    fail("O cliente deve ser uma loja")
-      //  }
-      !pedidoNota.produtoValido() -> {
+      }
+      !pedido.produtoValido() -> {
         fail("O pedido possui um produto com código maior que 980000")
       }
     }
-    pedidoPainel.setPedido(pedidoNota, filtro)
-    setProdutosGrid(pedidoNota)
+    pedidoPainel.setPedido(pedido, filtro)
+    setProdutosGrid(listPedido)
+  }
+
+  private fun <T, V> List<T>.merge(item: T.() -> V): V? {
+    return this.mapNotNull { it.item() }.distinct().firstOrNull()
+  }
+
+  private fun List<PedidoNota>.montaPedido(): PedidoNota? {
+    return if (this.isEmpty()) null
+    else {
+      PedidoNota(
+          storeno = this.merge { storeno },
+          numero = this.merge { numero },
+          date = this.mapNotNull { it.date }.maxOrNull(),
+          userno = this.merge { userno },
+          username = this.merge { username },
+          cpf_cgc = this.merge { cpf_cgc },
+          cliente = this.merge { cliente },
+          status = this.merge { status },
+          tipo = this.merge { tipo },
+          storeno_custno = this.merge { storeno_custno } ?: 0,
+      )
+    }
   }
 
   private fun execProcessa(filtro: FiltroPedido) {
     val loja = filtro.loja ?: fail("Loja não informada")
-    val numPedido = filtro.numPedido ?: fail("Numero do pedido/nota não informado")
-    val pedidoNota = saci.pedidoNota(loja, numPedido) ?: fail("Numero do pedido/nota não encontrado")
+    val listPedido = filtro.listPedido ?: fail("Numero do pedido/nota não informado")
+    val listPedidos = filtro.findPedidos()
+    val pedido = listPedidos.montaPedido() ?: fail("Numero do pedido/nota não encontrado")
     val tipoNota = filtro.tipoNota ?: fail("O Tipo da nota não foi informada")
-    val pedidoNotaTipo = pedidoNota.tipo
+    val pedidoNotaTipo = pedido.tipo
 
     if (pedidoNotaTipo != PEDIDO) when {
       filtro.tipoMov != ENTRADA || pedidoNotaTipo != DEVOLUCAO -> fail("A nota não é de saida")
-      filtro.tipoMov != SAIDA || pedidoNotaTipo != COMPRA      -> fail("A nota não é de entrada")
+      filtro.tipoMov != SAIDA || pedidoNotaTipo != COMPRA -> fail("A nota não é de entrada")
     }
     val tipo = filtro.tipoMov ?: fail("Tipo do Movimento não foi informado")
     when {
-      !pedidoNota.isDataValida() -> {
+      !pedido.isDataValida() -> {
         fail("Pedido tem mais de 366 dias")
       }
-      !pedidoNota.isLojaValida() -> {
-        fail("O cliente da nota/pedidos não é ${loja.numero}")
-      } //tipoNota == GARANTIA && pedidoNota.isEngecopi() -> {
-      //   fail("O cliente não pode ser loja")
-      //} //tipoNota == PERDA && !pedidoNota.isEngecopi()   -> {
-      //   fail("O cliente deve ser uma loja")
-      // }
-    }
-    val nota = saci.pesquisaNotaSTKMOV(loja, numPedido, tipo, tipoNota)
 
-    if (pedidoNota.status != NAO_PROCESSADO && nota != null && nota.cancelado != true) fail("Nota já processada")
+      !pedido.isLojaValida() -> {
+        fail("O cliente da nota/pedidos não é ${loja.numero}")
+      }
+    }
+    val nota = saci.pesquisaNotaSTKMOV(loja, listPedido, tipo, tipoNota)
+
+    if (pedido.status != NAO_PROCESSADO && nota != null && nota.cancelado != true) fail("Nota já processada")
     else {
-      if(pedidoNota.isData30Dias()){
-        processa(pedidoNota, loja, numPedido, tipo, tipoNota)
+      if (pedido.isData30Dias()) {
+        processa(listPedidos, tipo, tipoNota)
         filtroPedidoPainel.execFiltro(filtro)
-      }else{
-        messageConfirma("O pedido tem mais de 30 dias. Confirma?"){
-          processa(pedidoNota, loja, numPedido, tipo, tipoNota)
+      } else {
+        messageConfirma("O pedido tem mais de 30 dias. Confirma?") {
+          processa(listPedidos, tipo, tipoNota)
           filtroPedidoPainel.execFiltro(filtro)
         }
       }
@@ -114,70 +130,86 @@ class PedidosMovForm : VerticalLayout() {
 
   private fun messageConfirma(msgConfirmacao: String, executeProcesso: () -> Unit) {
     MessageBox
-      .create()
-      .withCaption("Confirmação")
-      .withMessage(msgConfirmacao)
-      .withYesButton({ executeProcesso() }, ButtonOption.caption("Sim"))
-      .withNoButton({ println("No button was pressed.") }, ButtonOption.caption("Não"))
-      .open()
+        .create()
+        .withCaption("Confirmação")
+        .withMessage(msgConfirmacao)
+        .withYesButton({ executeProcesso() }, ButtonOption.caption("Sim"))
+        .withNoButton({ println("No button was pressed.") }, ButtonOption.caption("Não"))
+        .open()
   }
 
   private fun desfazProcessa(filtro: FiltroPedido) {
     val loja = filtro.loja ?: fail("Loja Não encontrada")
-    val numPedido = filtro.numPedido ?: ""
+    val listPedido = filtro.findPedidos()
     val tipo = filtro.tipoMov ?: fail("Tipo de movimento não informado")
     val tipoNota = filtro.tipoNota ?: fail("Tipo de nota não Informada")
-    val pedido = saci.pedidoNota(loja, numPedido) ?: fail("Pedido não encontrado")
-    val nota = saci.pesquisaNotaSTKMOV(loja, numPedido, tipo, tipoNota)
+    listPedido.firstOrNull() ?: fail("Pedido não encontrado")
+    val nota = saci.pesquisaNotaSTKMOV(loja, filtro.listPedido, tipo, tipoNota)
     if (nota == null || nota.cancelado == true) fail("Esse pedido não foi processado")
 
-    desfaz(pedido, loja, numPedido, tipo, tipoNota)
+    desfaz(listPedido, tipo, tipoNota)
     filtroPedidoPainel.execFiltro(filtro)
   }
 
-  private fun setProdutosGrid(pedidoNota: PedidoNota?) {
-    val produtos = pedidoNota?.produtos().orEmpty()
+  private fun setProdutosGrid(list: List<PedidoNota>) {
+    val produtos = list.flatMap {
+      it.produtos()
+    }
     gridPainel.grid.dataProvider = ListDataProvider(produtos)
   }
 
-  private fun processa(pedidoNota: PedidoNota, loja: Loja, numPedido: String, tipo: TipoMov, tipoNota: TipoNota) {
+  private fun processa(listPedidos: List<PedidoNota>, tipo: TipoMov, tipoNota: TipoNota) {
+    listPedidos.forEach { pedido ->
+      processa(pedido, tipo, tipoNota)
+    }
+  }
+
+  private fun processa(pedidoNota: PedidoNota, tipo: TipoMov, tipoNota: TipoNota) {
+    val numPedido = pedidoNota.numero ?: ""
+    val storeno = pedidoNota.storeno ?: 0
     when (tipoNota) {
       GARANTIA -> {
         if (pedidoNota.tipo == DEVOLUCAO || pedidoNota.tipo == COMPRA) {
           val nfno = pedidoNota.numeroPedido ?: ""
           val nfse = pedidoNota.serie ?: ""
-          saci.processaNota(loja, nfno, nfse, NF)
-        }
-        else saci.processaPedido(loja, numPedido, tipo, tipoNota, NF)
+          saci.processaNota(storeno, nfno, nfse, NF)
+        } else saci.processaPedido(storeno, numPedido, tipo, tipoNota, NF)
       }
-      PERDA    -> {
+
+      PERDA -> {
         if (pedidoNota.tipo == DEVOLUCAO || pedidoNota.tipo == COMPRA) {
           val nfno = pedidoNota.numeroPedido ?: ""
           val nfse = pedidoNota.serie ?: ""
-          saci.processaNota(loja, nfno, nfse, STKMOV)
-        }
-        else saci.processaPedido(loja, numPedido, tipo, tipoNota, STKMOV)
+          saci.processaNota(storeno, nfno, nfse, STKMOV)
+        } else saci.processaPedido(storeno, numPedido, tipo, tipoNota, STKMOV)
       }
     }
   }
 
-  private fun desfaz(pedidoNota: PedidoNota, loja: Loja, numPedido: String, tipoMov: TipoMov, tipoNota: TipoNota) {
+  private fun desfaz(listPedidoNota: List<PedidoNota>, tipoMov: TipoMov, tipoNota: TipoNota) {
+    listPedidoNota.forEach { pedido ->
+      desfaz(pedido, tipoMov, tipoNota)
+    }
+  }
+
+  private fun desfaz(pedidoNota: PedidoNota, tipoMov: TipoMov, tipoNota: TipoNota) {
+    val numPedido = pedidoNota.numeroPedido ?: ""
+    val storeno = pedidoNota.storeno ?: 0
     when (tipoNota) {
       GARANTIA -> {
         if (pedidoNota.tipo == DEVOLUCAO || pedidoNota.tipo == COMPRA) {
           val nfno = pedidoNota.numeroPedido ?: ""
           val nfse = pedidoNota.serie ?: ""
-          saci.desfazNota(loja, nfno, nfse, NF)
-        }
-        else saci.desfazPedido(loja, numPedido, tipoMov, NF)
+          saci.desfazNota(storeno, nfno, nfse, NF)
+        } else saci.desfazPedido(storeno, numPedido, tipoMov, NF)
       }
-      PERDA    -> {
+
+      PERDA -> {
         if (pedidoNota.tipo == DEVOLUCAO || pedidoNota.tipo == COMPRA) {
           val nfno = pedidoNota.numeroPedido ?: ""
           val nfse = pedidoNota.serie ?: ""
-          saci.desfazNota(loja, nfno, nfse, STKMOV)
-        }
-        else saci.desfazPedido(loja, numPedido, tipoMov, STKMOV)
+          saci.desfazNota(storeno, nfno, nfse, STKMOV)
+        } else saci.desfazPedido(storeno, numPedido, tipoMov, STKMOV)
       }
     }
   }
