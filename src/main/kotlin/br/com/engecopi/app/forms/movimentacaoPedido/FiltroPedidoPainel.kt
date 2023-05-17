@@ -51,7 +51,7 @@ class FiltroPedidoPainel(val execFiltro: (FiltroPedido) -> Unit,
 
   private val numPedido = textField("Pedido/Nota") {
     addStyleName("align-right")
-    bind(binderFiltroPedido).withValidator({ it != null }, "Pedido com valor nulo").bind(FiltroPedido::listPedido)
+    bind(binderFiltroPedido).withValidator({ it != null }, "Pedido com valor nulo").bind(FiltroPedido::numPedido)
   }
 
   private val btnPesquisa = button("Pesquisa") {

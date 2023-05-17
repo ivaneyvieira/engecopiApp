@@ -38,10 +38,8 @@ class PedidosMovForm : VerticalLayout() {
 
   private fun execFiltro(filtro: FiltroPedido) {
     val loja = filtro.loja
-    filtro.listPedido ?: fail("Numero do pedido/nota não informado")
-    val listPedido = filtro.findPedidos()
-
-    val pedido = listPedido.montaPedido() ?: fail("Numero do pedido/nota não encontrado")
+    filtro.numPedido ?: fail("Numero do pedido/nota não informado")
+    val pedido = filtro.findPedido() ?: fail("Numero do pedido/nota não encontrado")
 
     filtro.tipoNota ?: fail("Tipo da Nota não informado")
 
@@ -51,7 +49,7 @@ class PedidosMovForm : VerticalLayout() {
     }
 
     pedidoPainel.setPedido(null, filtro)
-    setProdutosGrid(emptyList())
+    setProdutosGrid(null)
 
     when {
       !pedido.isDataValida() -> {
@@ -67,36 +65,13 @@ class PedidosMovForm : VerticalLayout() {
       }
     }
     pedidoPainel.setPedido(pedido, filtro)
-    setProdutosGrid(listPedido)
-  }
-
-  private fun <T, V> List<T>.merge(item: T.() -> V): V? {
-    return this.mapNotNull { it.item() }.distinct().firstOrNull()
-  }
-
-  private fun List<PedidoNota>.montaPedido(): PedidoNota? {
-    return if (this.isEmpty()) null
-    else {
-      PedidoNota(
-          storeno = this.merge { storeno },
-          numero = this.merge { numero },
-          date = this.mapNotNull { it.date }.maxOrNull(),
-          userno = this.merge { userno },
-          username = this.merge { username },
-          cpf_cgc = this.merge { cpf_cgc },
-          cliente = this.merge { cliente },
-          status = this.merge { status },
-          tipo = this.merge { tipo },
-          storeno_custno = this.merge { storeno_custno } ?: 0,
-      )
-    }
+    setProdutosGrid(pedido)
   }
 
   private fun execProcessa(filtro: FiltroPedido) {
     val loja = filtro.loja ?: fail("Loja não informada")
-    val listPedido = filtro.listPedido ?: fail("Numero do pedido/nota não informado")
-    val listPedidos = filtro.findPedidos()
-    val pedido = listPedidos.montaPedido() ?: fail("Numero do pedido/nota não encontrado")
+    val numPedido = filtro.numPedido ?: fail("Numero do pedido/nota não informado")
+    val pedido = filtro.findPedido() ?: fail("Numero do pedido/nota não encontrado")
     val tipoNota = filtro.tipoNota ?: fail("O Tipo da nota não foi informada")
     val pedidoNotaTipo = pedido.tipo
 
@@ -114,16 +89,16 @@ class PedidosMovForm : VerticalLayout() {
         fail("O cliente da nota/pedidos não é ${loja.numero}")
       }
     }
-    val nota = saci.pesquisaNotaSTKMOV(loja, listPedido, tipo, tipoNota)
+    val nota = saci.pesquisaNotaSTKMOV(loja, numPedido, tipo, tipoNota)
 
     if (pedido.status != NAO_PROCESSADO && nota != null && nota.cancelado != true) fail("Nota já processada")
     else {
       if (pedido.isData30Dias()) {
-        processa(listPedidos, tipo, tipoNota)
+        processa(pedido, tipo, tipoNota)
         filtroPedidoPainel.execFiltro(filtro)
       } else {
         messageConfirma("O pedido tem mais de 30 dias. Confirma?") {
-          processa(listPedidos, tipo, tipoNota)
+          processa(pedido, tipo, tipoNota)
           filtroPedidoPainel.execFiltro(filtro)
         }
       }
@@ -132,31 +107,29 @@ class PedidosMovForm : VerticalLayout() {
 
   private fun messageConfirma(msgConfirmacao: String, executeProcesso: () -> Unit) {
     MessageBox
-        .create()
-        .withCaption("Confirmação")
-        .withMessage(msgConfirmacao)
-        .withYesButton({ executeProcesso() }, ButtonOption.caption("Sim"))
-        .withNoButton({ println("No button was pressed.") }, ButtonOption.caption("Não"))
-        .open()
+      .create()
+      .withCaption("Confirmação")
+      .withMessage(msgConfirmacao)
+      .withYesButton({ executeProcesso() }, ButtonOption.caption("Sim"))
+      .withNoButton({ println("No button was pressed.") }, ButtonOption.caption("Não"))
+      .open()
   }
 
   private fun desfazProcessa(filtro: FiltroPedido) {
     val loja = filtro.loja ?: fail("Loja Não encontrada")
-    val listPedido = filtro.findPedidos()
+    val pedido = filtro.findPedido() ?: fail("Pedido não encontrado")
     val tipo = filtro.tipoMov ?: fail("Tipo de movimento não informado")
     val tipoNota = filtro.tipoNota ?: fail("Tipo de nota não Informada")
-    listPedido.firstOrNull() ?: fail("Pedido não encontrado")
-    val nota = saci.pesquisaNotaSTKMOV(loja, filtro.listPedido, tipo, tipoNota)
+    val nota = saci.pesquisaNotaSTKMOV(loja, filtro.numPedido, tipo, tipoNota)
     if (nota == null || nota.cancelado == true) fail("Esse pedido não foi processado")
 
-    desfaz(listPedido, tipo, tipoNota)
+    desfaz(pedido, tipo, tipoNota)
     filtroPedidoPainel.execFiltro(filtro)
   }
 
-  private fun setProdutosGrid(list: List<PedidoNota>) {
-    val produtos = list.flatMap {
-      it.produtos()
-    }
+  private fun setProdutosGrid(pedido: PedidoNota?) {
+    val produtos = pedido?.produtos().orEmpty()
+
     gridPainel.grid.dataProvider = ListDataProvider(produtos)
   }
 
