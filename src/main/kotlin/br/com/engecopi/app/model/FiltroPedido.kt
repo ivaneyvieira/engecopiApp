@@ -5,16 +5,14 @@ import br.com.engecopi.saci.saci
 import com.vaadin.icons.VaadinIcons
 import com.vaadin.server.Resource
 
-data class FiltroPedido(var tipoMov: TipoMov? = TipoMov.SAIDA,
-                        var tipoNota: TipoNota? = TipoNota.PERDA,
-                        var loja: Loja? = Loja.JS,
-                        var listPedido: String? = null) {
-  fun findPedidos(): List<PedidoNota> {
-    val list = listPedido?.split(",").orEmpty().map { it.trim() }
-    return list.mapNotNull { numPedido ->
-      saci.pedidoNota(loja, numPedido)
-    }
-
+data class FiltroPedido(
+  var tipoMov: TipoMov? = TipoMov.SAIDA,
+  var tipoNota: TipoNota? = TipoNota.PERDA,
+  var loja: Loja? = Loja.JS,
+  var numPedido: String? = null,
+) {
+  fun findPedido(): PedidoNota? {
+    return saci.pedidoNota(loja, numPedido)
   }
 }
 
