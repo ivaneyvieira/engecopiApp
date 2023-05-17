@@ -14,4 +14,7 @@ class PedidoProduto(
     val fornecedor: Int?,
     val tipo: Int?,
     val obs: String?,
-)
+){
+    val total
+        get() = if(quant == null || preco == null) null else quant * preco
+}
