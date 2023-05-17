@@ -259,7 +259,7 @@ class QuerySaci : QueryDB(driver, url, username, password) {
         ("ym" to "'${base.mesAno}'"),
     )
   }
-
+/*
   fun validarNfSaida(loja: Loja, nota: Int, tipo: TipoNota): Boolean {
     val mov = pesquisaNotaSTKMOV(loja, nota.toString(), SAIDA, tipo)
     return mov != null
@@ -269,7 +269,7 @@ class QuerySaci : QueryDB(driver, url, username, password) {
     val mov = pesquisaNotaSTKMOV(loja, nota.toString(), ENTRADA, tipo)
     return mov != null
   }
-
+*/
   fun desfazerAjuste(loja: Loja, xano: Int, operacao: String, mesAno: Int) {
     val sql = "/sql/removeInventarioPerda.sql"
     execute(

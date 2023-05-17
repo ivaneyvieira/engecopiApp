@@ -61,23 +61,30 @@ class GridPainel : CssLayout() {
       caption = "Custo Contabil"
       expandRatio = 1
     }
+    column(PedidoProduto::total) {
+      setRenderer(NumberRenderer(DecimalFormat("0.00")))
+      setStyleGenerator { "v-align-right" }
+      caption = "Total"
+      expandRatio = 1
+    }
     column(PedidoProduto::obs) {
       caption = "Obs"
       expandRatio = 1
     }
 
     showColumns(
-        PedidoProduto::prdno,
-        PedidoProduto::descricao,
-        PedidoProduto::grade,
-        PedidoProduto::localizacao,
-        PedidoProduto::fornecedor,
-        PedidoProduto::cl,
-        PedidoProduto::tipo,
-        PedidoProduto::estoque,
-        PedidoProduto::quant,
-        PedidoProduto::preco,
-        PedidoProduto::obs,
+      PedidoProduto::prdno,
+      PedidoProduto::descricao,
+      PedidoProduto::grade,
+      PedidoProduto::quant,
+      PedidoProduto::estoque,
+      PedidoProduto::obs,
+      PedidoProduto::localizacao,
+      PedidoProduto::fornecedor,
+      PedidoProduto::cl,
+      PedidoProduto::tipo,
+      PedidoProduto::preco,
+      PedidoProduto::total,
     )
   }
 
