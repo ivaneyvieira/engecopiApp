@@ -7,6 +7,7 @@ import br.com.engecopi.app.model.TipoNota
 import br.com.engecopi.app.model.TipoNota.GARANTIA
 import br.com.engecopi.app.model.TipoNota.PERDA
 import com.github.mvysny.karibudsl.v8.*
+import com.vaadin.ui.Alignment.BOTTOM_LEFT
 import com.vaadin.ui.Alignment.BOTTOM_RIGHT
 import com.vaadin.ui.CssLayout
 import com.vaadin.ui.themes.ValoTheme
@@ -16,13 +17,6 @@ class FiltroPedidoPainel(val execFiltro: (FiltroPedido) -> Unit,
                          val desfazProcessa: (FiltroPedido) -> Unit) : CssLayout() {
   private val binderFiltroPedido = beanValidationBinder<FiltroPedido>()
   private var filtroPedido: FiltroPedido? = FiltroPedido()
-  private val tipoMov = radioButtonGroup<TipoMov>("Tipo") {
-    styleName = ValoTheme.OPTIONGROUP_HORIZONTAL
-
-    setItems(TipoMov.values().toList())
-    setItemIconGenerator { it.icon }
-    bind(binderFiltroPedido).bind(FiltroPedido::tipoMov)
-  }
 
   val tipoNota = comboBox<TipoNota>("Tipo Nota") {
     setItems(TipoNota.values().toList().sortedBy { it.numero })
@@ -52,6 +46,14 @@ class FiltroPedidoPainel(val execFiltro: (FiltroPedido) -> Unit,
   private val numPedido = textField("Pedido/Nota") {
     addStyleName("align-right")
     bind(binderFiltroPedido).withValidator({ it != null }, "Pedido com valor nulo").bind(FiltroPedido::numPedido)
+  }
+
+  private val tipoMov = radioButtonGroup<TipoMov>("Tipo") {
+    styleName = ValoTheme.OPTIONGROUP_HORIZONTAL
+
+    setItems(TipoMov.values().toList())
+    setItemIconGenerator { it.icon }
+    bind(binderFiltroPedido).bind(FiltroPedido::tipoMov)
   }
 
   private val btnPesquisa = button("Pesquisa") {
@@ -93,10 +95,10 @@ class FiltroPedidoPainel(val execFiltro: (FiltroPedido) -> Unit,
       horizontalLayout {
         setWidth("100%")
         isMargin = true
-        addComponents(tipoMov, tipoNota, loja, numPedido, btnPesquisa, btnProcessa, btnDesfazProcessa)
-        setExpandRatio(numPedido, 1f)
-        setComponentAlignment(btnProcessa, BOTTOM_RIGHT)
-        setComponentAlignment(btnPesquisa, BOTTOM_RIGHT)
+        addComponents(tipoNota, loja, numPedido, tipoMov, btnPesquisa, btnProcessa, btnDesfazProcessa)
+        setExpandRatio(btnProcessa, 1f)
+        setComponentAlignment(btnProcessa, BOTTOM_LEFT)
+        setComponentAlignment(btnPesquisa, BOTTOM_LEFT)
         setComponentAlignment(btnDesfazProcessa, BOTTOM_RIGHT)
       }
     }
