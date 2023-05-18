@@ -129,8 +129,7 @@ class PedidosMovForm : VerticalLayout() {
 
   private fun setProdutosGrid(pedido: PedidoNota?) {
     val produtos = pedido?.produtos().orEmpty()
-
-    gridPainel.grid.dataProvider = ListDataProvider(produtos)
+    gridPainel.setItens(produtos)
   }
 
   private fun processa(listPedidos: List<PedidoNota>, tipo: TipoMov, tipoNota: TipoNota) {
