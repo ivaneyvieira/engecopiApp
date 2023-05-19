@@ -61,7 +61,7 @@ class GridPainel : CssLayout() {
     column(PedidoProduto::preco) {
       setRenderer(NumberRenderer(DecimalFormat("0.00")))
       setStyleGenerator { "v-align-right" }
-      caption = "Custo Contabil"
+      caption = "Custo Real"
       expandRatio = 1
     }
     column(PedidoProduto::total) {
@@ -90,16 +90,23 @@ class GridPainel : CssLayout() {
       PedidoProduto::total,
     )
 
-    totalFotter = this.appendFooterRow().getCell("total").apply {
-      text = ""
-      styleName = "v-align-right"
+    val fotter = this.appendFooterRow()
+
+    fotter.getCell(PedidoProduto::preco.name).apply {
+      this.html = "<font size=\"4\"><b>Total:</b>"
+      this.styleName = "v-align-right"
+    }
+
+    totalFotter = fotter.getCell(PedidoProduto::total.name).apply {
+      this.html = ""
+      this.styleName = "v-align-right"
     }
   }
 
   fun setItens(itens: List<PedidoProduto>) {
     grid.dataProvider = ListDataProvider(itens)
     val total = itens.sumByDouble { it.total ?: 0.0 }
-    totalFotter?.html = "<font size=\"4\"><b>Total:</b> ${total.format()}</font>"
+    totalFotter?.html = "<font size=\"4\">${total.format()}</font>"
   }
 
   init {
