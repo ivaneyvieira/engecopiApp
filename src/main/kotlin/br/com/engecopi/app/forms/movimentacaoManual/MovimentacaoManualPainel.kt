@@ -64,8 +64,10 @@ class MovimentacaoManualPainel : CssLayout() {
         setWidth("100%")
         isMargin = true
         numeroPedido.addStyleName("align-right")
-        addComponents(lojaPedido, numeroPedido, dataPedido, tipoPedido, notaPedido, usuarioPedido, clientePedido,
-            statusPedido)
+        addComponents(
+          lojaPedido, numeroPedido, dataPedido, tipoPedido, notaPedido, usuarioPedido, clientePedido,
+          statusPedido
+        )
 
         setExpandRatio(lojaPedido, 1f)
         setExpandRatio(numeroPedido, 2f)

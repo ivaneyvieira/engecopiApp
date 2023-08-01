@@ -44,10 +44,10 @@ class HeaderPanel(val form: ProcessaConferenciaForm) : VerticalLayout() {
     addClickListener {
       comboInventario.value?.let { inv ->
         if (inv.processado()) MessageBox
-            .createWarning()
-            .withCaption("Aviso")
-            .withMessage("O ajuste já está processado!")
-            .open()
+          .createWarning()
+          .withCaption("Aviso")
+          .withMessage("O ajuste já está processado!")
+          .open()
         else inv.numero?.let { numero ->
           saci.processaAjuste(numero)
           updateCombo(comboInventario)
@@ -61,10 +61,10 @@ class HeaderPanel(val form: ProcessaConferenciaForm) : VerticalLayout() {
     addClickListener {
       comboInventario.value?.let { inv ->
         if (!inv.processado()) MessageBox
-            .createWarning()
-            .withCaption("Aviso")
-            .withMessage("O ajuste não já está processado!")
-            .open()
+          .createWarning()
+          .withCaption("Aviso")
+          .withMessage("O ajuste não já está processado!")
+          .open()
         else inv.numero?.let { numero ->
           saci.defazAjuste(numero)
           updateView(inv)
@@ -119,15 +119,15 @@ class HeaderPanel(val form: ProcessaConferenciaForm) : VerticalLayout() {
       }
       val form = FormLayout(codigo, cmbGrade, quant)
       MessageBox
-          .create()
-          .withCaption("Adicionar produto")
-          .withMessage(form)
-          .withNoButton(ButtonOption.caption("Cancelar"))
-          .withYesButton({
-            salvarNovo(codigo = codigo.value, grade = cmbGrade.value ?: "", qtty = quant.value)
-          }, ButtonOption.caption("Salvar"), ButtonOption.focus())
-          .withWidth("380px")
-          .open()
+        .create()
+        .withCaption("Adicionar produto")
+        .withMessage(form)
+        .withNoButton(ButtonOption.caption("Cancelar"))
+        .withYesButton({
+          salvarNovo(codigo = codigo.value, grade = cmbGrade.value ?: "", qtty = quant.value)
+        }, ButtonOption.caption("Salvar"), ButtonOption.focus())
+        .withWidth("380px")
+        .open()
     }
   }
 

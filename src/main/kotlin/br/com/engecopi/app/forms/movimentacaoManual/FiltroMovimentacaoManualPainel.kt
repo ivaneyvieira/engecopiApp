@@ -12,9 +12,11 @@ import com.vaadin.ui.Alignment.BOTTOM_RIGHT
 import com.vaadin.ui.CssLayout
 import com.vaadin.ui.themes.ValoTheme
 
-class FiltroMovimentacaoManualPainel(val execFiltro: (FiltroPedido) -> Unit,
-                                     val execProcessa: (FiltroPedido) -> Unit,
-                                     val desfazProcessa: (FiltroPedido) -> Unit) : CssLayout() {
+class FiltroMovimentacaoManualPainel(
+  val execFiltro: (FiltroPedido) -> Unit,
+  val execProcessa: (FiltroPedido) -> Unit,
+  val desfazProcessa: (FiltroPedido) -> Unit
+) : CssLayout() {
   private val binderFiltroPedido = beanValidationBinder<FiltroPedido>()
   private var filtroPedido: FiltroPedido? = FiltroPedido()
 

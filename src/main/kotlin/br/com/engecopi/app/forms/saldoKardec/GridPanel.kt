@@ -49,13 +49,15 @@ class GridPanel : CssLayout() {
       setStyleGenerator { "v-align-right" }
     }
 
-    showColumns(SaldoKardec::codigo,
-        SaldoKardec::grade,
-        SaldoKardec::loja,
-        SaldoKardec::mes_ano,
-        SaldoKardec::saldoEstoque,
-        SaldoKardec::saldoKardec,
-        SaldoKardec::diferecenca)
+    showColumns(
+      SaldoKardec::codigo,
+      SaldoKardec::grade,
+      SaldoKardec::loja,
+      SaldoKardec::mes_ano,
+      SaldoKardec::saldoEstoque,
+      SaldoKardec::saldoKardec,
+      SaldoKardec::diferecenca
+    )
   }
 
   init {

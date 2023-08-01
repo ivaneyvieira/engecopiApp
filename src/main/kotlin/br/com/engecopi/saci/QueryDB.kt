@@ -55,9 +55,11 @@ open class QueryDB(private val driver: String, val url: String, val username: St
     }
   }
 
-  protected fun execute(file: String,
-                        vararg params: Pair<String, String>,
-                        monitor: (String, Int, Int) -> Unit = { _, _, _ -> }) {
+  protected fun execute(
+    file: String,
+    vararg params: Pair<String, String>,
+    monitor: (String, Int, Int) -> Unit = { _, _, _ -> }
+  ) {
     var sqlScript = SystemUtils.readFile(file)
     sql2o.beginTransaction().trywr { con ->
       params.forEach { sqlScript = sqlScript.replace(":${it.first}", it.second) }

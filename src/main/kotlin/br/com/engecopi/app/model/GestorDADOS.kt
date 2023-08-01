@@ -124,10 +124,10 @@ private class GestorDADOS(val connection: Connection) {
     sql2.append(" GROUP BY 1,2 ")
     sql2.append(" ) AS x")
     val sqlNotas0 =
-        " LEFT JOIN ( SELECT  xaprd.prdno        , xaprd.grade        , SUM(xaprd.qtty) qtty  FROM  nf  INNER JOIN xaprd ON (nf.storeno = xaprd.storeno AND  nf.pdvno = xaprd.pdvno AND  nf.xano = xaprd.xano)  INNER JOIN custp ON (custp.no = nf.custno)  INNER JOIN vend ON (custp.cpf_cgc = vend.cgc) LEFT  JOIN store ON (store.cgc = custp.cpf_cgc)  WHERE (nf.storeno = ? )  AND   (nf.nfse = '66')  AND   (nf.tipo = 2)  AND   (store.name IS NULL)  AND   (nf.cfo in (6949,5949))  AND   (nf.c1 <> '1')"
+      " LEFT JOIN ( SELECT  xaprd.prdno        , xaprd.grade        , SUM(xaprd.qtty) qtty  FROM  nf  INNER JOIN xaprd ON (nf.storeno = xaprd.storeno AND  nf.pdvno = xaprd.pdvno AND  nf.xano = xaprd.xano)  INNER JOIN custp ON (custp.no = nf.custno)  INNER JOIN vend ON (custp.cpf_cgc = vend.cgc) LEFT  JOIN store ON (store.cgc = custp.cpf_cgc)  WHERE (nf.storeno = ? )  AND   (nf.nfse = '66')  AND   (nf.tipo = 2)  AND   (store.name IS NULL)  AND   (nf.cfo in (6949,5949))  AND   (nf.c1 <> '1')"
 
     val sqlNotas =
-        "$sqlNotas0 GROUP BY xaprd.prdno, xaprd.grade  ) y ON (x.prdno = y.prdno " + "and " + "x.grade = y.grade) "
+      "$sqlNotas0 GROUP BY xaprd.prdno, xaprd.grade  ) y ON (x.prdno = y.prdno " + "and " + "x.grade = y.grade) "
 
     sql2.append(sqlNotas)
 
@@ -156,17 +156,19 @@ private class GestorDADOS(val connection: Connection) {
     while (rs.next()) {
       if (rs.findColumn("prdno") > 0) {
         val prd =
-            Produtos(prdno = rs.getString("prdno"),
-                grade = rs.getString("grade"),
-                descricao = rs.getString("descricao"),
-                fornecedor = rs.getLong("fornecedor"),
-                centrodelucro = rs.getString("centrodelucro"),
-                tipo = rs.getLong("tipo"),
-                qtdNfForn = rs.getDouble("qttynfs"),
-                qtdAtacado = rs.getDouble("qttyatacado"),
-                qtdConsiderada = rs.getDouble("qttyconsiderada"),
-                custo = rs.getDouble("ultimocusto"),
-                total = rs.getDouble("total"))
+          Produtos(
+            prdno = rs.getString("prdno"),
+            grade = rs.getString("grade"),
+            descricao = rs.getString("descricao"),
+            fornecedor = rs.getLong("fornecedor"),
+            centrodelucro = rs.getString("centrodelucro"),
+            tipo = rs.getLong("tipo"),
+            qtdNfForn = rs.getDouble("qttynfs"),
+            qtdAtacado = rs.getDouble("qttyatacado"),
+            qtdConsiderada = rs.getDouble("qttyconsiderada"),
+            custo = rs.getDouble("ultimocusto"),
+            total = rs.getDouble("total")
+          )
         listagem.add(prd)
       }
     }
@@ -421,7 +423,9 @@ private class GestorDADOS(val connection: Connection) {
       }
       if (valorTotal > 0.00) {
         val sql3 = StringBuilder()
-        sql3.append("INSERT INTO `nf` (`xano`, `nfno`, `custno`, `issuedate`, `delivdate`, `sec_amt`, `fre_amt`, `netamt`, `grossamt`, `discount`, `icms_amt`, `tax_paid`, `ipi_amt`, `base_calculo_ipi`, `iss_amt`, `base_iss_amt`, `isento_amt`, `subst_amt`, `baseIcmsSubst`, `icmsSubst`, `vol_no`, `vol_qtty`, `cfo`, `invno`, `cfo2`, `auxLong1`, `auxLong2`, `auxLong3`, `auxLong4`, `auxMy1`, `auxMy2`, `auxMy3`, `auxMy4`, `eordno`, `l1`, `l2`, `l3`, `l4`, `l5`, `l6`, `l7`, `l8`, `m1`, `m2`, `m3`, `m4`, `m5`, `m6`, `m7`, `m8`, `vol_gross`, `vol_net`, `mult`, `storeno`, `pdvno`, `carrno`, `empno`, `status`, `natopno`, `xatype`, `storeno_from`, `tipo`, `padbits`, `bits`, `usernoCancel`, `custno_addno`, `empnoDiscount`, `auxShort1`, `auxShort2`, `auxShort3`, `auxShort4`, `auxShort5`, `paymno`, `s1`, `s2`, `s3`, `s4`, `s5`, `s6`, `s7`, `s8`, `nfse`, `ship_by`, `vol_make`, `vol_kind`, `remarks`, `padbyte`, `print_remarks`, `remarksCancel`, `c1`, `c2`, `wshash`) VALUES ( ?,  ?,  ?,  ?,  ?,  0,  0,  ?,  ?,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  5949,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  ?,  0,  0,  1,  0,  7,  0,  0,  9,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  '66',  '',  '',  '',  ?,  '',  ?,  '',  '',  '',  ''); ")
+        sql3.append(
+          "INSERT INTO `nf` (`xano`, `nfno`, `custno`, `issuedate`, `delivdate`, `sec_amt`, `fre_amt`, `netamt`, `grossamt`, `discount`, `icms_amt`, `tax_paid`, `ipi_amt`, `base_calculo_ipi`, `iss_amt`, `base_iss_amt`, `isento_amt`, `subst_amt`, `baseIcmsSubst`, `icmsSubst`, `vol_no`, `vol_qtty`, `cfo`, `invno`, `cfo2`, `auxLong1`, `auxLong2`, `auxLong3`, `auxLong4`, `auxMy1`, `auxMy2`, `auxMy3`, `auxMy4`, `eordno`, `l1`, `l2`, `l3`, `l4`, `l5`, `l6`, `l7`, `l8`, `m1`, `m2`, `m3`, `m4`, `m5`, `m6`, `m7`, `m8`, `vol_gross`, `vol_net`, `mult`, `storeno`, `pdvno`, `carrno`, `empno`, `status`, `natopno`, `xatype`, `storeno_from`, `tipo`, `padbits`, `bits`, `usernoCancel`, `custno_addno`, `empnoDiscount`, `auxShort1`, `auxShort2`, `auxShort3`, `auxShort4`, `auxShort5`, `paymno`, `s1`, `s2`, `s3`, `s4`, `s5`, `s6`, `s7`, `s8`, `nfse`, `ship_by`, `vol_make`, `vol_kind`, `remarks`, `padbyte`, `print_remarks`, `remarksCancel`, `c1`, `c2`, `wshash`) VALUES ( ?,  ?,  ?,  ?,  ?,  0,  0,  ?,  ?,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  5949,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  ?,  0,  0,  1,  0,  7,  0,  0,  9,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  '66',  '',  '',  '',  ?,  '',  ?,  '',  '',  '',  ''); "
+        )
         val stmt3 = cx.prepareStatement(sql3.toString())
         stmt3.setInt(1, transacaoNF)
         stmt3.setInt(2, numnf)
@@ -556,7 +560,9 @@ private class GestorDADOS(val connection: Connection) {
       }
       if (valorTotal > 0.00) {
         val sql3 = StringBuilder()
-        sql3.append("insert into inv (vendno,ordno,xfrno,issue_date,date,comp_date,ipi,  icm,freight,netamt,grossamt,subst_trib,discount,prdamt,despesas,  base_ipi,aliq,cfo,nfNfno,auxLong1,auxLong2,auxMoney1,auxMoney2,  dataSaida,amtServicos,amtIRRF,amtINSS,amtISS,auxMoney3,auxMoney4,  auxMoney5,auxLong3,auxLong4,auxLong5,auxLong6,auxLong7,auxLong8,  auxLong9,auxLong10,auxLong11,auxLong12,auxMoney6,auxMoney7,auxMoney8,  auxMoney9,auxMoney10,auxMoney11,auxMoney12,auxMoney13,l1,l2,l3,  l4,l5,l6,l7,l8,m1,m2,m3,m4,m5,m6,m7,m8,weight,carrno,  packages,storeno,indxno,book_bits,type,usernoFirst,usernoLast,  nfStoreno,bits,padbyte,auxShort1,auxShort2,auxShort3,auxShort4,  auxShort5,auxShort6,auxShort7,auxShort8,auxShort9,auxShort10,  auxShort11,auxShort12,auxShort13,auxShort14,bits2,bits3,bits4,  bits5,s1,s2,s3,s4,s5,s6,s7,s8,nfname,invse,account,  remarks,contaCredito,contaDebito,nfNfse,auxStr1,auxStr2,auxStr3,  auxStr4,auxStr5,auxStr6,c1,c2) values (?,0,0,?,?,?,0,0,0,0,?,0,0,?,0,0,0,1949,0,0,0,0,0,?,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,?,0,3,4,0,0,0,35,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,?,?,'2.01.20','','','','',?,?,'','','','','','') ")
+        sql3.append(
+          "insert into inv (vendno,ordno,xfrno,issue_date,date,comp_date,ipi,  icm,freight,netamt,grossamt,subst_trib,discount,prdamt,despesas,  base_ipi,aliq,cfo,nfNfno,auxLong1,auxLong2,auxMoney1,auxMoney2,  dataSaida,amtServicos,amtIRRF,amtINSS,amtISS,auxMoney3,auxMoney4,  auxMoney5,auxLong3,auxLong4,auxLong5,auxLong6,auxLong7,auxLong8,  auxLong9,auxLong10,auxLong11,auxLong12,auxMoney6,auxMoney7,auxMoney8,  auxMoney9,auxMoney10,auxMoney11,auxMoney12,auxMoney13,l1,l2,l3,  l4,l5,l6,l7,l8,m1,m2,m3,m4,m5,m6,m7,m8,weight,carrno,  packages,storeno,indxno,book_bits,type,usernoFirst,usernoLast,  nfStoreno,bits,padbyte,auxShort1,auxShort2,auxShort3,auxShort4,  auxShort5,auxShort6,auxShort7,auxShort8,auxShort9,auxShort10,  auxShort11,auxShort12,auxShort13,auxShort14,bits2,bits3,bits4,  bits5,s1,s2,s3,s4,s5,s6,s7,s8,nfname,invse,account,  remarks,contaCredito,contaDebito,nfNfse,auxStr1,auxStr2,auxStr3,  auxStr4,auxStr5,auxStr6,c1,c2) values (?,0,0,?,?,?,0,0,0,0,?,0,0,?,0,0,0,1949,0,0,0,0,0,?,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,?,0,3,4,0,0,0,35,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,?,?,'2.01.20','','','','',?,?,'','','','','','') "
+        )
         val stmt3 = cx.prepareStatement(sql3.toString())
         stmt3.setInt(1, fornecedor)
         stmt3.setInt(2, Integer.valueOf(sdf.format(Date())))
@@ -576,11 +582,15 @@ private class GestorDADOS(val connection: Connection) {
         lista.forEach { prd ->
           val sql5 = StringBuilder()
           val qtd = prd.qtdConsiderada
-          sql5.append("INSERT INTO `iprd` (`invno`, `qtty`, `fob`, `cost`, `date`, `ipi`, `auxLong1`, `auxLong2`, `frete`, `seguro`, `despesas`, `freteIpi`, `qttyRessar`, `baseIcmsSubst`, `icmsSubst`, `icms`, `discount`, `fob4`, `cost4`, `icmsAliq`, `cfop`, `auxLong3`, `auxLong4`, `auxLong5`, `auxMy1`, `auxMy2`, `auxMy3`, `baseIcms`, `baseIpi`, `ipiAmt`, `reducaoBaseIcms`, `lucroTributado`, `l1`, `l2`, `l3`, `l4`, `l5`, `l6`, `l7`, `l8`, `m1`, `m2`, `m3`, `m4`, `m5`, `m6`, `m7`, `m8`, `storeno`, `bits`, `auxShort1`, `auxShort2`, `taxtype`, `auxShort3`, `auxShort4`, `auxShort5`, `seqno`, `bits2`, `bits3`, `bits4`, `s1`, `s2`, `s3`, `s4`, `s5`, `s6`, `s7`, `s8`, `prdno`, `grade`, `auxChar`, `auxChar2`, `cstIcms`, `cstIpi`, `c1`) VALUES (?,  ?,  ?,  ?,  ?,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1949,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  ?,  0,  0,  0,  0,  0,  0,  0,  ?,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  ?,  ?,  '',  '',  '090',  '',  '');")
+          sql5.append(
+            "INSERT INTO `iprd` (`invno`, `qtty`, `fob`, `cost`, `date`, `ipi`, `auxLong1`, `auxLong2`, `frete`, `seguro`, `despesas`, `freteIpi`, `qttyRessar`, `baseIcmsSubst`, `icmsSubst`, `icms`, `discount`, `fob4`, `cost4`, `icmsAliq`, `cfop`, `auxLong3`, `auxLong4`, `auxLong5`, `auxMy1`, `auxMy2`, `auxMy3`, `baseIcms`, `baseIpi`, `ipiAmt`, `reducaoBaseIcms`, `lucroTributado`, `l1`, `l2`, `l3`, `l4`, `l5`, `l6`, `l7`, `l8`, `m1`, `m2`, `m3`, `m4`, `m5`, `m6`, `m7`, `m8`, `storeno`, `bits`, `auxShort1`, `auxShort2`, `taxtype`, `auxShort3`, `auxShort4`, `auxShort5`, `seqno`, `bits2`, `bits3`, `bits4`, `s1`, `s2`, `s3`, `s4`, `s5`, `s6`, `s7`, `s8`, `prdno`, `grade`, `auxChar`, `auxChar2`, `cstIcms`, `cstIpi`, `c1`) VALUES (?,  ?,  ?,  ?,  ?,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1949,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  ?,  0,  0,  0,  0,  0,  0,  0,  ?,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  ?,  ?,  '',  '',  '090',  '',  '');"
+          )
           val stmt5 = cx.prepareStatement(sql5.toString())
           stmt5.setInt(1, invno)
-          stmt5.setInt(2, if (qtd.toInt() > 0) qtd.toInt()
-          else -qtd.toInt())
+          stmt5.setInt(
+            2, if (qtd.toInt() > 0) qtd.toInt()
+            else -qtd.toInt()
+          )
           stmt5.setInt(3, prd.custo.toInt())
           stmt5.setInt(4, prd.custo.toInt())
           stmt5.setInt(5, Integer.valueOf(sdf.format(Date())))

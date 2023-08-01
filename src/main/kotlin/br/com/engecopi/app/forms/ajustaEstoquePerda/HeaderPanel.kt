@@ -112,15 +112,17 @@ class HeaderPanel(private val ajustaEstoquePerdaForm: AjustaEstoquePerdaForm) : 
     }
     atualizaProdutos()
     MessageBox
-        .create()
-        .withCaption("Desfazer")
-        .withMessage(form)
-        .withYesButton({
-          confirmaDesfazer(edtLoja.value,
-              edtXAno.value?.toIntOrNull())
-        }, caption("Sim"))
-        .withNoButton({ println("No button was pressed.") }, caption("Não"))
-        .open()
+      .create()
+      .withCaption("Desfazer")
+      .withMessage(form)
+      .withYesButton({
+        confirmaDesfazer(
+          edtLoja.value,
+          edtXAno.value?.toIntOrNull()
+        )
+      }, caption("Sim"))
+      .withNoButton({ println("No button was pressed.") }, caption("Não"))
+      .open()
   }
 
   private fun confirmaDesfazer(loja: Loja?, xano: Int?) {
@@ -140,24 +142,24 @@ class HeaderPanel(private val ajustaEstoquePerdaForm: AjustaEstoquePerdaForm) : 
     atualizaProdutos()
 
     MessageBox
-        .createQuestion()
-        .withCaption("Alerta")
-        .withMessage("Tem Certeza?")
-        .withYesButton(::confirmaVoltaStatus, caption("Sim"))
-        .withNoButton({ println("No button was pressed.") }, caption("Não"))
-        .open()
+      .createQuestion()
+      .withCaption("Alerta")
+      .withMessage("Tem Certeza?")
+      .withYesButton(::confirmaVoltaStatus, caption("Sim"))
+      .withNoButton({ println("No button was pressed.") }, caption("Não"))
+      .open()
   }
 
   private fun clickExecuta(clickEvent: ClickEvent) {
     atualizaProdutos()
 
     MessageBox
-        .createQuestion()
-        .withCaption("Alerta")
-        .withMessage("Tem Certeza?")
-        .withYesButton(::confirmaExecuta, caption("Sim"))
-        .withNoButton({ println("No button was pressed.") }, caption("Não"))
-        .open()
+      .createQuestion()
+      .withCaption("Alerta")
+      .withMessage("Tem Certeza?")
+      .withYesButton(::confirmaExecuta, caption("Sim"))
+      .withNoButton({ println("No button was pressed.") }, caption("Não"))
+      .open()
   }
 
   private fun confirmaVoltaStatus() {
@@ -179,13 +181,15 @@ class HeaderPanel(private val ajustaEstoquePerdaForm: AjustaEstoquePerdaForm) : 
     ajustaEstoquePerdaForm.setProdutos(produtos)
   }
 
-  fun baseDados() = Base(lojaDestino = loja.value?.numero ?: 0,
-      operacao = tipoMov.value,
-      numPedido = edtPedido.value ?: "",
-      codprd = codigo.value?.trim() ?: "",
-      fornecedores = edtFornecedores.value ?: "",
-      tipos = edtTipos.value ?: "",
-      mesAno = mesAno.value?.numMesAno() ?: 0)
+  fun baseDados() = Base(
+    lojaDestino = loja.value?.numero ?: 0,
+    operacao = tipoMov.value,
+    numPedido = edtPedido.value ?: "",
+    codprd = codigo.value?.trim() ?: "",
+    fornecedores = edtFornecedores.value ?: "",
+    tipos = edtTipos.value ?: "",
+    mesAno = mesAno.value?.numMesAno() ?: 0
+  )
 
   fun fail(msg: String): Nothing {
     show(msg, ERROR_MESSAGE)
