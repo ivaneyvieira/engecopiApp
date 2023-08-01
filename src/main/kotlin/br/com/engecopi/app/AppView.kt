@@ -1,6 +1,7 @@
 package br.com.engecopi.app
 
 import br.com.engecopi.app.forms.ajustaEstoquePerda.AjustaEstoquePerdaForm
+import br.com.engecopi.app.forms.movimentacaoManual.MovimentacaoManualForm
 import br.com.engecopi.app.forms.movimentacaoPedido.PedidosMovForm
 import br.com.engecopi.app.forms.processaConferencia.ProcessaConferenciaForm
 import br.com.engecopi.app.forms.saldoKardec.SaldoKardecForm
@@ -21,8 +22,8 @@ class AppView : VerticalLayout(), View {
       setSizeFull()
       styleName = ValoTheme.TABSHEET_FRAMED
       addTab(PedidosMovForm(), "Movimentação de Pedidos")
-      addTab(AjustaEstoquePerdaForm(),
-          "Ajusta Estoque Perda") // addTab(AjustaEstoqueGarantiaForm(), "Ajusta Estoque Garantia")
+      addTab(MovimentacaoManualForm(), "Movimentação Manual")
+      addTab(AjustaEstoquePerdaForm(), "Ajusta Estoque Perda")
       addTab(SaldoKardecForm(), "Compara Saldo vs Kardec")
       addTab(ProcessaConferenciaForm(), "Conferência")
       expandRatio = 1f
