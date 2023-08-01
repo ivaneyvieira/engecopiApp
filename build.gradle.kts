@@ -47,7 +47,7 @@ dependencies {
   
   //Dependencias do projeto
   compile("org.sql2o:sql2o:1.5.4")
-  compile("mysql:mysql-connector-java:5.1.45")
+  compile("mysql:mysql-connector-java:5.1.48")
   compile("org.imgscalr:imgscalr-lib:4.2")
   
   compile("org.vaadin.addons:vaadin-excel-exporter:2.0")

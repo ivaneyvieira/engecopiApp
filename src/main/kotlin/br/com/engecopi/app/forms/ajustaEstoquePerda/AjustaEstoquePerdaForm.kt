@@ -4,7 +4,6 @@ import br.com.engecopi.app.model.Produtos
 import com.vaadin.ui.VerticalLayout
 
 class AjustaEstoquePerdaForm : VerticalLayout() {
-
   private val gridPanel = GridPanel(this)
   val headerPanel = HeaderPanel(this)
 
