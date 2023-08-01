@@ -8,16 +8,18 @@ import br.com.engecopi.saci.saci
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-class PedidoNota(val storeno: Int?,
-                 val numero: String?,
-                 val date: Date?,
-                 val userno: Int?,
-                 val username: String?,
-                 val cpf_cgc: String?,
-                 val cliente: String?,
-                 val status: StatusPedido?,
-                 val tipo: TipoPedido?,
-                 val storeno_custno: Int) {
+class PedidoNota(
+  val storeno: Int?,
+  val numero: String?,
+  val date: Date?,
+  val userno: Int?,
+  val username: String?,
+  val cpf_cgc: String?,
+  val cliente: String?,
+  val status: StatusPedido?,
+  val tipo: TipoPedido?,
+  val storeno_custno: Int
+) {
   val loja
     get() = Loja.findLoja(storeno)
   val numeroPedido

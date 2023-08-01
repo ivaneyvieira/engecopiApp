@@ -13,7 +13,6 @@ import br.com.engecopi.saci.beans.PedidoNota
 import br.com.engecopi.saci.beans.StatusPedido.NAO_PROCESSADO
 import br.com.engecopi.saci.beans.TipoPedido.*
 import br.com.engecopi.saci.saci
-import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.ui.Notification.Type.ERROR_MESSAGE
 import com.vaadin.ui.Notification.show
 import com.vaadin.ui.VerticalLayout

@@ -20,7 +20,8 @@ import de.steinwedel.messagebox.ButtonOption
 import de.steinwedel.messagebox.MessageBox
 
 class MovimentacaoManualForm : VerticalLayout() {
-  private val filtroMovimentacaoManualPainel = FiltroMovimentacaoManualPainel(::execFiltro, ::execProcessa, ::desfazProcessa)
+  private val filtroMovimentacaoManualPainel =
+    FiltroMovimentacaoManualPainel(::execFiltro, ::execProcessa, ::desfazProcessa)
   private val movimentacaoManualPainel = MovimentacaoManualPainel()
   private val gridPainel = GridPainel()
 
