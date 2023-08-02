@@ -20,52 +20,19 @@ import de.steinwedel.messagebox.ButtonOption
 import de.steinwedel.messagebox.MessageBox
 
 class MovimentacaoManualForm : VerticalLayout() {
-  private val filtroMovimentacaoManualPainel =
-    FiltroMovimentacaoManualPainel(::execFiltro, ::execProcessa, ::desfazProcessa)
-  private val movimentacaoManualPainel = MovimentacaoManualPainel()
+  private val movimentacaoManualPainel = MovimentacaoManualPainel(::execProcessa)
   private val gridPainel = GridPainel()
+  private val filtroPainel = FiltroPainel(movimentacaoManualPainel, gridPainel)
 
   init {
     setSizeFull()
-    addComponents(filtroMovimentacaoManualPainel, movimentacaoManualPainel)
+    addComponents(movimentacaoManualPainel, filtroPainel)
     addComponentsAndExpand(gridPainel)
   }
 
   fun fail(msg: String): Nothing {
     show(msg, ERROR_MESSAGE)
     throw Exception(msg)
-  }
-
-  private fun execFiltro(filtro: FiltroPedido) {
-    val loja = filtro.loja
-    filtro.numPedido ?: fail("Numero do pedido/nota não informado")
-    val pedido = filtro.findPedido() ?: fail("Numero do pedido/nota não encontrado")
-
-    filtro.tipoNota ?: fail("Tipo da Nota não informado")
-
-    if (pedido.tipo != PEDIDO) when {
-      filtro.tipoMov == ENTRADA && pedido.tipo == COMPRA -> fail("A nota não é de saída")
-      filtro.tipoMov == SAIDA && pedido.tipo == DEVOLUCAO -> fail("A nota não é de entrada")
-    }
-
-    movimentacaoManualPainel.setPedido(null, filtro)
-    setProdutosGrid(null)
-
-    when {
-      !pedido.isDataValida() -> {
-        fail("Pedido tem mais de 366 dias")
-      }
-
-      !pedido.isLojaValida() -> {
-        fail("O cliente da nota/pedidos não é ${loja?.numero}")
-      }
-
-      !pedido.produtoValido() -> {
-        fail("O pedido possui um produto com código maior que 980000")
-      }
-    }
-    movimentacaoManualPainel.setPedido(pedido, filtro)
-    setProdutosGrid(pedido)
   }
 
   private fun execProcessa(filtro: FiltroPedido) {
@@ -95,11 +62,11 @@ class MovimentacaoManualForm : VerticalLayout() {
     else {
       if (pedido.isData30Dias()) {
         processa(pedido, tipo, tipoNota)
-        filtroMovimentacaoManualPainel.execFiltro(filtro)
+        //movimentacaoManualPainel.execFiltro(filtro)
       } else {
         messageConfirma("O pedido tem mais de 30 dias. Confirma?") {
           processa(pedido, tipo, tipoNota)
-          filtroMovimentacaoManualPainel.execFiltro(filtro)
+          // movimentacaoManualPainel.execFiltro(filtro)
         }
       }
     }
@@ -113,29 +80,6 @@ class MovimentacaoManualForm : VerticalLayout() {
       .withYesButton({ executeProcesso() }, ButtonOption.caption("Sim"))
       .withNoButton({ println("No button was pressed.") }, ButtonOption.caption("Não"))
       .open()
-  }
-
-  private fun desfazProcessa(filtro: FiltroPedido) {
-    val loja = filtro.loja ?: fail("Loja Não encontrada")
-    val pedido = filtro.findPedido() ?: fail("Pedido não encontrado")
-    val tipo = filtro.tipoMov ?: fail("Tipo de movimento não informado")
-    val tipoNota = filtro.tipoNota ?: fail("Tipo de nota não Informada")
-    val nota = saci.pesquisaNotaSTKMOV(loja, filtro.numPedido, tipo, tipoNota)
-    if (nota == null || nota.cancelado == true) fail("Esse pedido não foi processado")
-
-    desfaz(pedido, tipo, tipoNota)
-    filtroMovimentacaoManualPainel.execFiltro(filtro)
-  }
-
-  private fun setProdutosGrid(pedido: PedidoNota?) {
-    val produtos = pedido?.produtos().orEmpty()
-    gridPainel.setItens(produtos)
-  }
-
-  private fun processa(listPedidos: List<PedidoNota>, tipo: TipoMov, tipoNota: TipoNota) {
-    listPedidos.forEach { pedido ->
-      processa(pedido, tipo, tipoNota)
-    }
   }
 
   private fun processa(pedidoNota: PedidoNota, tipo: TipoMov, tipoNota: TipoNota) {
@@ -157,12 +101,6 @@ class MovimentacaoManualForm : VerticalLayout() {
           saci.processaNota(storeno, nfno, nfse, STKMOV)
         } else saci.processaPedido(storeno, numPedido, tipo, tipoNota, STKMOV)
       }
-    }
-  }
-
-  private fun desfaz(listPedidoNota: List<PedidoNota>, tipoMov: TipoMov, tipoNota: TipoNota) {
-    listPedidoNota.forEach { pedido ->
-      desfaz(pedido, tipoMov, tipoNota)
     }
   }
 

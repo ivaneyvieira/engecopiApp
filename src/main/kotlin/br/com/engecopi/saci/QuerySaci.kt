@@ -203,6 +203,16 @@ class QuerySaci : QueryDB(driver, url, username, password) {
     }
   }
 
+  fun buscaProdutos(base: BaseProduto): List<Produtos> {
+    val sql = "/sql/buscaProdutosManual.sql"
+    return query(sql, Produtos::class) {
+      addOptionalParameter("loja", base.loja)
+      addOptionalParameter("prdno", base.codprd)
+      addOptionalParameter("vends", base.fornecedores)
+      addOptionalParameter("types", base.types)
+    }
+  }
+
   private fun xanoInventario(): Xano? {
     val sql = "/sql/xanoInventario.sql"
     return query(sql, Xano::class).firstOrNull()
