@@ -1,7 +1,6 @@
 package br.com.engecopi.app.forms.movimentacaoManual
 
 import br.com.engecopi.app.model.Produtos
-import br.com.engecopi.saci.beans.PedidoProduto
 import br.com.engecopi.utils.format
 import com.github.mvysny.karibudsl.v8.column
 import com.github.mvysny.karibudsl.v8.grid
@@ -64,21 +63,8 @@ class GridPainel : CssLayout() {
       Produtos::centrodelucro,
       Produtos::tipo,
       Produtos::qtdAtacado,
-      Produtos::fornecedor,
       Produtos::custo,
     )
-
-    val fotter = this.appendFooterRow()
-
-    fotter.getCell(PedidoProduto::preco.name).apply {
-      this.html = "<font size=\"4\"><b>Total:</b>"
-      this.styleName = "v-align-right"
-    }
-
-    totalFotter = fotter.getCell(PedidoProduto::total.name).apply {
-      this.html = ""
-      this.styleName = "v-align-right"
-    }
   }
 
   fun setItens(itens: List<Produtos>) {
