@@ -1,83 +1,78 @@
 package br.com.engecopi.app.forms.movimentacaoManual
 
 import br.com.engecopi.app.model.FiltroPedido
-import br.com.engecopi.saci.beans.PedidoNota
-import br.com.engecopi.saci.beans.StatusPedido.JA_PROCESSADO
-import br.com.engecopi.saci.beans.StatusPedido.NAO_PROCESSADO
-import br.com.engecopi.utils.format
-import com.github.mvysny.karibudsl.v8.horizontalLayout
-import com.github.mvysny.karibudsl.v8.isMargin
-import com.github.mvysny.karibudsl.v8.panel
-import com.github.mvysny.karibudsl.v8.textField
+import br.com.engecopi.app.model.Loja
+import br.com.engecopi.app.model.TipoMov
+import br.com.engecopi.app.model.TipoNota
+import br.com.engecopi.app.model.TipoNota.GARANTIA
+import br.com.engecopi.app.model.TipoNota.PERDA
+import com.github.mvysny.karibudsl.v8.*
+import com.vaadin.ui.Alignment.BOTTOM_LEFT
 import com.vaadin.ui.CssLayout
-import com.vaadin.ui.TextField
 import com.vaadin.ui.themes.ValoTheme
 
-class MovimentacaoManualPainel : CssLayout() {
-  private fun textReadOnly(caption: String): TextField {
-    return textField(caption) {
-      isReadOnly = true
-      setWidth("100%")
+class MovimentacaoManualPainel(
+  val execProcessa: (FiltroPedido) -> Unit
+) : CssLayout() {
+  private val binderFiltroPedido = beanValidationBinder<FiltroPedido>()
+  private var filtroPedido: FiltroPedido? = FiltroPedido()
+
+  val tipoNota = comboBox<TipoNota>("Tipo Nota") {
+    setItems(TipoNota.values().toList().sortedBy { it.numero })
+    isEmptySelectionAllowed = false
+    isTextInputAllowed = false
+    setItemCaptionGenerator {
+      when (it) {
+        GARANTIA -> "Garantia"
+        PERDA -> "Perda"
+        else -> ""
+      }
     }
+    setWidth("120px")
+    value = PERDA
+    bind(binderFiltroPedido).bind(FiltroPedido::tipoNota)
   }
 
-  private val lojaPedido = textReadOnly("Loja")
-  private val numeroPedido = textReadOnly("Número")
-  private val dataPedido = textReadOnly("Data")
-  private val tipoPedido = textReadOnly("Tipo")
-  private val usuarioPedido = textReadOnly("Usuário")
-  private val clientePedido = textReadOnly("Cliente")
-  private val notaPedido = textReadOnly("NF")
-  private val statusPedido = textReadOnly("Status")
+  val loja = comboBox<Loja>("Loja") {
+    isEmptySelectionAllowed = false
+    isTextInputAllowed = false
+    setItems(Loja.values().toList())
+    setItemCaptionGenerator { it.numero.toString() + " - " + it.descricao }
+    setWidth("150px")
+    bind(binderFiltroPedido).bind(FiltroPedido::loja)
+  }
 
-  fun setPedido(pedidoNota: PedidoNota?, filtroPedido: FiltroPedido) {
-    lojaPedido.value = pedidoNota?.loja?.toString() ?: ""
-    numeroPedido.value = pedidoNota?.numero ?: ""
-    dataPedido.value = pedidoNota?.date?.format() ?: ""
-    usuarioPedido.value = pedidoNota?.username ?: ""
-    clientePedido.value = pedidoNota?.cliente ?: ""
-    val nota = pedidoNota?.notaFiscal(filtroPedido.tipoMov, filtroPedido.tipoNota)
-    notaPedido.value = when {
-      nota == null -> ""
-      nota.cancelado == true -> ""
-      else -> nota.numero
-    }
-    tipoPedido.value = when {
-      nota == null -> ""
-      nota.cancelado == true -> ""
-      else -> nota.tipoDescricao
-    }
-    statusPedido.value = when (pedidoNota?.status) {
-      NAO_PROCESSADO -> "Não Processado"
-      JA_PROCESSADO -> "Já Processado"
-      else -> ""
+  private val tipoMov = radioButtonGroup<TipoMov>("Tipo") {
+    styleName = ValoTheme.OPTIONGROUP_HORIZONTAL
+
+    setItems(TipoMov.values().toList())
+    setItemIconGenerator { it.icon }
+    bind(binderFiltroPedido).bind(FiltroPedido::tipoMov)
+  }
+
+  private val btnProcessa = button("Processamento") {
+    addClickListener {
+      val filtro = filtroPedido ?: return@addClickListener
+      if (binderFiltroPedido.writeBeanIfValid(filtro)) {
+        execProcessa(filtro)
+        binderFiltroPedido.readBean(filtro)
+      }
     }
   }
 
   init {
-    caption = "Pedido"
+    caption = "Filtro"
     setWidth("100%")
     styleName = ValoTheme.LAYOUT_WELL
     panel {
-      setWidth("100%")
       horizontalLayout {
         setWidth("100%")
         isMargin = true
-        numeroPedido.addStyleName("align-right")
-        addComponents(
-          lojaPedido, numeroPedido, dataPedido, tipoPedido, notaPedido, usuarioPedido, clientePedido,
-          statusPedido
-        )
-
-        setExpandRatio(lojaPedido, 1f)
-        setExpandRatio(numeroPedido, 2f)
-        setExpandRatio(dataPedido, 2f)
-        setExpandRatio(tipoPedido, 2f)
-        setExpandRatio(notaPedido, 2f)
-        setExpandRatio(usuarioPedido, 2f)
-        setExpandRatio(clientePedido, 4f)
-        setExpandRatio(statusPedido, 2f)
+        addComponents(tipoNota, loja, tipoMov, btnProcessa)
+        setExpandRatio(btnProcessa, 1f)
+        setComponentAlignment(btnProcessa, BOTTOM_LEFT)
       }
     }
+    binderFiltroPedido.readBean(filtroPedido)
   }
 }

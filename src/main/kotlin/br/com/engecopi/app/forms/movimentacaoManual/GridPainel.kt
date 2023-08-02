@@ -1,5 +1,6 @@
 package br.com.engecopi.app.forms.movimentacaoManual
 
+import br.com.engecopi.app.model.Produtos
 import br.com.engecopi.saci.beans.PedidoProduto
 import br.com.engecopi.utils.format
 import com.github.mvysny.karibudsl.v8.column
@@ -15,79 +16,56 @@ import java.text.DecimalFormat
 
 class GridPainel : CssLayout() {
   private var totalFotter: FooterCell? = null
-  val grid = grid(PedidoProduto::class, null, ListDataProvider(emptyList())) {
+  val grid = grid(Produtos::class, null, ListDataProvider(emptyList())) {
     setSizeFull()
 
-    column(PedidoProduto::prdno) {
+    column(Produtos::prdno) {
       caption = "Código"
       expandRatio = 1
     }
-    column(PedidoProduto::descricao) {
+    column(Produtos::descricao) {
       caption = "Descricao"
       expandRatio = 3
     }
-    column(PedidoProduto::grade) {
+    column(Produtos::grade) {
       caption = "Grade"
       expandRatio = 1
     }
-    column(PedidoProduto::localizacao) {
-      caption = "Localização"
-      this.setWidth(120.0)
-    }
-    column(PedidoProduto::fornecedor) {
+    column(Produtos::fornecedor) {
       caption = "Fornecedor"
       expandRatio = 1
     }
-    column(PedidoProduto::cl) {
+    column(Produtos::centrodelucro) {
       caption = "CL"
       expandRatio = 1
     }
-    column(PedidoProduto::tipo) {
+    column(Produtos::tipo) {
       caption = "Tipo"
       expandRatio = 1
     }
-    column(PedidoProduto::estoque) {
+    column(Produtos::qtdAtacado) {
       setRenderer(NumberRenderer(DecimalFormat("0")))
       setStyleGenerator { "v-align-right" }
       caption = "Estoque"
       expandRatio = 1
     }
-    column(PedidoProduto::quant) {
-      setRenderer(NumberRenderer(DecimalFormat("0")))
-      setStyleGenerator { "v-align-right" }
-      caption = "Quantidade"
-      expandRatio = 1
-    }
-    column(PedidoProduto::preco) {
+    column(Produtos::custo) {
       setRenderer(NumberRenderer(DecimalFormat("0.00")))
       setStyleGenerator { "v-align-right" }
       caption = "Custo Real"
       expandRatio = 1
     }
-    column(PedidoProduto::total) {
-      setRenderer(NumberRenderer(DecimalFormat("0.00")))
-      setStyleGenerator { "v-align-right" }
-      caption = "Total"
-      expandRatio = 1
-    }
-    column(PedidoProduto::obs) {
-      caption = "Obs"
-      expandRatio = 1
-    }
 
     showColumns(
-      PedidoProduto::prdno,
-      PedidoProduto::descricao,
-      PedidoProduto::grade,
-      PedidoProduto::quant,
-      PedidoProduto::estoque,
-      PedidoProduto::obs,
-      PedidoProduto::localizacao,
-      PedidoProduto::fornecedor,
-      PedidoProduto::cl,
-      PedidoProduto::tipo,
-      PedidoProduto::preco,
-      PedidoProduto::total,
+      Produtos::prdno,
+      Produtos::descricao,
+      Produtos::grade,
+      Produtos::fornecedor,
+      Produtos::centrodelucro,
+      Produtos::tipo,
+      Produtos::qtdAtacado,
+      Produtos::fornecedor,
+      Produtos::custo,
     )
 
     val fotter = this.appendFooterRow()
@@ -103,7 +81,7 @@ class GridPainel : CssLayout() {
     }
   }
 
-  fun setItens(itens: List<PedidoProduto>) {
+  fun setItens(itens: List<Produtos>) {
     grid.dataProvider = ListDataProvider(itens)
     val total = itens.sumByDouble { it.total ?: 0.0 }
     totalFotter?.html = "<font size=\"4\">${total.format()}</font>"
