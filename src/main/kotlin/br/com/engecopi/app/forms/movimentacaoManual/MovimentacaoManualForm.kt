@@ -36,40 +36,7 @@ class MovimentacaoManualForm : VerticalLayout() {
   }
 
   private fun execProcessa(filtro: FiltroPedido) {
-    val loja = filtro.loja ?: fail("Loja não informada")
-    val numPedido = filtro.numPedido ?: fail("Numero do pedido/nota não informado")
-    val pedido = filtro.findPedido() ?: fail("Numero do pedido/nota não encontrado")
-    val tipoNota = filtro.tipoNota ?: fail("O Tipo da nota não foi informada")
-    val pedidoNotaTipo = pedido.tipo
 
-    if (pedidoNotaTipo != PEDIDO) when {
-      filtro.tipoMov != ENTRADA || pedidoNotaTipo != DEVOLUCAO -> fail("A nota não é de saida")
-      filtro.tipoMov != SAIDA || pedidoNotaTipo != COMPRA -> fail("A nota não é de entrada")
-    }
-    val tipo = filtro.tipoMov ?: fail("Tipo do Movimento não foi informado")
-    when {
-      !pedido.isDataValida() -> {
-        fail("Pedido tem mais de 366 dias")
-      }
-
-      !pedido.isLojaValida() -> {
-        fail("O cliente da nota/pedidos não é ${loja.numero}")
-      }
-    }
-    val nota = saci.pesquisaNotaSTKMOV(loja, numPedido, tipo, tipoNota)
-
-    if (pedido.status != NAO_PROCESSADO && nota != null && nota.cancelado != true) fail("Nota já processada")
-    else {
-      if (pedido.isData30Dias()) {
-        processa(pedido, tipo, tipoNota)
-        //movimentacaoManualPainel.execFiltro(filtro)
-      } else {
-        messageConfirma("O pedido tem mais de 30 dias. Confirma?") {
-          processa(pedido, tipo, tipoNota)
-          // movimentacaoManualPainel.execFiltro(filtro)
-        }
-      }
-    }
   }
 
   private fun messageConfirma(msgConfirmacao: String, executeProcesso: () -> Unit) {
@@ -83,24 +50,6 @@ class MovimentacaoManualForm : VerticalLayout() {
   }
 
   private fun processa(pedidoNota: PedidoNota, tipo: TipoMov, tipoNota: TipoNota) {
-    val numPedido = pedidoNota.numero ?: ""
-    val storeno = pedidoNota.storeno ?: 0
-    when (tipoNota) {
-      GARANTIA -> {
-        if (pedidoNota.tipo == DEVOLUCAO || pedidoNota.tipo == COMPRA) {
-          val nfno = pedidoNota.numeroPedido ?: ""
-          val nfse = pedidoNota.serie ?: ""
-          saci.processaNota(storeno, nfno, nfse, NF)
-        } else saci.processaPedido(storeno, numPedido, tipo, tipoNota, NF)
-      }
 
-      PERDA -> {
-        if (pedidoNota.tipo == DEVOLUCAO || pedidoNota.tipo == COMPRA) {
-          val nfno = pedidoNota.numeroPedido ?: ""
-          val nfse = pedidoNota.serie ?: ""
-          saci.processaNota(storeno, nfno, nfse, STKMOV)
-        } else saci.processaPedido(storeno, numPedido, tipo, tipoNota, STKMOV)
-      }
-    }
   }
 }
