@@ -103,26 +103,4 @@ class MovimentacaoManualForm : VerticalLayout() {
       }
     }
   }
-
-  private fun desfaz(pedidoNota: PedidoNota, tipoMov: TipoMov, tipoNota: TipoNota) {
-    val numPedido = pedidoNota.numeroPedido ?: ""
-    val storeno = pedidoNota.storeno ?: 0
-    when (tipoNota) {
-      GARANTIA -> {
-        if (pedidoNota.tipo == DEVOLUCAO || pedidoNota.tipo == COMPRA) {
-          val nfno = pedidoNota.numeroPedido ?: ""
-          val nfse = pedidoNota.serie ?: ""
-          saci.desfazNota(storeno, nfno, nfse, NF)
-        } else saci.desfazPedido(storeno, numPedido, tipoMov, NF)
-      }
-
-      PERDA -> {
-        if (pedidoNota.tipo == DEVOLUCAO || pedidoNota.tipo == COMPRA) {
-          val nfno = pedidoNota.numeroPedido ?: ""
-          val nfse = pedidoNota.serie ?: ""
-          saci.desfazNota(storeno, nfno, nfse, STKMOV)
-        } else saci.desfazPedido(storeno, numPedido, tipoMov, STKMOV)
-      }
-    }
-  }
 }

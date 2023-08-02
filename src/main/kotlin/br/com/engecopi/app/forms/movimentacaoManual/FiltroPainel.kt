@@ -21,6 +21,7 @@ class FiltroPainel(val movimentacaoManualPainel: MovimentacaoManualPainel, val g
 
     this.horizontalLayout {
       this.w = 100.perc
+      this.isMargin = true
       codigo = textField("Código Produto") {
         isExpanded = false
       }
