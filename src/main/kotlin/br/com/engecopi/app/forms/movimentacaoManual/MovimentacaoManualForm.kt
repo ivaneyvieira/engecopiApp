@@ -26,7 +26,6 @@ class MovimentacaoManualForm : VerticalLayout() {
   }
 
   private fun execProcessa() {
-    gridPainel.execProcessa()
     val selecionado = gridPainel.itensSelecionado()
     val tipoMov = movimentacaoManualPainel.filtroBean().tipoMov
     val tipoNota = movimentacaoManualPainel.filtroBean().tipoNota

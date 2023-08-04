@@ -15,7 +15,6 @@ import java.text.DecimalFormat
 
 
 class GridPainel : CssLayout() {
-  private val selecionado = mutableSetOf<ProdutosMovManual>()
   val grid = grid(ProdutosMovManual::class, null, ListDataProvider(emptyList())) {
     setSizeFull()
     this.setSelectionMode(SelectionMode.MULTI)
@@ -100,21 +99,10 @@ class GridPainel : CssLayout() {
 
   fun setItens(itens: List<ProdutosMovManual>) {
     val selectedItems = grid.selectedItems
-    selecionado.addAll(selectedItems)
-    val novosItens = mutableListOf<ProdutosMovManual>()
-    novosItens.addAll(itens)
-    novosItens.addAll(selecionado)
-    grid.dataProvider = ListDataProvider(novosItens)
-    selecionado.forEach {
-      grid.selectionModel.select(it)
-    }
-  }
+    val novosItens = (itens + selectedItems).distinct()
 
-  fun execProcessa() {
-    val itens = grid.selectedItems
-    selecionado.addAll(itens)
-    grid.dataProvider = ListDataProvider(selecionado)
-    selecionado.forEach {
+    grid.dataProvider = ListDataProvider(novosItens)
+    novosItens.forEach {
       grid.selectionModel.select(it)
     }
   }
@@ -124,8 +112,13 @@ class GridPainel : CssLayout() {
   }
 
   fun updateSelection() {
+    val selecionado = grid.selectedItems.toList()
     selecionado.forEach { it.updateSaldo() }
     grid.setItems(selecionado)
+  }
+
+  fun limpaProdutos() {
+    grid.dataProvider = ListDataProvider(emptyList())
   }
 
   init {
