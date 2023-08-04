@@ -1,6 +1,6 @@
 package br.com.engecopi.app.forms.movimentacaoManual
 
-import br.com.engecopi.app.model.FiltroPedido
+import br.com.engecopi.app.model.FiltroMov
 import br.com.engecopi.app.model.Loja
 import br.com.engecopi.app.model.TipoMov
 import br.com.engecopi.app.model.TipoNota
@@ -12,12 +12,9 @@ import com.vaadin.ui.CssLayout
 import com.vaadin.ui.themes.ValoTheme
 
 class MovimentacaoManualPainel(
-  val execProcessa: (FiltroPedido) -> Unit
+  val execProcessa: () -> Unit
 ) : CssLayout() {
-  private val binderFiltroPedido = beanValidationBinder<FiltroPedido>()
-  private var filtroPedido: FiltroPedido? = FiltroPedido()
-
-  val tipoNota = comboBox<TipoNota>("Tipo Nota") {
+  private val tipoNota = comboBox<TipoNota>("Tipo Nota") {
     setItems(TipoNota.values().toList().sortedBy { it.numero })
     isEmptySelectionAllowed = false
     isTextInputAllowed = false
@@ -30,16 +27,18 @@ class MovimentacaoManualPainel(
     }
     setWidth("120px")
     value = PERDA
-    bind(binderFiltroPedido).bind(FiltroPedido::tipoNota)
   }
 
-  val loja = comboBox<Loja>("Loja") {
+  private val loja = comboBox<Loja>("Loja") {
     isEmptySelectionAllowed = false
     isTextInputAllowed = false
     setItems(Loja.values().toList())
     setItemCaptionGenerator { it.numero.toString() + " - " + it.descricao }
     setWidth("150px")
-    bind(binderFiltroPedido).bind(FiltroPedido::loja)
+  }
+
+  private val transacao = textField("Transacao") {
+    addStyleName("align-right")
   }
 
   private val tipoMov = radioButtonGroup<TipoMov>("Tipo") {
@@ -47,16 +46,18 @@ class MovimentacaoManualPainel(
 
     setItems(TipoMov.values().toList())
     setItemIconGenerator { it.icon }
-    bind(binderFiltroPedido).bind(FiltroPedido::tipoMov)
   }
+
+  fun filtroBean(): FiltroMov = FiltroMov(
+    tipoMov = tipoMov.value,
+    tipoNota = tipoNota.value,
+    loja = loja.value,
+    transacao = transacao.value ?: "",
+  )
 
   private val btnProcessa = button("Processamento") {
     addClickListener {
-      val filtro = filtroPedido ?: return@addClickListener
-      if (binderFiltroPedido.writeBeanIfValid(filtro)) {
-        execProcessa(filtro)
-        binderFiltroPedido.readBean(filtro)
-      }
+      execProcessa()
     }
   }
 
@@ -73,6 +74,5 @@ class MovimentacaoManualPainel(
         setComponentAlignment(btnProcessa, BOTTOM_LEFT)
       }
     }
-    binderFiltroPedido.readBean(filtroPedido)
   }
 }
