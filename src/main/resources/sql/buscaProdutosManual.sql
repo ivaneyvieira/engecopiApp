@@ -53,6 +53,7 @@ SELECT loja                                    AS loja,
        IFNULL(fornecedor, 0)                   AS fornecedor,
        CAST(IFNULL(centrodelucro, '') AS CHAR) AS centrodelucro,
        IFNULL(tipo, 0)                         AS tipo,
+       qtty / 1000                             AS saldo,
        qtty / 1000                             AS qtty,
        ultimocusto / 10000                     AS custo,
        (qtty / 1000) * (ultimocusto / 10000)   AS total

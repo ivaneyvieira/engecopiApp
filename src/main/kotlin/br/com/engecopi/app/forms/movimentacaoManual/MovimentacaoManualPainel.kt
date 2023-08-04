@@ -35,6 +35,7 @@ class MovimentacaoManualPainel(
     setItems(Loja.values().toList())
     setItemCaptionGenerator { it.numero.toString() + " - " + it.descricao }
     setWidth("150px")
+    value = Loja.MF
   }
 
   private val transacao = textField("Transacao") {
@@ -46,6 +47,7 @@ class MovimentacaoManualPainel(
 
     setItems(TipoMov.values().toList())
     setItemIconGenerator { it.icon }
+    value = TipoMov.SAIDA
   }
 
   fun filtroBean(): FiltroMov = FiltroMov(
@@ -54,6 +56,10 @@ class MovimentacaoManualPainel(
     loja = loja.value,
     transacao = transacao.value ?: "",
   )
+
+  fun setTransacao(transacaoNumber: String) {
+    transacao.value = transacaoNumber
+  }
 
   private val btnProcessa = button("Processamento") {
     addClickListener {
@@ -69,7 +75,7 @@ class MovimentacaoManualPainel(
       horizontalLayout {
         setWidth("100%")
         isMargin = true
-        addComponents(tipoNota, loja, tipoMov, btnProcessa)
+        addComponents(tipoNota, loja, tipoMov, transacao, btnProcessa)
         setExpandRatio(btnProcessa, 1f)
         setComponentAlignment(btnProcessa, BOTTOM_LEFT)
       }
