@@ -29,6 +29,10 @@ class FiltroPainel(
       this.isMargin = true
       codigo = textField("Código Produto") {
         isExpanded = false
+
+        onEnterPressed {
+          atualizaProdutos()
+        }
       }
       descricao = textField("Descrição") {
         this.setWidthFull()
@@ -45,12 +49,12 @@ class FiltroPainel(
         this.setWidthFull()
         isExpanded = true
       }
-      button("Busca") {
+      button("Limpar") {
         this.alignment = Alignment.BOTTOM_RIGHT
         this.isExpanded = false
 
         onLeftClick {
-          atualizaProdutos()
+          gridPainel.limpaProdutos()
         }
       }
     }
