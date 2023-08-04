@@ -1,5 +1,6 @@
 package br.com.engecopi.app.forms.movimentacaoManual
 
+import br.com.engecopi.app.model.TipoMov
 import br.com.engecopi.app.model.TipoNota
 import br.com.engecopi.saci.saci
 import com.vaadin.ui.Notification.Type.ERROR_MESSAGE
@@ -37,7 +38,11 @@ class MovimentacaoManualForm : VerticalLayout() {
     when (tipoNota) {
       TipoNota.GARANTIA -> fail("Tipo de nota não implementado")
       TipoNota.PERDA -> {
-        messageConfirma("Confirma o processamento dos itens selecionados?") {
+        val verbo = when (tipoMov) {
+          TipoMov.ENTRADA -> "ENTRADA"
+          TipoMov.SAIDA -> "SAÌDA"
+        }
+        messageConfirma("Confirma a $verbo dos itens selecionados?") {
           val transacao = saci.executarMov(tipoMov, selecionado)
           movimentacaoManualPainel.setTransacao(transacao)
           gridPainel.updateSelection()

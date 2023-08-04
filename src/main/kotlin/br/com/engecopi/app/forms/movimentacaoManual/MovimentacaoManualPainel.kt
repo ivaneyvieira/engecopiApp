@@ -75,7 +75,7 @@ class MovimentacaoManualPainel(
       horizontalLayout {
         setWidth("100%")
         isMargin = true
-        addComponents(tipoNota, loja, tipoMov, transacao, btnProcessa)
+        addComponents(tipoNota, loja, tipoMov, btnProcessa, transacao)
         setExpandRatio(btnProcessa, 1f)
         setComponentAlignment(btnProcessa, BOTTOM_LEFT)
       }
