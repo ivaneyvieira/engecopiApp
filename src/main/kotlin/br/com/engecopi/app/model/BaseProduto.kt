@@ -5,5 +5,7 @@ class BaseProduto(
   val codprd: String,
   val fornecedores: String,
   val types: String,
+  val cl: String,
+  val descricao: String,
 )
 

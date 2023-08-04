@@ -1,18 +1,6 @@
 package br.com.engecopi.app.forms.movimentacaoManual
 
-import br.com.engecopi.app.model.FiltroPedido
-import br.com.engecopi.app.model.TipoMov
-import br.com.engecopi.app.model.TipoMov.ENTRADA
-import br.com.engecopi.app.model.TipoMov.SAIDA
-import br.com.engecopi.app.model.TipoNota
-import br.com.engecopi.app.model.TipoNota.GARANTIA
-import br.com.engecopi.app.model.TipoNota.PERDA
-import br.com.engecopi.saci.DestinoMov.NF
-import br.com.engecopi.saci.DestinoMov.STKMOV
-import br.com.engecopi.saci.beans.PedidoNota
-import br.com.engecopi.saci.beans.StatusPedido.NAO_PROCESSADO
-import br.com.engecopi.saci.beans.TipoPedido.*
-import br.com.engecopi.saci.saci
+import br.com.engecopi.app.model.FiltroMov
 import com.vaadin.ui.Notification.Type.ERROR_MESSAGE
 import com.vaadin.ui.Notification.show
 import com.vaadin.ui.VerticalLayout
@@ -35,8 +23,9 @@ class MovimentacaoManualForm : VerticalLayout() {
     throw Exception(msg)
   }
 
-  private fun execProcessa(filtro: FiltroPedido) {
-
+  private fun execProcessa() {
+    gridPainel.execProcessa()
+    val selecionado = gridPainel.itensSelecionado()
   }
 
   private fun messageConfirma(msgConfirmacao: String, executeProcesso: () -> Unit) {
@@ -49,7 +38,4 @@ class MovimentacaoManualForm : VerticalLayout() {
       .open()
   }
 
-  private fun processa(pedidoNota: PedidoNota, tipo: TipoMov, tipoNota: TipoNota) {
-
-  }
 }

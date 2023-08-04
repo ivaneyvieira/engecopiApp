@@ -203,13 +203,15 @@ class QuerySaci : QueryDB(driver, url, username, password) {
     }
   }
 
-  fun buscaProdutos(base: BaseProduto): List<Produtos> {
+  fun buscaProdutos(base: BaseProduto): List<ProdutosMovManual> {
     val sql = "/sql/buscaProdutosManual.sql"
-    return query(sql, Produtos::class) {
+    return query(sql, ProdutosMovManual::class) {
       addOptionalParameter("loja", base.loja)
       addOptionalParameter("prdno", base.codprd)
       addOptionalParameter("vends", base.fornecedores)
       addOptionalParameter("types", base.types)
+      addOptionalParameter("cl", base.cl)
+      addOptionalParameter("descricao", base.descricao)
     }
   }
 

@@ -1,76 +1,102 @@
 package br.com.engecopi.app.forms.movimentacaoManual
 
-import br.com.engecopi.app.model.Produtos
-import br.com.engecopi.utils.format
+import br.com.engecopi.app.model.ProdutosMovManual
 import com.github.mvysny.karibudsl.v8.column
 import com.github.mvysny.karibudsl.v8.grid
 import com.github.mvysny.karibudsl.v8.panel
 import com.github.mvysny.karibudsl.v8.showColumns
 import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.ui.CssLayout
-import com.vaadin.ui.components.grid.FooterCell
+import com.vaadin.ui.Grid.SelectionMode
 import com.vaadin.ui.renderers.NumberRenderer
 import com.vaadin.ui.themes.ValoTheme.LAYOUT_WELL
 import java.text.DecimalFormat
 
 class GridPainel : CssLayout() {
-  private var totalFotter: FooterCell? = null
-  val grid = grid(Produtos::class, null, ListDataProvider(emptyList())) {
+  private val selecionado = mutableSetOf<ProdutosMovManual>()
+  val grid = grid(ProdutosMovManual::class, null, ListDataProvider(emptyList())) {
     setSizeFull()
+    this.setSelectionMode(SelectionMode.MULTI)
 
-    column(Produtos::prdno) {
+    column(ProdutosMovManual::prdno) {
       caption = "Código"
       expandRatio = 1
     }
-    column(Produtos::descricao) {
+    column(ProdutosMovManual::descricao) {
       caption = "Descricao"
       expandRatio = 3
     }
-    column(Produtos::grade) {
+    column(ProdutosMovManual::grade) {
       caption = "Grade"
       expandRatio = 1
     }
-    column(Produtos::fornecedor) {
+    column(ProdutosMovManual::fornecedor) {
       caption = "Fornecedor"
       expandRatio = 1
     }
-    column(Produtos::centrodelucro) {
+    column(ProdutosMovManual::centrodelucro) {
       caption = "CL"
       expandRatio = 1
     }
-    column(Produtos::tipo) {
+    column(ProdutosMovManual::tipo) {
       caption = "Tipo"
       expandRatio = 1
     }
-    column(Produtos::qtdAtacado) {
+    column(ProdutosMovManual::qtty) {
       setRenderer(NumberRenderer(DecimalFormat("0")))
       setStyleGenerator { "v-align-right" }
-      caption = "Estoque"
+      caption = "Quantidade"
       expandRatio = 1
     }
-    column(Produtos::custo) {
+    column(ProdutosMovManual::custo) {
       setRenderer(NumberRenderer(DecimalFormat("0.00")))
       setStyleGenerator { "v-align-right" }
       caption = "Custo Real"
       expandRatio = 1
     }
+    column(ProdutosMovManual::total) {
+      setRenderer(NumberRenderer(DecimalFormat("0.00")))
+      setStyleGenerator { "v-align-right" }
+      caption = "Total"
+      expandRatio = 1
+    }
 
     showColumns(
-      Produtos::prdno,
-      Produtos::descricao,
-      Produtos::grade,
-      Produtos::fornecedor,
-      Produtos::centrodelucro,
-      Produtos::tipo,
-      Produtos::qtdAtacado,
-      Produtos::custo,
+      ProdutosMovManual::prdno,
+      ProdutosMovManual::descricao,
+      ProdutosMovManual::grade,
+      ProdutosMovManual::fornecedor,
+      ProdutosMovManual::centrodelucro,
+      ProdutosMovManual::tipo,
+      ProdutosMovManual::qtty,
+      ProdutosMovManual::custo,
+      ProdutosMovManual::total,
     )
   }
 
-  fun setItens(itens: List<Produtos>) {
-    grid.dataProvider = ListDataProvider(itens)
-    val total = itens.sumByDouble { it.total ?: 0.0 }
-    totalFotter?.html = "<font size=\"4\">${total.format()}</font>"
+  fun setItens(itens: List<ProdutosMovManual>) {
+    val selectedItems = grid.selectedItems
+    selecionado.addAll(selectedItems)
+    val novosItens = mutableListOf<ProdutosMovManual>()
+    novosItens.addAll(itens)
+    novosItens.addAll(selecionado)
+    grid.dataProvider = ListDataProvider(novosItens)
+    selecionado.forEach {
+      grid.selectionModel.select(it)
+    }
+  }
+
+  fun execProcessa() {
+    val itens = grid.selectedItems
+    selecionado.addAll(itens)
+    grid.dataProvider = ListDataProvider(selecionado)
+    selecionado.forEach {
+      grid.selectionModel.select(it)
+    }
+  }
+
+  fun itensSelecionado() : List<ProdutosMovManual> {
+    return grid.selectedItems.toList()
   }
 
   init {
