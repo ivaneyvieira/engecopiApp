@@ -1,5 +1,7 @@
 package br.com.engecopi.app.model
 
+import br.com.engecopi.saci.saci
+
 class ProdutosMovManual(
   var loja: Int,
   var prdno: String,
@@ -8,7 +10,8 @@ class ProdutosMovManual(
   var fornecedor: Long,
   var centrodelucro: String,
   var tipo: Long,
-  var qtty: Double,
+  var saldo: Int,
+  var qtty: Int,
   var custo: Double,
   var total: Double,
 ){
@@ -30,5 +33,13 @@ class ProdutosMovManual(
     result = 31 * result + prdno.hashCode()
     result = 31 * result + grade.hashCode()
     return result
+  }
+
+  fun updateSaldo() {
+    val produto = saci.buscaProdutos(BaseProduto(loja = loja, codprd = prdno)).firstOrNull{
+      it.grade == grade
+    } ?: return
+    this.saldo = produto.saldo
+    this.qtty = produto.saldo
   }
 }

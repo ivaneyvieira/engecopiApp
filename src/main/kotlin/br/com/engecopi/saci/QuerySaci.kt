@@ -238,6 +238,17 @@ class QuerySaci : QueryDB(driver, url, username, password) {
     return xano.toString()
   }
 
+  fun executarMov(tipoMov: TipoMov, produtos: List<ProdutosMovManual>): String {
+
+    val xanoBean = xanoInventario()
+    val xano = xanoBean?.xano ?: return ""
+    val tipo = tipoMov.cod
+    produtos.forEach { prd ->
+      processaProdutoPerda(xano, tipo, prd)
+    }
+    return xano.toString()
+  }
+
   fun executarGarantia(base: Base): String {
     val produto = buscaProdutos(base)
     val xano = xanoInventario()?.xano ?: return ""
@@ -275,6 +286,20 @@ class QuerySaci : QueryDB(driver, url, username, password) {
       ("prdno" to "'${prd.prdno}'"),
       ("grade" to "'${prd.grade}'"),
       ("ym" to "'${base.mesAno}'"),
+    )
+  }
+
+  private fun processaProdutoPerda(xano: Int, tipo: String, prd: ProdutosMovManual) {
+    val sql = "/sql/ajustaInventarioMov.sql"
+    execute(
+      sql,
+      ("tipo" to "'$tipo'"),
+      ("xano" to "$xano"),
+      ("qttd" to "${(prd.qtty * 1000).toInt()}"),
+      ("custo" to "${(prd.custo * 10000).toInt()}"),
+      ("loja" to "${prd.loja}"),
+      ("prdno" to "'${prd.prdno}'"),
+      ("grade" to "'${prd.grade}'"),
     )
   }
 

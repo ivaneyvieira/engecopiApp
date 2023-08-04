@@ -1,6 +1,7 @@
 package br.com.engecopi.app.forms.movimentacaoManual
 
-import br.com.engecopi.app.model.FiltroMov
+import br.com.engecopi.app.model.TipoNota
+import br.com.engecopi.saci.saci
 import com.vaadin.ui.Notification.Type.ERROR_MESSAGE
 import com.vaadin.ui.Notification.show
 import com.vaadin.ui.VerticalLayout
@@ -26,6 +27,23 @@ class MovimentacaoManualForm : VerticalLayout() {
   private fun execProcessa() {
     gridPainel.execProcessa()
     val selecionado = gridPainel.itensSelecionado()
+    val tipoMov = movimentacaoManualPainel.filtroBean().tipoMov
+    val tipoNota = movimentacaoManualPainel.filtroBean().tipoNota
+
+    if (selecionado.isEmpty()) fail("Nenhum item selecionado")
+    if (tipoMov == null) fail("Tipo de movimentação não informado")
+    if (tipoNota == null) fail("Tipo de nota não informado")
+
+    when (tipoNota) {
+      TipoNota.GARANTIA -> fail("Tipo de nota não implementado")
+      TipoNota.PERDA -> {
+        messageConfirma("Confirma o processamento dos itens selecionados?") {
+          val transacao = saci.executarMov(tipoMov, selecionado)
+          movimentacaoManualPainel.setTransacao(transacao)
+          gridPainel.updateSelection()
+        }
+      }
+    }
   }
 
   private fun messageConfirma(msgConfirmacao: String, executeProcesso: () -> Unit) {

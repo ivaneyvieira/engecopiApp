@@ -10,13 +10,23 @@ import com.vaadin.ui.CssLayout
 import com.vaadin.ui.Grid.SelectionMode
 import com.vaadin.ui.renderers.NumberRenderer
 import com.vaadin.ui.themes.ValoTheme.LAYOUT_WELL
+import org.vaadin.viritin.fields.IntegerField
 import java.text.DecimalFormat
+
 
 class GridPainel : CssLayout() {
   private val selecionado = mutableSetOf<ProdutosMovManual>()
   val grid = grid(ProdutosMovManual::class, null, ListDataProvider(emptyList())) {
     setSizeFull()
     this.setSelectionMode(SelectionMode.MULTI)
+
+    val edtQuantidade = IntegerField().apply {
+      addStyleName("align-right")
+      addStyleName(LAYOUT_WELL)
+      setWidth("100%")
+    }
+
+    val binder = this.getEditor().getBinder()
 
     column(ProdutosMovManual::prdno) {
       caption = "Código"
@@ -42,7 +52,16 @@ class GridPainel : CssLayout() {
       caption = "Tipo"
       expandRatio = 1
     }
+    column(ProdutosMovManual::saldo) {
+      setRenderer(NumberRenderer(DecimalFormat("0")))
+      setStyleGenerator { "v-align-right" }
+      caption = "Saldo"
+      expandRatio = 1
+    }
     column(ProdutosMovManual::qtty) {
+      setEditorComponent(edtQuantidade) { bean, valor ->
+        bean.qtty = valor
+      }
       setRenderer(NumberRenderer(DecimalFormat("0")))
       setStyleGenerator { "v-align-right" }
       caption = "Quantidade"
@@ -68,10 +87,15 @@ class GridPainel : CssLayout() {
       ProdutosMovManual::fornecedor,
       ProdutosMovManual::centrodelucro,
       ProdutosMovManual::tipo,
+      ProdutosMovManual::saldo,
       ProdutosMovManual::qtty,
       ProdutosMovManual::custo,
       ProdutosMovManual::total,
     )
+
+    this.editor.saveCaption = "Salvar"
+    this.editor.cancelCaption = "Cancelar"
+    this.editor.isEnabled = true
   }
 
   fun setItens(itens: List<ProdutosMovManual>) {
@@ -95,8 +119,13 @@ class GridPainel : CssLayout() {
     }
   }
 
-  fun itensSelecionado() : List<ProdutosMovManual> {
+  fun itensSelecionado(): List<ProdutosMovManual> {
     return grid.selectedItems.toList()
+  }
+
+  fun updateSelection() {
+    selecionado.forEach { it.updateSaldo() }
+    grid.setItems(selecionado)
   }
 
   init {
