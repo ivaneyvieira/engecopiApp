@@ -9,16 +9,16 @@ DO @GRADE := :grade;
 
 INSERT INTO sqldados.stkmov (xano, qtty, date, cm_fiscal, cm_real, storeno, bits, prdno, grade,
                              remarks)
-SELECT @XANO                     AS xano,
-       @QTTD                     AS qtty,
-       @DATA                     AS date,
-       @CUSTO                    AS cm_fiscal,
-       @CUSTO                    AS cm_real,
-       @LOJA                     AS storeno,
-       1                         AS bits,
-       @PRDNO                    AS prdno,
-       @GRADE                    AS grade,
-       CONCAT('66:MOV A', @XANO) AS remarks
+SELECT @XANO                          AS xano,
+       @QTTD                          AS qtty,
+       @DATA                          AS date,
+       @CUSTO                         AS cm_fiscal,
+       @CUSTO                         AS cm_real,
+       @LOJA                          AS storeno,
+       1                              AS bits,
+       @PRDNO                         AS prdno,
+       @GRADE                         AS grade,
+       CONCAT('AJUSTE', @TIPO, @XANO) AS remarks
 FROM DUAL;
 
 INSERT INTO sqldados.stkmovh (xano, qtty, date, nfno, cm_fiscal, cm_real, auxLong1, auxLong2,
