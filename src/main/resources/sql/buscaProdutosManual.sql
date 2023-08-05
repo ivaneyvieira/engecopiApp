@@ -16,7 +16,8 @@ CREATE TEMPORARY TABLE T_ORD
 )
 SELECT storeno, prdno, grade, SUM(qtty) AS quant
 FROM sqldados.eoprd AS E
-WHERE storeno = @LJ
+WHERE @PEDIDO != 0
+  AND storeno = @LJ
   AND ordno = @PEDIDO
 GROUP BY prdno, grade;
 
@@ -45,7 +46,7 @@ WHERE stk.storeno = @LJ
   AND (FIND_IN_SET(prd.typeno, @TYPE) > 0 OR @TYPE = '')
   AND (prd.clno = @CL OR prd.deptno = @CL OR prd.groupno = @CL OR @CL = '')
   AND (prd.name LIKE CONCAT(@DESCRICAO, '%') OR @DESCRICAO = '')
-  AND @PEDIDO = ''
+  AND @PEDIDO = 0
 GROUP BY prdno, grade;
 
 DROP TEMPORARY TABLE IF EXISTS T_PRD_STK;
@@ -68,7 +69,7 @@ FROM sqldados.stk
                   USING (storeno, prdno, grade)
        JOIN sqldados.prd
             ON (stk.prdno = prd.no)
-WHERE @PEDIDO <> ''
+WHERE @PEDIDO <> 0
 GROUP BY prdno, grade;
 
 DROP TEMPORARY TABLE IF EXISTS T_PRD;
