@@ -218,7 +218,7 @@ class QuerySaci : QueryDB(driver, url, username, password) {
     val sql = "/sql/buscaProdutosManual.sql"
     return query(sql, ProdutosMovManual::class) {
       addOptionalParameter("loja", base.loja)
-      addOptionalParameter("pedido", base.pedido)
+      addOptionalParameter("pedido", base.pedido.toIntOrNull() ?: 0)
       addOptionalParameter("prdno", base.codprd)
       addOptionalParameter("vends", base.fornecedores)
       addOptionalParameter("types", base.types)
