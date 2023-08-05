@@ -34,7 +34,7 @@ SELECT stk.storeno                        AS loja,
        LPAD(prd.clno, 6, '0')             AS centrodelucro,
        prd.typeno                         AS tipo,
        stk.qtty_atacado + stk.qtty_varejo AS saldo,
-       stk.qtty_atacado + stk.qtty_varejo AS qtty,
+       0                                  AS qtty,
        IFNULL(stk.cm_varejo, 0)           AS ultimocusto
 FROM sqldados.stk
        INNER JOIN sqldados.prd
