@@ -7,5 +7,6 @@ class BaseProduto(
   val types: String = "",
   val cl: String = "",
   val descricao: String = "",
+  val pedido: String = "",
 )
 

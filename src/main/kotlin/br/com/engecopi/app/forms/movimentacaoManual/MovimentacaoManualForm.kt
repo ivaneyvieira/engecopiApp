@@ -10,7 +10,7 @@ import de.steinwedel.messagebox.ButtonOption
 import de.steinwedel.messagebox.MessageBox
 
 class MovimentacaoManualForm : VerticalLayout() {
-  private val movimentacaoManualPainel = MovimentacaoManualPainel(::execProcessa)
+  private val movimentacaoManualPainel = MovimentacaoManualPainel(::execProcessa, ::execDesfaz)
   private val gridPainel = GridPainel()
   private val filtroPainel = FiltroPainel(movimentacaoManualPainel, gridPainel)
 
@@ -44,6 +44,34 @@ class MovimentacaoManualForm : VerticalLayout() {
         messageConfirma("Confirma a $verbo dos itens selecionados?") {
           val transacao = saci.executarMov(tipoMov, selecionado)
           movimentacaoManualPainel.setTransacao(transacao)
+          gridPainel.updateSelection()
+        }
+      }
+    }
+  }
+
+  private fun execDesfaz() {
+    val filtroBean = movimentacaoManualPainel.filtroBean()
+    val tipoMov = filtroBean.tipoMov
+    val tipoNota = filtroBean.tipoNota
+    val transacao = filtroBean.transacao
+    val loja = filtroBean.loja
+
+    if (transacao.isEmpty()) fail("Nenhuma transação selecionada")
+    if (tipoMov == null) fail("Tipo de movimentação não informado")
+    if (tipoNota == null) fail("Tipo de nota não informado")
+    if (loja == null) fail("Loja não informada")
+
+    when (tipoNota) {
+      TipoNota.GARANTIA -> fail("Tipo de nota não implementado")
+      TipoNota.PERDA -> {
+        val verbo = when (tipoMov) {
+          TipoMov.ENTRADA -> "ENTRADA"
+          TipoMov.SAIDA -> "SAÌDA"
+        }
+        messageConfirma("Desfaz a $verbo dos itens selecionados?") {
+          saci.desfazInventarioMov(tipoMov, transacao, loja)
+          movimentacaoManualPainel.setTransacao("")
           gridPainel.updateSelection()
         }
       }
