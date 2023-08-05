@@ -54,7 +54,7 @@ class GridPainel : CssLayout() {
     column(ProdutosMovManual::saldo) {
       setRenderer(NumberRenderer(DecimalFormat("0")))
       setStyleGenerator { "v-align-right" }
-      caption = "Saldo"
+      caption = "Estoque Total"
       expandRatio = 1
     }
     column(ProdutosMovManual::qtty) {
@@ -63,7 +63,7 @@ class GridPainel : CssLayout() {
       }
       setRenderer(NumberRenderer(DecimalFormat("0")))
       setStyleGenerator { "v-align-right" }
-      caption = "Quantidade"
+      caption = "Quant Ajuste"
       expandRatio = 1
     }
     column(ProdutosMovManual::custo) {
@@ -83,11 +83,11 @@ class GridPainel : CssLayout() {
       ProdutosMovManual::prdno,
       ProdutosMovManual::descricao,
       ProdutosMovManual::grade,
+      ProdutosMovManual::qtty,
+      ProdutosMovManual::saldo,
       ProdutosMovManual::fornecedor,
       ProdutosMovManual::centrodelucro,
       ProdutosMovManual::tipo,
-      ProdutosMovManual::saldo,
-      ProdutosMovManual::qtty,
       ProdutosMovManual::custo,
       ProdutosMovManual::total,
     )
