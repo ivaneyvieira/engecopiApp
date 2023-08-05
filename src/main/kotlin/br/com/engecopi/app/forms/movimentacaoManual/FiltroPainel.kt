@@ -90,7 +90,7 @@ class FiltroPainel(
   private fun atualizaProdutos() {
     val base = baseDados()
     val produtos = saci.buscaProdutos(base)
-    gridPainel.setItens(produtos)
+    gridPainel.addItens(produtos)
   }
 
   private fun baseDados() = BaseProduto(

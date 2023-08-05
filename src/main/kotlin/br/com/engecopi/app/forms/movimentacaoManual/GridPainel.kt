@@ -97,12 +97,13 @@ class GridPainel : CssLayout() {
     this.editor.isEnabled = true
   }
 
-  fun setItens(itens: List<ProdutosMovManual>) {
-    val selectedItems = grid.selectedItems
-    val novosItens = (itens + selectedItems).distinct()
+  fun addItens(itens: List<ProdutosMovManual>) {
+    val selectedItems = grid.selectedItems.onEach { it.updateSaldo() }.sortedBy { it.prdno }
+    val resto = (itens - selectedItems.toSet()).sortedBy { it.prdno }
+    val novosItens = selectedItems + resto
 
     grid.dataProvider = ListDataProvider(novosItens)
-    novosItens.forEach {
+    selectedItems.forEach {
       grid.selectionModel.select(it)
     }
   }
