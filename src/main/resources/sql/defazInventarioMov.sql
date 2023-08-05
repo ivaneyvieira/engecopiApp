@@ -24,6 +24,12 @@ WHERE storeno = @LOJA
   AND xano = @XANO
   AND remarks LIKE 'AJUSTE%';
 
+DELETE
+FROM sqldados.stkmovh
+WHERE storeno = @LOJA
+  AND xano = @XANO
+  AND EXISTS(SELECT * FROM T_STKMOV);
+
 UPDATE sqldados.stk AS S
   INNER JOIN T_STKMOV AS M
   USING (storeno, prdno, grade)
