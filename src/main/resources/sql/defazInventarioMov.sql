@@ -16,13 +16,13 @@ SELECT storeno,
 FROM sqldados.stkmov
 WHERE storeno = @LOJA
   AND xano = @XANO
-  AND remarks LIKE CONCAT('AJUSTE', @TIPO, @XANO);
+  AND remarks LIKE 'AJUSTE%';
 
 DELETE
 FROM sqldados.stkmov
 WHERE storeno = @LOJA
   AND xano = @XANO
-  AND remarks LIKE CONCAT('AJUSTE', @TIPO, @XANO);
+  AND remarks LIKE 'AJUSTE%';
 
 UPDATE sqldados.stk AS S
   INNER JOIN T_STKMOV AS M
