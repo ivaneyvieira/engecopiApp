@@ -14,6 +14,7 @@ class FiltroPainel(
 ) :
   CssLayout() {
   private lateinit var edtTipos: TextField
+  private lateinit var pedido: TextField
   private lateinit var edtFornecedores: TextField
   private lateinit var codigo: TextField
   private lateinit var centroLucro: TextField
@@ -27,6 +28,7 @@ class FiltroPainel(
     this.horizontalLayout {
       this.w = 100.perc
       this.isMargin = true
+
       codigo = textField("Código Produto") {
         isExpanded = false
 
@@ -34,20 +36,45 @@ class FiltroPainel(
           atualizaProdutos()
         }
       }
+
+      pedido = textField("Pedido") {
+        isExpanded = false
+
+        onEnterPressed {
+          atualizaProdutos()
+        }
+      }
+
       descricao = textField("Descrição") {
         this.setWidthFull()
         isExpanded = true
+
+        onEnterPressed {
+          atualizaProdutos()
+        }
       }
       centroLucro = textField("Centro Lucro") {
         isExpanded = false
+
+        onEnterPressed {
+          atualizaProdutos()
+        }
       }
       edtFornecedores = textField("Fornecedores") {
         this.setWidthFull()
         isExpanded = true
+
+        onEnterPressed {
+          atualizaProdutos()
+        }
       }
       edtTipos = textField("Tipos") {
         this.setWidthFull()
         isExpanded = true
+
+        onEnterPressed {
+          atualizaProdutos()
+        }
       }
       button("Limpar") {
         this.alignment = Alignment.BOTTOM_RIGHT
@@ -61,7 +88,8 @@ class FiltroPainel(
   }
 
   private fun atualizaProdutos() {
-    val produtos = saci.buscaProdutos(baseDados())
+    val base = baseDados()
+    val produtos = saci.buscaProdutos(base)
     gridPainel.setItens(produtos)
   }
 
@@ -72,5 +100,6 @@ class FiltroPainel(
     types = edtTipos.value ?: "",
     cl = centroLucro.value ?: "",
     descricao = descricao.value ?: "",
+    pedido = pedido.value ?: "",
   )
 }

@@ -12,7 +12,8 @@ import com.vaadin.ui.CssLayout
 import com.vaadin.ui.themes.ValoTheme
 
 class MovimentacaoManualPainel(
-  val execProcessa: () -> Unit
+  val execProcessa: () -> Unit,
+  val execDesfaz: () -> Unit,
 ) : CssLayout() {
   private val tipoNota = comboBox<TipoNota>("Tipo Nota") {
     setItems(TipoNota.values().toList().sortedBy { it.numero })
@@ -67,6 +68,12 @@ class MovimentacaoManualPainel(
     }
   }
 
+  private val btnDesfaz = button("Desfaz") {
+    addClickListener {
+      execDesfaz()
+    }
+  }
+
   init {
     caption = "Filtro"
     setWidth("100%")
@@ -75,9 +82,11 @@ class MovimentacaoManualPainel(
       horizontalLayout {
         setWidth("100%")
         isMargin = true
-        addComponents(tipoNota, loja, tipoMov, btnProcessa, transacao)
+        addComponents(tipoNota, loja, tipoMov, btnProcessa, transacao, btnDesfaz)
         setExpandRatio(btnProcessa, 1f)
+        setExpandRatio(btnDesfaz, 1f)
         setComponentAlignment(btnProcessa, BOTTOM_LEFT)
+        setComponentAlignment(btnDesfaz, BOTTOM_LEFT)
       }
     }
   }

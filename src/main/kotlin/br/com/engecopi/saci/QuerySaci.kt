@@ -56,7 +56,7 @@ class QuerySaci : QueryDB(driver, url, username, password) {
     val sql = if (destino == STKMOV) "/sql/processaPedido.sql" else "/sql/processaPedidoNF.sql"
     execute(
       sql,
-      Pair("storeno", "$storeno"),
+      "storeno" to "$storeno",
       Pair("ordno", numero),
       Pair("tipo", "'$tipo'"),
       Pair("t_nota", "${tipoNota.numero}")
@@ -129,6 +129,17 @@ class QuerySaci : QueryDB(driver, url, username, password) {
     execute(sql1, Pair("numero", numero))
     val sql2 = "/sql/novoAjuste.sql"
     execute(sql2)
+  }
+
+  fun desfazInventarioMov(tipo: TipoMov, xano: String, loja: Loja) {
+    val sql = "/sql/defazInventarioMov.sql"
+
+    execute(
+      sql,
+      "tipo" to "'${tipo.cod}'",
+      "xano" to xano,
+      "loja" to loja.numero.toString(),
+    )
   }
 
   fun defazAjuste(numero: String) {
@@ -207,6 +218,7 @@ class QuerySaci : QueryDB(driver, url, username, password) {
     val sql = "/sql/buscaProdutosManual.sql"
     return query(sql, ProdutosMovManual::class) {
       addOptionalParameter("loja", base.loja)
+      addOptionalParameter("pedido", base.pedido)
       addOptionalParameter("prdno", base.codprd)
       addOptionalParameter("vends", base.fornecedores)
       addOptionalParameter("types", base.types)
@@ -239,7 +251,6 @@ class QuerySaci : QueryDB(driver, url, username, password) {
   }
 
   fun executarMov(tipoMov: TipoMov, produtos: List<ProdutosMovManual>): String {
-
     val xanoBean = xanoInventario()
     val xano = xanoBean?.xano ?: return ""
     val tipo = tipoMov.cod
