@@ -18,7 +18,7 @@ SELECT @XANO                          AS xano,
        1                              AS bits,
        @PRDNO                         AS prdno,
        @GRADE                         AS grade,
-       CONCAT('AJUSTE', @TIPO, @XANO) AS remarks
+       CONCAT('AJUSTE ', @TIPO, @XANO) AS remarks
 FROM DUAL;
 
 UPDATE sqldados.stk
