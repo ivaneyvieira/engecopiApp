@@ -1,0 +1,50 @@
+select *
+from sqldados.stkmov
+where storeno = 4
+  and prdno = 19
+  and grade = ''
+ and date = 20230807;
+
+
+select storeno, prdno, qtty_varejo, qtty_atacado from sqldados.stk
+where storeno = 4
+  and prdno = 19
+  and grade = '';
+
+select * from sqldados.stkmovh
+where storeno = 4
+  and prdno = 19
+  and grade = ''
+ and date = 20230807;
+/*
+
+stk antes
+4,              19,1793000,0
+
+passo 1
+mov
+20230807,-1000
+stk
+4,              19,1793000,-1000
+
+passo 2
+
+mov
+20230807,-100014477713,-1000,20230807,4027,4027,4,1,              19,"",66:PED A14477713
+stk
+4,              19,1792000,0
+movh
+14477713,-1000,20230807,0,4027,4027,0,0,0,0,0,0,0,0,0,0,4,1,0,0,0,0,0,0,0,              19,"",0,0,0,0,0
+
+passo 3
+
+mov
+
+stk
+4,              19,1792000,0
+
+movh
+14477713,-1000,20230807,619479,4027,4027,0,0,0,0,0,0,0,0,0,0,4,1,0,1,0,0,0,0,0,              19,"",1,0,0,0,0
+
+
+*/

@@ -66,15 +66,15 @@ FROM DUAL;
 DELETE
 FROM sqldados.stkmov
 WHERE (storeno = @LOJA)
-  AND (remarks LIKE CONCAT('%:PED _%') OR xano = @PEDIDO)
+  AND (remarks LIKE CONCAT('%:PED _%'))
   AND (remarks NOT LIKE '%:PED A%')
   AND (prdno = @PRDNO)
   AND (grade = @GRADE)
   AND date BETWEEN @DI AND @DF;
 
 UPDATE sqldados.stk
-SET stk.qtty_atacado = (stk.qtty_atacado - @QTTD),
-    stk.qtty_varejo  = (stk.qtty_varejo + @QTTD)
+SET stk.qtty_varejo  = (stk.qtty_varejo + @QTTD),
+    stk.qtty_atacado = (stk.qtty_atacado - @QTTD)
 WHERE (stk.storeno = @LOJA)
   AND (stk.prdno = @PRDNO)
   AND (stk.grade = @GRADE)

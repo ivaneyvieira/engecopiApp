@@ -306,7 +306,7 @@ class QuerySaci : QueryDB(driver, url, username, password) {
       sql,
       ("tipo" to "'$tipo'"),
       ("xano" to "$xano"),
-      ("qttd" to "${(prd.qtty * 1000).toInt()}"),
+      ("qttd" to "${(prd.qtty * 1000)}"),
       ("custo" to "${(prd.custo * 10000).toInt()}"),
       ("loja" to "${prd.loja}"),
       ("prdno" to "'${prd.prdno}'"),
