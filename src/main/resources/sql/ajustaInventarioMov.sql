@@ -18,9 +18,10 @@ SELECT @XANO                           AS xano,
        1                               AS bits,
        @PRDNO                          AS prdno,
        @GRADE                          AS grade,
-       CONCAT('AJUSTE ', @TIPO, @XANO) AS remarks
+       CONCAT('66:PED ', @TIPO, @XANO) AS remarks
 FROM DUAL;
 
+/*
 INSERT INTO sqldados.stkmovh (xano, qtty, date, nfno, cm_fiscal, cm_real, auxLong1, auxLong2, auxLong3, auxLong4,
                               auxLong5, auxMy1, auxMy2, auxMy3, auxMy4, auxMy5, storeno, userno, tipo, bits, auxShort1,
                               auxShort2, auxShort3, auxShort4, auxShort5, prdno, grade, nfse, auxStr1, auxStr2, auxStr3,
@@ -57,17 +58,11 @@ SELECT @XANO  AS xano,
        0      AS auxStr2,
        0      AS auxStr3,
        0      AS auxStr4
-FROM DUAL;
+FROM DUAL
+*/
 
 UPDATE sqldados.stk
-SET qtty_varejo = qtty_atacado + qtty_varejo,
-    last_date   = CURRENT_DATE * 1
-WHERE (storeno = @LOJA)
-  AND (prdno = @PRDNO)
-  AND (grade = @GRADE);
-
-UPDATE sqldados.stk
-SET qtty_atacado = 0,
+SET qtty_atacado = qtty_atacado + (@FATOR * @QTTD),
     last_date    = CURRENT_DATE * 1
 WHERE (storeno = @LOJA)
   AND (prdno = @PRDNO)
