@@ -1,16 +1,16 @@
 DO @TIPO := :tipo;
 DO @XANO := :xano;
-DO @QTTD := IF(@TIPO = 'E', 1, -1) * :qttd;
+DO @QTTD := :qttd;
+DO @FATOR := IF(@TIPO = 'E', 1, -1);
 DO @DATA := CURRENT_DATE * 1;
 DO @CUSTO := :custo;
 DO @LOJA := :loja;
 DO @PRDNO := LPAD(:prdno, 16, ' ');
 DO @GRADE := :grade;
 
-INSERT INTO sqldados.stkmov (xano, qtty, date, cm_fiscal, cm_real, storeno, bits, prdno, grade,
-                             remarks)
+INSERT INTO sqldados.stkmov (xano, qtty, date, cm_fiscal, cm_real, storeno, bits, prdno, grade, remarks)
 SELECT @XANO                           AS xano,
-       @QTTD                           AS qtty,
+       @QTTD * @FATOR                  AS qtty,
        @DATA                           AS date,
        @CUSTO                          AS cm_fiscal,
        @CUSTO                          AS cm_real,
@@ -21,10 +21,9 @@ SELECT @XANO                           AS xano,
        CONCAT('AJUSTE ', @TIPO, @XANO) AS remarks
 FROM DUAL;
 
-INSERT INTO sqldados.stkmovh (xano, qtty, date, nfno, cm_fiscal, cm_real, auxLong1, auxLong2,
-                              auxLong3, auxLong4, auxLong5, auxMy1, auxMy2, auxMy3, auxMy4, auxMy5,
-                              storeno, userno, tipo, bits, auxShort1, auxShort2, auxShort3,
-                              auxShort4, auxShort5, prdno, grade, nfse, auxStr1, auxStr2, auxStr3,
+INSERT INTO sqldados.stkmovh (xano, qtty, date, nfno, cm_fiscal, cm_real, auxLong1, auxLong2, auxLong3, auxLong4,
+                              auxLong5, auxMy1, auxMy2, auxMy3, auxMy4, auxMy5, storeno, userno, tipo, bits, auxShort1,
+                              auxShort2, auxShort3, auxShort4, auxShort5, prdno, grade, nfse, auxStr1, auxStr2, auxStr3,
                               auxStr4)
 SELECT @XANO  AS xano,
        @QTTD  AS qtty,
@@ -61,7 +60,16 @@ SELECT @XANO  AS xano,
 FROM DUAL;
 
 UPDATE sqldados.stk
-SET stk.qtty_atacado = (stk.qtty_atacado + @QTTD)
-WHERE (stk.storeno = @LOJA)
-  AND (stk.prdno = @PRDNO)
-  AND (stk.grade = @GRADE)
+SET qtty_varejo = qtty_atacado + qtty_varejo,
+    last_date   = CURRENT_DATE * 1
+WHERE (storeno = @LOJA)
+  AND (prdno = @PRDNO)
+  AND (grade = @GRADE);
+
+UPDATE sqldados.stk
+SET qtty_atacado = 0,
+    last_date    = CURRENT_DATE * 1
+WHERE (storeno = @LOJA)
+  AND (prdno = @PRDNO)
+  AND (grade = @GRADE)
+
