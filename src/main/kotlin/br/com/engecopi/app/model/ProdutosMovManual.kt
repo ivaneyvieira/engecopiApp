@@ -9,12 +9,17 @@ class ProdutosMovManual(
   var descricao: String,
   var fornecedor: Long,
   var centrodelucro: String,
+  var loc: String,
   var tipo: Long,
+  var saldoTotal: Int,
   var saldo: Int,
   var qtty: Int,
   var custo: Double,
-  var total: Double,
-){
+  var obs: String,
+) {
+  val total
+    get() = qtty * custo
+
   override fun equals(other: Any?): Boolean {
     if (this === other) return true
     if (javaClass != other?.javaClass) return false
@@ -36,10 +41,9 @@ class ProdutosMovManual(
   }
 
   fun updateSaldo() {
-    val produto = saci.buscaProdutos(BaseProduto(loja = loja, codprd = prdno)).firstOrNull{
+    val produto = saci.buscaProdutos(BaseProduto(loja = loja, codprd = prdno)).firstOrNull {
       it.grade == grade
     } ?: return
     this.saldo = produto.saldo
-    this.qtty = produto.saldo
   }
 }

@@ -77,6 +77,5 @@ SELECT TRIM(prdno)                                  AS prdno,
        qttynfs / 1000                               AS qtdNfForn,
        qttyatacado / 1000                           AS qtdAtacado,
        (qttyatacado - qttynfs) / 1000               AS qtdConsiderada,
-       ultimocusto / 10000                          AS custo,
-       (qttyatacado / 1000) * (ultimocusto / 10000) AS total
+       ultimocusto / 10000                          AS custo
 FROM T
