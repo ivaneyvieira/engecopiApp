@@ -14,8 +14,14 @@ CREATE TEMPORARY TABLE T_ORD
 (
   PRIMARY KEY (storeno, prdno, grade)
 )
-SELECT storeno, prdno, grade, SUM(qtty) AS quant
+SELECT storeno,
+       prdno,
+       grade,
+       SUM(qtty)                                                  AS quant,
+       IFNULL(CAST(TRIM(MID(R.remarks__480, 1, 20)) AS CHAR), '') AS obs
 FROM sqldados.eoprd AS E
+       LEFT JOIN sqldados.eordrk AS R
+                 USING (storeno, ordno)
 WHERE @PEDIDO != 0
   AND storeno = @LJ
   AND ordno = @PEDIDO
@@ -35,7 +41,8 @@ SELECT stk.storeno                        AS loja,
        prd.typeno                         AS tipo,
        stk.qtty_atacado + stk.qtty_varejo AS saldo,
        0                                  AS qtty,
-       IFNULL(stk.cm_varejo, 0)           AS ultimocusto
+       IFNULL(stk.cm_varejo, 0)           AS ultimocusto,
+       ''                                 AS obs
 FROM sqldados.stk
        INNER JOIN sqldados.prd
                   ON (stk.prdno = prd.no)
@@ -63,7 +70,8 @@ SELECT stk.storeno                        AS loja,
        prd.typeno                         AS tipo,
        stk.qtty_atacado + stk.qtty_varejo AS saldo,
        T_ORD.quant                        AS qtty,
-       IFNULL(stk.cm_varejo, 0)           AS ultimocusto
+       IFNULL(stk.cm_varejo, 0)           AS ultimocusto,
+       obs                                AS obs
 FROM sqldados.stk
        INNER JOIN T_ORD
                   USING (storeno, prdno, grade)
@@ -86,7 +94,8 @@ SELECT loja,
        tipo,
        saldo,
        qtty,
-       ultimocusto
+       ultimocusto,
+       obs
 FROM T_PRD_STK
 UNION
 SELECT loja,
@@ -98,8 +107,30 @@ SELECT loja,
        tipo,
        saldo,
        qtty,
-       ultimocusto
+       ultimocusto,
+       obs
 FROM T_PRDCAD;
+
+DROP TEMPORARY TABLE IF EXISTS T_SALDO;
+CREATE TEMPORARY TABLE T_SALDO
+(
+  PRIMARY KEY (prdno, grade)
+)
+SELECT prdno, grade, SUM(qtty_varejo + qtty_atacado) AS saldoEstoque
+FROM sqldados.stk
+       INNER JOIN T_PRD USING (prdno, grade)
+GROUP BY prdno, grade;
+
+DROP TEMPORARY TABLE IF EXISTS T_LOC;
+CREATE TEMPORARY TABLE T_LOC
+(
+  PRIMARY KEY (prdno, grade)
+)
+SELECT prdno, grade, MAX(MID(localizacao, 1, 4)) AS loc
+FROM sqldados.prdloc
+WHERE storeno = 4
+  AND localizacao NOT LIKE 'CD00%'
+GROUP BY prdno, grade;
 
 DROP TEMPORARY TABLE IF EXISTS T;
 CREATE TEMPORARY TABLE T
@@ -110,10 +141,17 @@ SELECT P.loja,
        P.fornecedor,
        P.centrodelucro,
        P.tipo,
+       IFNULL(S.saldoEstoque, 0)       AS saldoTotal,
+       IFNULL(CAST(L.loc AS CHAR), '') AS loc,
        P.saldo,
        P.qtty,
-       P.ultimocusto
-FROM T_PRD AS P;
+       P.ultimocusto,
+       P.obs
+FROM T_PRD AS P
+       LEFT JOIN T_SALDO AS S
+                 USING (prdno, grade)
+       LEFT JOIN T_LOC AS L
+                 USING (prdno, grade);
 
 SELECT loja                                    AS loja,
        TRIM(prdno)                             AS prdno,
@@ -121,9 +159,11 @@ SELECT loja                                    AS loja,
        IFNULL(descricao, '')                   AS descricao,
        IFNULL(fornecedor, 0)                   AS fornecedor,
        CAST(IFNULL(centrodelucro, '') AS CHAR) AS centrodelucro,
+       loc                                     AS loc,
        IFNULL(tipo, 0)                         AS tipo,
+       saldoTotal / 100                        AS saldoTotal,
        saldo / 1000                            AS saldo,
        qtty / 1000                             AS qtty,
        ultimocusto / 10000                     AS custo,
-       (qtty / 1000) * (ultimocusto / 10000)   AS total
+       obs                                     AS obs
 FROM T

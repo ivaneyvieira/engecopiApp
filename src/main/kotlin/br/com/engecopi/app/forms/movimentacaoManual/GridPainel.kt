@@ -1,13 +1,12 @@
 package br.com.engecopi.app.forms.movimentacaoManual
 
 import br.com.engecopi.app.model.ProdutosMovManual
-import com.github.mvysny.karibudsl.v8.column
-import com.github.mvysny.karibudsl.v8.grid
-import com.github.mvysny.karibudsl.v8.panel
-import com.github.mvysny.karibudsl.v8.showColumns
+import br.com.engecopi.utils.format
+import com.github.mvysny.karibudsl.v8.*
 import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.ui.CssLayout
 import com.vaadin.ui.Grid.SelectionMode
+import com.vaadin.ui.components.grid.FooterCell
 import com.vaadin.ui.renderers.NumberRenderer
 import com.vaadin.ui.themes.ValoTheme.LAYOUT_WELL
 import org.vaadin.viritin.fields.IntegerField
@@ -15,6 +14,7 @@ import java.text.DecimalFormat
 
 
 class GridPainel : CssLayout() {
+  private var totalFotter: FooterCell? = null
   val grid = grid(ProdutosMovManual::class, null, ListDataProvider(emptyList())) {
     setSizeFull()
     this.setSelectionMode(SelectionMode.MULTI)
@@ -54,7 +54,21 @@ class GridPainel : CssLayout() {
     column(ProdutosMovManual::saldo) {
       setRenderer(NumberRenderer(DecimalFormat("0")))
       setStyleGenerator { "v-align-right" }
+      caption = "Estoque"
+      expandRatio = 1
+    }
+    column(ProdutosMovManual::saldoTotal) {
+      setRenderer(NumberRenderer(DecimalFormat("0")))
+      setStyleGenerator { "v-align-right" }
       caption = "Estoque Total"
+      expandRatio = 1
+    }
+    column(ProdutosMovManual::obs) {
+      caption = "Obs"
+      expandRatio = 2
+    }
+    column(ProdutosMovManual::loc) {
+      caption = "Loc MF"
       expandRatio = 1
     }
     column(ProdutosMovManual::qtty) {
@@ -85,6 +99,9 @@ class GridPainel : CssLayout() {
       ProdutosMovManual::grade,
       ProdutosMovManual::qtty,
       ProdutosMovManual::saldo,
+      ProdutosMovManual::saldoTotal,
+      ProdutosMovManual::obs,
+      ProdutosMovManual::loc,
       ProdutosMovManual::fornecedor,
       ProdutosMovManual::centrodelucro,
       ProdutosMovManual::tipo,
@@ -95,6 +112,28 @@ class GridPainel : CssLayout() {
     this.editor.saveCaption = "Salvar"
     this.editor.cancelCaption = "Cancelar"
     this.editor.isEnabled = true
+
+    this.editor.addSaveListener {
+      val itens = this.dataProvider.getAll()
+      updateTotal(itens)
+    }
+
+    val fotter = this.appendFooterRow()
+
+    fotter.getCell(ProdutosMovManual::total.name).apply {
+      this.html = "<font size=\"4\"><b>Total:</b>"
+      this.styleName = "v-align-right"
+    }
+
+    totalFotter = fotter.getCell(ProdutosMovManual::total.name).apply {
+      this.html = ""
+      this.styleName = "v-align-right"
+    }
+
+    this.addSelectionListener {
+      val itens = this.dataProvider.getAll()
+      updateTotal(itens)
+    }
   }
 
   fun addItens(itens: List<ProdutosMovManual>) {
@@ -106,6 +145,13 @@ class GridPainel : CssLayout() {
     selectedItems.forEach {
       grid.selectionModel.select(it)
     }
+
+    updateTotal(itens)
+  }
+
+  private fun updateTotal(itens: List<ProdutosMovManual>) {
+    val total = itens.sumByDouble { it.total }
+    totalFotter?.html = "<font size=\"4\">${total.format()}</font>"
   }
 
   fun itensSelecionado(): List<ProdutosMovManual> {
