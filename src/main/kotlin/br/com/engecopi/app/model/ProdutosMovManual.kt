@@ -3,6 +3,7 @@ package br.com.engecopi.app.model
 import br.com.engecopi.saci.saci
 
 class ProdutosMovManual(
+  var sequencial: Int = 0,
   var loja: Int,
   var prdno: String,
   var grade: String,

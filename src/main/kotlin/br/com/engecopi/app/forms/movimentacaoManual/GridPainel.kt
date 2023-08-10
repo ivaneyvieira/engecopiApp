@@ -27,6 +27,11 @@ class GridPainel : CssLayout() {
 
     val binder = this.getEditor().getBinder()
 
+    //Coluna sequancial
+    column(ProdutosMovManual::sequencial) {
+      caption = "Seq"
+      expandRatio = 1
+    }
     column(ProdutosMovManual::prdno) {
       caption = "Código"
       expandRatio = 1
@@ -94,6 +99,7 @@ class GridPainel : CssLayout() {
     }
 
     showColumns(
+      ProdutosMovManual::sequencial,
       ProdutosMovManual::prdno,
       ProdutosMovManual::descricao,
       ProdutosMovManual::grade,
@@ -114,8 +120,7 @@ class GridPainel : CssLayout() {
     this.editor.isEnabled = true
 
     this.editor.addSaveListener {
-      val itens = this.dataProvider.getAll()
-      updateTotal(itens)
+      updateTotal()
     }
 
     val fotter = this.appendFooterRow()
@@ -131,8 +136,12 @@ class GridPainel : CssLayout() {
     }
 
     this.addSelectionListener {
-      val itens = this.dataProvider.getAll()
-      updateTotal(itens)
+      updateTotal()
+    }
+
+
+    this.dataProvider.addDataProviderListener {
+      updateTotal()
     }
   }
 
@@ -146,12 +155,17 @@ class GridPainel : CssLayout() {
       grid.selectionModel.select(it)
     }
 
-    updateTotal(itens)
+    updateTotal()
   }
 
-  private fun updateTotal(itens: List<ProdutosMovManual>) {
+  private fun updateTotal() {
+    val itens = grid.dataProvider.getAll()
     val total = itens.sumByDouble { it.total }
     totalFotter?.html = "<font size=\"4\">${total.format()}</font>"
+
+    itens.forEachIndexed { index, produtosMovManual ->
+      produtosMovManual.sequencial = index + 1
+    }
   }
 
   fun itensSelecionado(): List<ProdutosMovManual> {
