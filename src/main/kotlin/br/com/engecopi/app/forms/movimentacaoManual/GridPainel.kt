@@ -63,10 +63,10 @@ class GridPainel : CssLayout() {
       expandRatio = 1
     }
     column(ProdutosMovManual::saldoTotal) {
-      setRenderer(NumberRenderer(DecimalFormat("0")))
-      setStyleGenerator { "v-align-right" }
-      caption = "Estoque Total"
-      expandRatio = 1
+      this.setRenderer(NumberRenderer(DecimalFormat("0")))
+      this.setStyleGenerator { "v-align-right" }
+      this.caption = "Estoque Total"
+      this.expandRatio = 1
     }
     column(ProdutosMovManual::obs) {
       caption = "Obs"
@@ -118,6 +118,11 @@ class GridPainel : CssLayout() {
     this.editor.saveCaption = "Salvar"
     this.editor.cancelCaption = "Cancelar"
     this.editor.isEnabled = true
+    this.editor.isBuffered = true
+
+    binder.addStatusChangeListener {
+      edtQuantidade.focus()
+    }
 
     this.editor.addSaveListener {
       updateTotal()
