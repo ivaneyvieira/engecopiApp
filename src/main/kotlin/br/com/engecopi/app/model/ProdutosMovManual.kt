@@ -34,6 +34,12 @@ class ProdutosMovManual(
     return true
   }
 
+  var qttdStr: String
+    get() = qtty.toString()
+    set(value) {
+      qtty = value.toIntOrNull() ?: 0
+    }
+
   override fun hashCode(): Int {
     var result = loja
     result = 31 * result + prdno.hashCode()
