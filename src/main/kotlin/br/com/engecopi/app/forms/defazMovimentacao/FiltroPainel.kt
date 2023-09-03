@@ -1,6 +1,5 @@
-package br.com.engecopi.app.forms.movimentacaoManual
+package br.com.engecopi.app.forms.defazMovimentacao
 
-import br.com.engecopi.app.forms.defazMovimentacao.DefazMovimentacaoPainel
 import br.com.engecopi.app.model.BaseProduto
 import br.com.engecopi.saci.saci
 import com.github.mvysny.karibudsl.v8.*
@@ -10,7 +9,7 @@ import com.vaadin.ui.TextField
 import com.vaadin.ui.themes.ValoTheme
 
 class FiltroPainel(
-  private val defazMovimentacaoPainel: DefazMovimentacaoPainel,
+  private val movimentacaoManualPainel: DefazMovimentacaoPainel,
   private val gridPainel: GridPainel
 ) :
   CssLayout() {
@@ -95,7 +94,7 @@ class FiltroPainel(
   }
 
   private fun baseDados() = BaseProduto(
-    loja = defazMovimentacaoPainel.filtroBean().loja?.numero ?: 0,
+    loja = movimentacaoManualPainel.filtroBean().loja?.numero ?: 0,
     codprd = codigo.value?.trim() ?: "",
     fornecedores = edtFornecedores.value ?: "",
     types = edtTipos.value ?: "",

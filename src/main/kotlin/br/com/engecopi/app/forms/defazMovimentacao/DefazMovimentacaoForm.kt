@@ -1,6 +1,5 @@
-package br.com.engecopi.app.forms.movimentacaoManual
+package br.com.engecopi.app.forms.defazMovimentacao
 
-import br.com.engecopi.app.forms.defazMovimentacao.DefazMovimentacaoPainel
 import br.com.engecopi.app.model.TipoMov
 import br.com.engecopi.app.model.TipoNota
 import br.com.engecopi.saci.saci
@@ -10,7 +9,7 @@ import com.vaadin.ui.VerticalLayout
 import de.steinwedel.messagebox.ButtonOption
 import de.steinwedel.messagebox.MessageBox
 
-class MovimentacaoManualForm : VerticalLayout() {
+class DefazMovimentacaoForm : VerticalLayout() {
   private val defazMovimentacaoPainel = DefazMovimentacaoPainel(::execProcessa, ::execDesfaz)
   private val gridPainel = GridPainel()
   private val filtroPainel = FiltroPainel(defazMovimentacaoPainel, gridPainel)
