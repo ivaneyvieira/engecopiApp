@@ -361,6 +361,7 @@ class QuerySaci : QueryDB(driver, url, username, password) {
         ("transacao" to filtro.transacao),
         ("prdno" to "'${produto.prdno}'"),
         ("grade" to "'${produto.grade}'"),
+        ("ajustaSaldo" to "'${filtro.ajustaSaldo.let { if (it) "S" else "N" }}'"),
       )
     }
   }
