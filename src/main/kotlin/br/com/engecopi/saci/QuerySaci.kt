@@ -227,6 +227,14 @@ class QuerySaci : QueryDB(driver, url, username, password) {
     }
   }
 
+    fun buscaProdutosMovimentacaoManual(filtro: FiltroTransacao): List<ProdutosMovManual> {
+    val sql = "/sql/buscaProdutosMovManual.sql"
+    return query(sql, ProdutosMovManual::class) {
+      addOptionalParameter("loja", filtro.loja?.numero ?: 0)
+      addOptionalParameter("transacao", filtro.transacao)
+    }
+  }
+
   private fun xanoInventario(): Xano? {
     val sql = "/sql/xanoInventario.sql"
     return query(sql, Xano::class).firstOrNull()
@@ -342,6 +350,19 @@ class QuerySaci : QueryDB(driver, url, username, password) {
       addOptionalParameter("loja", loja.numero)
       addOptionalParameter("xano", xano)
     }.firstOrNull()
+  }
+
+  fun removeProdutos(filtro: FiltroTransacao, produtos: List<ProdutosMovManual>) {
+    val sql = "/sql/removeProdutos.sql"
+    produtos.forEach { produto ->
+      execute(
+        sql,
+        ("loja" to "${filtro.loja?.numero}"),
+        ("transacao" to filtro.transacao),
+        ("prdno" to "'${produto.prdno}'"),
+        ("grade" to "'${produto.grade}'"),
+      )
+    }
   }
 
   companion object {

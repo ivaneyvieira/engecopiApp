@@ -10,7 +10,7 @@ import com.vaadin.ui.TextField
 import com.vaadin.ui.themes.ValoTheme
 
 class FiltroPainel(
-  private val defazMovimentacaoPainel: DefazMovimentacaoPainel,
+  private val defazMovimentacaoPainel: MovimentacaoManualPainel,
   private val gridPainel: GridPainel
 ) :
   CssLayout() {

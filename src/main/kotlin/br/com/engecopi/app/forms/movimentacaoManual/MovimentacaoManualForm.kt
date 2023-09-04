@@ -1,6 +1,5 @@
 package br.com.engecopi.app.forms.movimentacaoManual
 
-import br.com.engecopi.app.forms.defazMovimentacao.DefazMovimentacaoPainel
 import br.com.engecopi.app.model.TipoMov
 import br.com.engecopi.app.model.TipoNota
 import br.com.engecopi.saci.saci
@@ -11,13 +10,13 @@ import de.steinwedel.messagebox.ButtonOption
 import de.steinwedel.messagebox.MessageBox
 
 class MovimentacaoManualForm : VerticalLayout() {
-  private val defazMovimentacaoPainel = DefazMovimentacaoPainel(::execProcessa, ::execDesfaz)
+  private val movimentacaoManualPainel = MovimentacaoManualPainel(::execProcessa, ::execDesfaz)
   private val gridPainel = GridPainel()
-  private val filtroPainel = FiltroPainel(defazMovimentacaoPainel, gridPainel)
+  private val filtroPainel = FiltroPainel(movimentacaoManualPainel, gridPainel)
 
   init {
     setSizeFull()
-    addComponents(defazMovimentacaoPainel, filtroPainel)
+    addComponents(movimentacaoManualPainel, filtroPainel)
     addComponentsAndExpand(gridPainel)
   }
 
@@ -28,8 +27,8 @@ class MovimentacaoManualForm : VerticalLayout() {
 
   private fun execProcessa() {
     val selecionado = gridPainel.itensSelecionado()
-    val tipoMov = defazMovimentacaoPainel.filtroBean().tipoMov
-    val tipoNota = defazMovimentacaoPainel.filtroBean().tipoNota
+    val tipoMov = movimentacaoManualPainel.filtroBean().tipoMov
+    val tipoNota = movimentacaoManualPainel.filtroBean().tipoNota
 
     if (selecionado.isEmpty()) fail("Nenhum item selecionado")
     if (tipoMov == null) fail("Tipo de movimentação não informado")
@@ -44,7 +43,7 @@ class MovimentacaoManualForm : VerticalLayout() {
         }
         messageConfirma("Confirma a $verbo dos itens selecionados?") {
           val transacao = saci.executarMov(tipoMov, selecionado)
-          defazMovimentacaoPainel.setTransacao(transacao)
+          movimentacaoManualPainel.setTransacao(transacao)
           gridPainel.updateSelection()
         }
       }
@@ -52,7 +51,7 @@ class MovimentacaoManualForm : VerticalLayout() {
   }
 
   private fun execDesfaz() {
-    val filtroBean = defazMovimentacaoPainel.filtroBean()
+    val filtroBean = movimentacaoManualPainel.filtroBean()
     val tipoMov = filtroBean.tipoMov
     val tipoNota = filtroBean.tipoNota
     val transacao = filtroBean.transacao
@@ -72,7 +71,7 @@ class MovimentacaoManualForm : VerticalLayout() {
         }
         messageConfirma("Desfaz a $verbo dos itens selecionados?") {
           saci.desfazInventarioMov(tipoMov, transacao, loja)
-          defazMovimentacaoPainel.setTransacao("")
+          movimentacaoManualPainel.setTransacao("")
           gridPainel.updateSelection()
         }
       }
