@@ -23,11 +23,15 @@ class DefazMovimentacaoPainel(
     addStyleName("align-right")
   }
 
-  fun filtroTransacao() = FiltroTransacao(loja = loja.value, transacao = transacao.value ?: "")
-
-  fun setTransacao(transacaoNumber: String) {
-    transacao.value = transacaoNumber
+  private val ajustaSaldo = checkBox("Ajusta Saldo") {
+    value = true
   }
+
+  fun filtroTransacao() = FiltroTransacao(
+    loja = loja.value,
+    transacao = transacao.value ?: "",
+    ajustaSaldo = ajustaSaldo.value ?: false
+  )
 
   private val btnProcessa = button("Remove") {
     addClickListener {
@@ -49,9 +53,10 @@ class DefazMovimentacaoPainel(
       horizontalLayout {
         setWidth("100%")
         isMargin = true
-        addComponents(loja, transacao, btnBusca, btnProcessa)
+        addComponents(loja, transacao, btnBusca, ajustaSaldo, btnProcessa)
         setExpandRatio(btnBusca, 1f)
         setComponentAlignment(btnBusca, BOTTOM_LEFT)
+        setComponentAlignment(ajustaSaldo, BOTTOM_LEFT)
         setComponentAlignment(btnProcessa, BOTTOM_LEFT)
       }
     }
