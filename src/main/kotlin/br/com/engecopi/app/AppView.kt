@@ -1,6 +1,7 @@
 package br.com.engecopi.app
 
 import br.com.engecopi.app.forms.ajustaEstoquePerda.AjustaEstoquePerdaForm
+import br.com.engecopi.app.forms.defazMovimentacao.DefazMovimentacaoForm
 import br.com.engecopi.app.forms.movimentacaoManual.MovimentacaoManualForm
 import br.com.engecopi.app.forms.movimentacaoPedido.PedidosMovForm
 import br.com.engecopi.app.forms.processaConferencia.ProcessaConferenciaForm
@@ -24,6 +25,7 @@ class AppView : VerticalLayout(), View {
       addTab(PedidosMovForm(), "Movimentação de Pedidos")
       addTab(MovimentacaoManualForm(), "Movimentação Manual")
       addTab(AjustaEstoquePerdaForm(), "Ajusta Estoque Perda")
+      addTab(DefazMovimentacaoForm(), "Remove Movimentação")
       addTab(SaldoKardecForm(), "Compara Saldo vs Kardec")
       addTab(ProcessaConferenciaForm(), "Conferência")
       expandRatio = 1f

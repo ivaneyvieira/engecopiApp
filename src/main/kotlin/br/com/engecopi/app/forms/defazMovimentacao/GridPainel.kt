@@ -19,14 +19,6 @@ class GridPainel : CssLayout() {
     setSizeFull()
     this.setSelectionMode(SelectionMode.MULTI)
 
-    val edtQuantidade = IntegerField().apply {
-      addStyleName("align-right")
-      addStyleName(LAYOUT_WELL)
-      setWidth("100%")
-    }
-
-    val binder = this.getEditor().getBinder()
-
     //Coluna sequancial
     column(ProdutosMovManual::sequencial) {
       caption = "Seq"
@@ -77,9 +69,6 @@ class GridPainel : CssLayout() {
       expandRatio = 1
     }
     column(ProdutosMovManual::qtty) {
-      setEditorComponent(edtQuantidade) { bean, valor ->
-        bean.qtty = valor
-      }
       setRenderer(NumberRenderer(DecimalFormat("0")))
       setStyleGenerator { "v-align-right" }
       caption = "Quant Ajuste"
@@ -120,9 +109,6 @@ class GridPainel : CssLayout() {
     this.editor.isEnabled = true
     this.editor.isBuffered = true
 
-    binder.addStatusChangeListener {
-      edtQuantidade.focus()
-    }
 
     this.editor.addSaveListener {
       updateTotal()
@@ -151,15 +137,7 @@ class GridPainel : CssLayout() {
   }
 
   fun addItens(itens: List<ProdutosMovManual>) {
-    val selectedItems = grid.selectedItems.onEach { it.updateSaldo() }.sortedBy { it.prdno }
-    val resto = (itens - selectedItems.toSet()).sortedBy { it.prdno }
-    val novosItens = selectedItems + resto
-
-    grid.dataProvider = ListDataProvider(novosItens)
-    selectedItems.forEach {
-      grid.selectionModel.select(it)
-    }
-
+    grid.dataProvider = ListDataProvider(itens)
     updateTotal()
   }
 

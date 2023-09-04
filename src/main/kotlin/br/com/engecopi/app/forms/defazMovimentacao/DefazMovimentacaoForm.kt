@@ -10,71 +10,26 @@ import de.steinwedel.messagebox.ButtonOption
 import de.steinwedel.messagebox.MessageBox
 
 class DefazMovimentacaoForm : VerticalLayout() {
-  private val defazMovimentacaoPainel = DefazMovimentacaoPainel(::execProcessa, ::execDesfaz)
+  private val defazMovimentacaoPainel = DefazMovimentacaoPainel(execBusca = ::execBusca, execProcessa = ::execProcessa)
   private val gridPainel = GridPainel()
-  private val filtroPainel = FiltroPainel(defazMovimentacaoPainel, gridPainel)
 
   init {
     setSizeFull()
-    addComponents(defazMovimentacaoPainel, filtroPainel)
+    addComponents(defazMovimentacaoPainel)
     addComponentsAndExpand(gridPainel)
   }
 
-  fun fail(msg: String): Nothing {
-    show(msg, ERROR_MESSAGE)
-    throw Exception(msg)
-  }
-
   private fun execProcessa() {
-    val selecionado = gridPainel.itensSelecionado()
-    val tipoMov = defazMovimentacaoPainel.filtroBean().tipoMov
-    val tipoNota = defazMovimentacaoPainel.filtroBean().tipoNota
-
-    if (selecionado.isEmpty()) fail("Nenhum item selecionado")
-    if (tipoMov == null) fail("Tipo de movimentação não informado")
-    if (tipoNota == null) fail("Tipo de nota não informado")
-
-    when (tipoNota) {
-      TipoNota.GARANTIA -> fail("Tipo de nota não implementado")
-      TipoNota.PERDA -> {
-        val verbo = when (tipoMov) {
-          TipoMov.ENTRADA -> "ENTRADA"
-          TipoMov.SAIDA -> "SAÌDA"
-        }
-        messageConfirma("Confirma a $verbo dos itens selecionados?") {
-          val transacao = saci.executarMov(tipoMov, selecionado)
-          defazMovimentacaoPainel.setTransacao(transacao)
-          gridPainel.updateSelection()
-        }
-      }
+    val filtro = defazMovimentacaoPainel.filtroTransacao()
+    gridPainel.itensSelecionado().let { produtos ->
+      saci.removeProdutos(filtro, produtos)
     }
+    execBusca()
   }
 
-  private fun execDesfaz() {
-    val filtroBean = defazMovimentacaoPainel.filtroBean()
-    val tipoMov = filtroBean.tipoMov
-    val tipoNota = filtroBean.tipoNota
-    val transacao = filtroBean.transacao
-    val loja = filtroBean.loja
-
-    if (transacao.isEmpty()) fail("Nenhuma transação selecionada")
-    if (tipoMov == null) fail("Tipo de movimentação não informado")
-    if (tipoNota == null) fail("Tipo de nota não informado")
-    if (loja == null) fail("Loja não informada")
-
-    when (tipoNota) {
-      TipoNota.GARANTIA -> fail("Tipo de nota não implementado")
-      TipoNota.PERDA -> {
-        val verbo = when (tipoMov) {
-          TipoMov.ENTRADA -> "ENTRADA"
-          TipoMov.SAIDA -> "SAÌDA"
-        }
-        messageConfirma("Desfaz a $verbo dos itens selecionados?") {
-          saci.desfazInventarioMov(tipoMov, transacao, loja)
-          defazMovimentacaoPainel.setTransacao("")
-          gridPainel.updateSelection()
-        }
-      }
+  private fun execBusca() {
+    saci.buscaProdutosMovimentacaoManual(defazMovimentacaoPainel.filtroTransacao()).let { produtos ->
+      gridPainel.addItens(produtos)
     }
   }
 
@@ -87,5 +42,4 @@ class DefazMovimentacaoForm : VerticalLayout() {
       .withNoButton({ println("No button was pressed.") }, ButtonOption.caption("Não"))
       .open()
   }
-
 }
