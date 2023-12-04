@@ -21,7 +21,7 @@ enum class TipoMov(val cod: String, val descricao: String, val operacao: String,
 }
 
 enum class Loja(val numero: Int, val descricao: String) {
-  JS(1, "JS"), DS(2, "DS"), MR(3, "MR"), MF(4, "MF"), PK(5, "PK"), AD(10, "ADM");
+  JS(1, "JS"), DS(2, "DS"), MR(3, "MR"), MF(4, "MF"), PK(5, "PK"), TM(8, "TM"), AD(10, "ADM");
 
   companion object {
     fun findLoja(storeno: Int?): Loja? = Loja.values().toList().firstOrNull {
